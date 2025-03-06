@@ -259,14 +259,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="sm:w-full md:max-w-7xl lg:max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
           Transaction Management
         </h1>
 
         {/* Tracked Expenses */}
         <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between flex-wrap items-center mb-4">
             <h2 className="text-xl font-semibold">Tracked Expenses</h2>
             <button
               onClick={() => setShowAddExpense(true)}

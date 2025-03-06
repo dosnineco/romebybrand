@@ -145,9 +145,9 @@
 
 /* Default Dosnine Theme */
 .Default {
-  --bkg: #CCCCFF;       /* Softer, premium off-white */
-  --primary:#2ecc71;   /* Richer blue for a more modern, tech feel */
-  --shade: #011942; 
+  --bkg: #fff;       /* Softer, premium off-white */
+  --primary:#9ce4b4;   /* Richer blue for a more modern, tech feel */
+  --shade: #09122C; 
 }
  
 

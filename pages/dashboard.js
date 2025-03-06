@@ -22,46 +22,14 @@ function App() {
       bgHover: "hover:bg-blue-50",
     },
     {
-      title: "Leaderboard",
-      description: "Track and analyze your Clickaway data",
+      title: "spend",
+      description: "Track and analyze your spending data",
       icon: BarChart2,
-      path: "leaderboard",
+      path: "spend",
       color: "text-orange-600",
       bgHover: "hover:bg-orange-50",
     },
-    
-    {
-      title: "Bespoke Studio",
-      description: "See the vision of your site.",
-      icon: Award,
-      path: "/studio",
-      color: "text-yellow-600",
-      bgHover: "hover:bg-yellow-50",
-    },
-    {
-      title: "Service Quoting Tool",
-      description: "Generate professional service quotes instantly",
-      icon: Calculator,
-      path: "/tools/quote",
-      color: "text-purple-600",
-      bgHover: "hover:bg-purple-50",
-    },
-    {
-      title: "Email Template Tool",
-      description: "Manage and use email templates efficiently",
-      icon: Mail,
-      path: "/tools/email-template",
-      color: "text-red-600",
-      bgHover: "hover:bg-red-50",
-    },
-    {
-      title: "Salary Calculator",
-      description: "Convert salary to hourly rates and vice versa",
-      icon: DollarSign,
-      path: "/tools/salary-to-hourly",
-      color: "text-yellow-600",
-      bgHover: "hover:bg-yellow-50",
-    },
+
   ];
 
   const filteredTools = tools.filter(tool =>
