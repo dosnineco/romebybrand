@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.dosnine.com
+
+# Sitemaps
+Sitemap: https://www.dosnine.com/sitemap.xml

@@ -1,0 +1,218 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Lilita+One&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap'); 
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bkg: #ffffff;
+  --primary: #ffc107; /* Vibrant yellow */
+  --shade: #212529; /* Deep neutral for contrast */
+  --heading: 5rem;
+  --heading-color: #212529;
+  --heading-color-light: #343a40;
+}
+
+#__next{
+  position: relative;
+  z-index: 1;
+}
+
+
+.theme-gray-light {
+  --bkg: #f4faff;
+  --primary: #4a90e2; /* Light blue for a fresh look */
+  --shade: #2c3e50; /* Neutral deep shade */
+}
+
+.theme-gray-peach {
+  --bkg: #fff9f3;
+  --primary: #ff6f61; /* Soft coral */
+  --shade: #2a2e45; /* Rich navy */
+}
+
+.theme-yellow-deep {
+  --bkg: #fffcf5;
+  --primary: #ffb703; /* Rich amber */
+  --shade: #023047; /* Deep ocean blue */
+}
+
+.theme-dark-green {
+  --bkg: #f2f9f6;
+  --primary: #2a9d8f; /* Calm teal */
+  --shade: #264653; /* Muted navy-green */
+}
+
+.theme-blue {
+  --bkg: #f0f8ff;
+  --primary: #0077b6; /* Modern blue */
+  --shade: #1d3557; /* Deep neutral blue */
+}
+
+.theme-green {
+  --bkg: #f5fff5;
+  --primary: #38b000; /* Vibrant green */
+  --shade: #2a2e35; /* Neutral deep gray */
+}
+
+.theme-purple {
+  --bkg: #f9f5ff;
+  --primary: #9c27b0; /* Modern purple */
+  --shade: #311b92; /* Rich deep violet */
+}
+
+.theme-orange {
+  --bkg: #fff;
+  --primary: #2e5a6b; /* Vibrant orange */
+  --shade: #3a3335; /* Deep grayish brown */
+}
+
+.theme-pink {
+  --bkg: #fff0f5;
+  --primary: #ff3d68; /* Soft magenta */
+  --shade: #3d2f39; /* Neutral deep purple-gray */
+}
+
+.theme-teal {
+  --bkg: #e6fffa;
+  --primary: #2ec4b6; /* Bright teal */
+  --shade: #264653; /* Deep greenish blue */
+}
+
+.theme-brown {
+  --bkg: #f8f4f0;
+  --primary: #6d4c41; /* Warm brown */
+  --shade: #3e2723; /* Rich dark brown */
+}
+
+.theme-cyan {
+  --bkg: #e0f7ff;
+  --primary: #0288d1; /* Cool cyan */
+  --shade: #1b3b5e; /* Deep ocean blue */
+}
+
+.theme-indigo {
+  --bkg: #f0f5ff;
+  --primary: #5a67d8; /* Soft indigo */
+  --shade: #1c1f33; /* Deep midnight blue */
+}
+
+.theme-olive {
+  --bkg: #faf9f5;
+  --primary: #556b2f; /* Muted olive */
+  --shade: #3e4235; /* Neutral earthy tone */
+}
+
+.theme-gold {
+  --bkg: #fffef5;
+  --primary: #ffbf00; /* Vibrant gold */
+  --shade: #3a2c1e; /* Warm deep brown */
+}
+
+.theme-silver {
+  --bkg: #f9f9f9;
+  --primary: #b0bec5; /* Modern silver */
+  --shade: #2c3e50; /* Neutral dark gray */
+}
+
+.theme-maroon {
+  --bkg: #fff5f5;
+  --primary: #800020; /* Rich maroon */
+  --shade: #3a2323; /* Neutral deep brown-red */
+}
+
+.theme-rose {
+  --bkg: #fff7f9;
+  --primary: #f72585; /* Modern rose pink */
+  --shade: #3b2238; /* Deep purple-pink */
+}
+
+/* Mint is excellent as-is */
+.theme-mint {
+  --bkg: #f0fff4;
+  --primary: #3eb489;
+  --shade: #212529;
+}
+
+
+
+::selection{
+  background-color: #2ecc71;
+  color:#fff;
+}
+
+/* Default Dosnine Theme */
+.Default {
+  --bkg: #CCCCFF;       /* Softer, premium off-white */
+  --primary:#2ecc71;   /* Richer blue for a more modern, tech feel */
+  --shade: #011942; 
+}
+ 
+
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background-color:var(--bkg) ;
+  overflow-x: hidden;
+  /* font-family: "Work Sans", sans-serif; */
+  font-family: "Lato", serif;
+  font-weight: 600;
+  font-size:16px;
+  color:var(--shade);
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
+
+
+
+h1{
+  margin: 0;
+  color: var(--black);
+  font-size: var(--heading);
+  line-height: 1.2;
+  font-weight: 900;
+  text-transform: capitalize;
+  font-family: "Rubik", serif;
+}
+
+
+
+h2,h3,h4,h5{
+  color:var(--heading_color);
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 1.8;
+}
+
+p{
+  padding: 1em 0;
+  display: block;
+  line-height: 1.8;
+  font-size: 1.9em;
+  margin-bottom: 2em;
+  font-weight: 400;
+}
+
+
+@media (max-width: 768px) {
+  h1{
+  font-size: 3rem;
+  }
+}
+
+.box-shadow{
+  border: 1px solid rgb(18, 18, 18);
+  box-shadow: rgb(18, 18, 18) 4px 4px 0px;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+
+
+
+
