@@ -1,26 +1,7 @@
-     <Seo siteTitle='Dosnine' pageTitle={`Service Delivery Industry #1 Website Template - Dosnine Media`} description='Get Your Website Up In A Day!,Not In Weeks!' url='www.dosnine.com'/>
 
+Milestone Reminders: “You’re $500 away from your savings goal—keep going!”
 
-      <Header/>
-
-      
-      <PromoSection/>
-      <HowItWorks/>
-      {/* <WhatsNew /> */}
-      {/* <Services /> */}
-      <FeaturedItems/>
-      <Faq />
-      <ContactForm/>
-      <Footer/>
-
-
-      password generator base of a word text or sentence
-
-
-
-
-Email Automation & Management
-Tool Idea: Smart Email Assistant
-Automates follow-ups, categorizes emails, and suggests replies using AI.
-Example Keywords: "email assistant software," "automated email follow-up."
-High demand: Email remains a top productivity blocker in offices.
+## Personalized Money Tips & AI Insights
+Smart Spending Alerts: Get a notification like “You spent 20% more on dining this week.”
+Cash Flow Forecasting: AI suggests how much you can safely spend based on past transactions.
+Automated Budgeting Suggestions: “You can save an extra $200 this month by adjusting your grocery budget.”

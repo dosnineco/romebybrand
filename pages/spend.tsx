@@ -260,12 +260,12 @@ function App() {
   return (
     <div className="min-h-screen bg-white p-6">
       <div className="sm:w-full md:max-w-7xl lg:max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Transaction Management
+        <h1 className="text-xl text-lg text-gray-900 mb-8">
+          Transactions
         </h1>
 
         {/* Tracked Expenses */}
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
+        {/* <div className="bg-white rounded-lg  p-6 mb-8">
           <div className="flex justify-between flex-wrap items-center mb-4">
             <h2 className="text-xl font-semibold">Tracked Expenses</h2>
             <button
@@ -326,26 +326,32 @@ function App() {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
+
+           {/* Add Transaction Form */}
+           {/* <div className="mb-6">
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          >
+            <Plus className="h-5 w-5 inline mr-2" />
+            Add Transaction
+          </button>
+        </div> */}
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-700">Total Credits</h3>
-            <p className="text-2xl font-bold text-green-600">
+          <div className="bg-white border-2 border-dashed rounded-lg  p-6">
+            <h3 className="text-lg font-normal text-gray-700">Total Credits</h3>
+            <p className="text-base font-bold inline text-green-600">
               ${summary.totalCredits.toFixed(2)}
             </p>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-700">Total Debits</h3>
-            <p className="text-2xl font-bold text-red-600">
-              ${summary.totalDebits.toFixed(2)}
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-700">Net Balance</h3>
+       
+          <div className="bg-white border-2 border-dashed rounded-lg  p-6">
+            <h3 className="text-lg font-normal text-gray-700">Net Balance</h3>
             <p
-              className={`text-2xl font-bold ${
+              className={`text-base font-bold inline ${
                 summary.netBalance >= 0 ? 'text-green-600' : 'text-red-600'
               }`}
             >
@@ -360,56 +366,12 @@ function App() {
           </div>
         )}
 
-        {/* Filters and Search */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search transactions..."
-                  value={searchTerm}
-                  onChange={e => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded"
-                />
-                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <select
-                value={filterPeriod}
-                onChange={e => setFilterPeriod(e.target.value as FilterPeriod)}
-                className="border rounded px-4 py-2"
-              >
-                <option value="all">All Time</option>
-                <option value="day">Last 24 Hours</option>
-                <option value="week">This Week</option>
-                <option value="month">This Month</option>
-              </select>
-              <button
-                onClick={() => fetchTransactions()}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-              >
-                <Filter className="h-5 w-5 inline mr-2" />
-                Apply
-              </button>
-            </div>
-          </div>
-        </div>
+  
 
-        {/* Add Transaction Form */}
-        <div className="mb-6">
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-          >
-            <Plus className="h-5 w-5 inline mr-2" />
-            Add Transaction
-          </button>
-        </div>
+     
 
         {showAddForm && (
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <div className="bg-white rounded-lg  p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Add New Transaction</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
@@ -456,9 +418,45 @@ function App() {
             </div>
           </div>
         )}
+      {/* Filters and Search */}
+      <div className="bg-white rounded-lg  p-4 mb-6">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search transactions..."
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border rounded"
+                />
+                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <select
+                value={filterPeriod}
+                onChange={e => setFilterPeriod(e.target.value as FilterPeriod)}
+                className="border rounded px-4 py-2"
+              >
+                <option value="all">All Time</option>
+                <option value="day">Last 24 Hours</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+              </select>
+              <button
+                onClick={() => fetchTransactions()}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                <Filter className="h-5 w-5 inline mr-2" />
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Transactions Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white rounded-lg  overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -583,3 +581,4 @@ function App() {
 }
 
 export default App;
+

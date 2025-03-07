@@ -59,7 +59,6 @@ function MyApp({ Component, pageProps }) {
             <Layout className="container mx-auto px-4 py-8">
               <Component {...pageProps} />
             </Layout>
-            <Footer />
           </SignedIn>
         </>
       )}
