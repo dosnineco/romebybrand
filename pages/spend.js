@@ -72,6 +72,14 @@ const App = () => {
           shopping: 'Stick to a shopping list to avoid impulse purchases.',
         }[category] || 'Review your spending in this category for potential savings.';
       }
+      else {
+        recommendation = 'You are within budget.';
+        // recommendation = {
+        //   food: 'You are within budget for food spending.',
+        //   entertainment: 'You are within budget for entertainment spending.',
+        //   shopping: 'You are within budget for shopping spending.',
+        // }[category] || `You are within budget.;
+      }
   
       return {
         category,
@@ -298,19 +306,61 @@ const App = () => {
             />
           </td>
           <td className="px-4 py-2">
-            <select
-              value={editData.category}
-              onChange={(e) => handleInputChange('category', e.target.value)}
-              className="w-full border rounded px-2 py-1"
-            >
-              <option value="food">Food</option>
-              <option value="shopping">Shopping</option>
-              <option value="transport">Transport</option>
-              <option value="housing">Housing</option>
-              <option value="entertainment">Entertainment</option>
-              <option value="gas">Gas</option>
-              <option value="other">Other</option>
-            </select>
+          <select
+  value={editData.category}
+  onChange={(e) => handleInputChange('category', e.target.value)}
+  className="w-full border rounded px-2 py-1"
+>
+  <optgroup label="Food & Dining">
+    <option value="food">Food</option>
+    <option value="groceries">Groceries</option>
+    <option value="dining_out">Dining Out</option>
+  </optgroup>
+
+  <optgroup label="Shopping">
+    <option value="shopping">Shopping</option>
+    <option value="clothing">Clothing</option>
+    <option value="electronics">Electronics</option>
+  </optgroup>
+
+  <optgroup label="Transport">
+    <option value="transport">Transport</option>
+    <option value="fuel">Fuel</option>
+    <option value="public_transport">Public Transport</option>
+  </optgroup>
+
+  <optgroup label="Housing">
+    <option value="housing">Housing</option>
+    <option value="rent">Rent</option>
+    <option value="mortgage">Mortgage</option>
+    <option value="utilities">Utilities</option>
+    <option value="electricity">Electricity</option>
+    <option value="water">Water</option>
+    <option value="internet">Internet</option>
+  </optgroup>
+
+  <optgroup label="Entertainment">
+    <option value="entertainment">Entertainment</option>
+    <option value="movies">Movies</option>
+    <option value="subscriptions">Subscriptions</option>
+  </optgroup>
+
+  <optgroup label="Miscellaneous">
+    <option value="gas">Gas</option>
+    <option value="healthcare">Healthcare</option>
+    <option value="insurance">Insurance</option>
+    <option value="education">Education</option>
+    <option value="investments">Investments</option>
+    <option value="donations">Donations</option>
+    <option value="travel">Travel</option>
+    <option value="fitness">Fitness</option>
+    <option value="pets">Pets</option>
+  </optgroup>
+
+  <option value="miscellaneous">Miscellaneous</option>
+  <option value="other">Other</option>
+</select>
+
           </td>
           <td className="px-4 py-2">
             <input
@@ -382,7 +432,7 @@ const App = () => {
       <div className="w-full mx-auto">
         <h1 className="text-xl font-semibold text-gray-900 mb-6">Smart Transaction Manager</h1>
         
-        <div className="p-2 grid gap-2 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
+        <div className="p-2 mb-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
       {spendingInsights.map((insight, index) => (
         <div
           key={insight.category}
@@ -477,24 +527,65 @@ const App = () => {
                 step="0.01"
                 className="border rounded-lg px-3 py-2"
               />
-              <select
-                value={newTransaction.category}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    category: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              >
-                <option value="food">Food</option>
-                <option value="shopping">Shopping</option>
-                <option value="transport">Transport</option>
-                <option value="housing">Housing</option>
-                <option value="entertainment">Entertainment</option>
-                <option value="gas">Gas</option>
-                <option value="other">Other</option>
-              </select>
+             <select
+  value={newTransaction.category}
+  onChange={(e) =>
+    setNewTransaction((prev) => ({
+      ...prev,
+      category: e.target.value,
+    }))
+  }
+  className="border rounded-lg px-3 py-2"
+>
+  <optgroup label="Food & Dining">
+    <option value="food">Food</option>
+    <option value="groceries">Groceries</option>
+    <option value="dining_out">Dining Out</option>
+  </optgroup>
+
+  <optgroup label="Shopping">
+    <option value="shopping">Shopping</option>
+    <option value="clothing">Clothing</option>
+    <option value="electronics">Electronics</option>
+  </optgroup>
+
+  <optgroup label="Transport">
+    <option value="transport">Transport</option>
+    <option value="fuel">Fuel</option>
+    <option value="public_transport">Public Transport</option>
+  </optgroup>
+
+  <optgroup label="Housing">
+    <option value="housing">Housing</option>
+    <option value="rent">Rent</option>
+    <option value="mortgage">Mortgage</option>
+    <option value="utilities">Utilities</option>
+    <option value="electricity">Electricity</option>
+    <option value="water">Water</option>
+    <option value="internet">Internet</option>
+  </optgroup>
+
+  <optgroup label="Entertainment">
+    <option value="entertainment">Entertainment</option>
+    <option value="movies">Movies</option>
+    <option value="subscriptions">Subscriptions</option>
+  </optgroup>
+
+  <optgroup label="Miscellaneous">
+    <option value="gas">Gas</option>
+    <option value="healthcare">Healthcare</option>
+    <option value="insurance">Insurance</option>
+    <option value="education">Education</option>
+    <option value="investments">Investments</option>
+    <option value="donations">Donations</option>
+    <option value="travel">Travel</option>
+    <option value="fitness">Fitness</option>
+    <option value="pets">Pets</option>
+  </optgroup>
+
+  <option value="other">Other</option>
+</select>
+
             </div>
             <div className="mt-4 flex flex-col sm:flex-row gap-2">
               <button
