@@ -3,115 +3,37 @@ import { useUser } from '@clerk/clerk-react';
 import { format, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { Edit2, Trash2, Save, X, Plus, Search, Filter } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { FaUtensils, FaShoppingCart, FaCar, FaHome, FaGamepad } from 'react-icons/fa';
 
-interface Transaction {
-  id: string;
-  transaction_date: string;
-  post_date: string;
-  description: string;
-  amount: number;
-}
-
-interface TrackedExpense {
-  id: string;
-  name: string;
-  amount: number;
-}
-
-interface TransactionSummary {
-  totalCredits: number;
-  totalDebits: number;
-  netBalance: number;
-}
-
-type FilterPeriod = 'all' | 'day' | 'week' | 'month';
-
-function App() {
+const App = () => {
   const { user } = useUser();
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [trackedExpenses, setTrackedExpenses] = useState<TrackedExpense[]>([]);
-  const [summary, setSummary] = useState<TransactionSummary>({
-    totalCredits: 0,
-    totalDebits: 0,
-    netBalance: 0,
-  });
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editData, setEditData] = useState<Partial<Transaction>>({});
+  const [transactions, setTransactions] = useState([]);
+  const [summary, setSummary] = useState({ totalCredits: 0, totalDebits: 0, netBalance: 0 });
+  const [editingId, setEditingId] = useState(null);
+  const [editData, setEditData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [filterPeriod, setFilterPeriod] = useState<FilterPeriod>('all');
+  const [filterPeriod, setFilterPeriod] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newTransaction, setNewTransaction] = useState<Partial<Transaction>>({
+  const [newTransaction, setNewTransaction] = useState({
     transaction_date: format(new Date(), 'yyyy-MM-dd'),
     post_date: format(new Date(), 'yyyy-MM-dd'),
     description: '',
-    amount: 0,
+    amount: '',
+    category: 'other',
   });
-  const [newExpense, setNewExpense] = useState<Partial<TrackedExpense>>({
-    name: '',
-    amount: 0,
-  });
-  const [showAddExpense, setShowAddExpense] = useState(false);
+  const [weeklyBudget, setWeeklyBudget] = useState('');
+  const [monthlySpending, setMonthlySpending] = useState('');
+  const [spendingInsights, setSpendingInsights] = useState('');
+
+
+  
 
   useEffect(() => {
     if (!user) return;
     fetchTransactions();
-    fetchTrackedExpenses();
   }, [user]);
-
-  const fetchTrackedExpenses = async () => {
-    try {
-      const { data, error: fetchError } = await supabase
-        .from('tracked_expenses')
-        .select('*')
-        .eq('user_id', user?.id);
-
-      if (fetchError) throw fetchError;
-      setTrackedExpenses(data || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    }
-  };
-
-  const addTrackedExpense = async () => {
-    if (!user || !newExpense.name || !newExpense.amount) return;
-
-    try {
-      const { error: insertError } = await supabase
-        .from('tracked_expenses')
-        .insert([
-          {
-            user_id: user.id,
-            name: newExpense.name,
-            amount: newExpense.amount,
-          },
-        ]);
-
-      if (insertError) throw insertError;
-
-      fetchTrackedExpenses();
-      setNewExpense({ name: '', amount: 0 });
-      setShowAddExpense(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    }
-  };
-
-  const deleteTrackedExpense = async (id: string) => {
-    try {
-      const { error: deleteError } = await supabase
-        .from('tracked_expenses')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user?.id);
-
-      if (deleteError) throw deleteError;
-      fetchTrackedExpenses();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    }
-  };
 
   const fetchTransactions = async () => {
     try {
@@ -119,8 +41,7 @@ function App() {
         .from('transactions')
         .select('*')
         .eq('user_id', user?.id);
-
-      // Apply date filters
+  
       if (filterPeriod === 'day') {
         query = query.gte('transaction_date', format(subDays(new Date(), 1), 'yyyy-MM-dd'));
       } else if (filterPeriod === 'week') {
@@ -132,22 +53,21 @@ function App() {
           .gte('transaction_date', format(startOfMonth(new Date()), 'yyyy-MM-dd'))
           .lte('transaction_date', format(endOfMonth(new Date()), 'yyyy-MM-dd'));
       }
-
+  
       const { data, error: fetchError } = await query.order('transaction_date', { ascending: false });
-
+  
       if (fetchError) throw fetchError;
-
+  
       let filteredData = data || [];
-      
-      // Apply search filter
       if (searchTerm) {
         filteredData = filteredData.filter(t => 
           t.description.toLowerCase().includes(searchTerm.toLowerCase())
         );
       }
-
+  
       setTransactions(filteredData);
       calculateSummary(filteredData);
+      calculateSpendingInsights(filteredData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -176,6 +96,7 @@ function App() {
         post_date: format(new Date(), 'yyyy-MM-dd'),
         description: '',
         amount: 0,
+        category: 'other',
       });
       setShowAddForm(false);
     } catch (err) {
@@ -183,7 +104,7 @@ function App() {
     }
   };
 
-  const calculateSummary = (data: Transaction[]) => {
+  const calculateSummary = (data) => {
     const summary = data.reduce(
       (acc, curr) => {
         if (curr.amount >= 0) {
@@ -200,7 +121,27 @@ function App() {
     setSummary(summary);
   };
 
-  const handleEdit = (transaction: Transaction) => {
+  const calculateSpendingInsights = (data) => {
+    const totalSpending = data.reduce((acc, curr) => acc + Math.abs(curr.amount), 0);
+    const weeklySpending = totalSpending / 4; // Approximate weekly spending
+    const monthlySpending = totalSpending;
+
+    setMonthlySpending(monthlySpending);
+
+    if (weeklyBudget > 0) {
+      if (weeklySpending > weeklyBudget) {
+        setSpendingInsights('You are over your weekly budget. Consider reducing your spending.');
+      } else if (weeklySpending === weeklyBudget) {
+        setSpendingInsights('You are at your weekly budget limit. Be cautious with further spending.');
+      } else {
+        setSpendingInsights('You are within your weekly budget. You can continue spending.');
+      }
+    } else {
+      setSpendingInsights('Set a weekly budget to get spending insights.');
+    }
+  };
+
+  const handleEdit = (transaction) => {
     setEditingId(transaction.id);
     setEditData(transaction);
   };
@@ -229,7 +170,7 @@ function App() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id) => {
     if (!user) return;
 
     try {
@@ -249,6 +190,23 @@ function App() {
     }
   };
 
+  const getCategoryIcon = (category) => {
+    switch (category) {
+      case 'food':
+        return <FaUtensils className="text-green-500" />;
+      case 'shopping':
+        return <FaShoppingCart className="text-blue-500" />;
+      case 'transport':
+        return <FaCar className="text-red-500" />;
+      case 'housing':
+        return <FaHome className="text-purple-500" />;
+      case 'entertainment':
+        return <FaGamepad className="text-yellow-500" />;
+      default:
+        return <FaShoppingCart className="text-gray-500" />;
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -257,6 +215,94 @@ function App() {
     );
   }
 
+
+
+  
+const fetchWeeklyBudget = async () => {
+  if (!user?.id) return; // Ensure user is defined
+
+  try {
+    console.log('Fetching budget for user:', user.id);
+
+    const { data, error } = await supabase
+      .from('weekly_budget')
+      .select('amount') // Select only the necessary field
+      .eq('user_id', user.id)
+      .maybeSingle(); // Prevents errors if no rows exist
+
+    if (error) {
+      console.error('Error fetching budget:', error.message);
+      throw error;
+    }
+
+    console.log('Budget fetched:', data);
+
+    setWeeklyBudget(data ? data.amount : ''); // Set to previous budget or empty
+  } catch (err) {
+    console.error('Error:', err.message);
+    setError(err.message || 'Error fetching budget');
+  }
+};
+
+
+
+  
+  const saveWeeklyBudget = async () => {
+    if (!user || !weeklyBudget) return;
+  
+    try {
+      // Check if the user already has a budget entry
+      const { data, error: fetchError } = await supabase
+        .from('weekly_budget')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+  
+      if (fetchError && fetchError.code !== 'PGRST116') throw fetchError; // Ignore 'no rows found' error
+  
+      if (data) {
+        // If a budget exists, update it
+        const { error: updateError } = await supabase
+          .from('weekly_budget')
+          .update({ amount: weeklyBudget, created_at: new Date() })
+          .eq('user_id', user.id);
+  
+        if (updateError) throw updateError;
+      } else {
+        // If no budget exists, insert a new one
+        const { error: insertError } = await supabase
+          .from('weekly_budget')
+          .insert([{ user_id: user.id, amount: weeklyBudget }]);
+  
+        if (insertError) throw insertError;
+      }
+  
+      fetchWeeklyBudget();
+    } catch (err) {
+      setError(err.message || 'Error saving budget');
+    }
+  };
+  
+
+  const deleteWeeklyBudget = async () => {
+    if (!user) return;
+  
+    try {
+  
+      const { error } = await supabase
+        .from('weekly_budget')
+        .delete()
+        .eq('user_id', user.id)
+  
+      if (error) throw error;
+  
+      setWeeklyBudget('');
+    } catch (err) {
+      setError(err.message || 'Error deleting budget');
+    }
+  };
+  
+  
   return (
     <div className="min-h-screen bg-white p-6">
       <div className="sm:w-full md:max-w-7xl lg:max-w-7xl mx-auto">
@@ -264,72 +310,55 @@ function App() {
           Transactions
         </h1>
 
-        {/* Tracked Expenses */}
-        {/* <div className="bg-white rounded-lg  p-6 mb-8">
-          <div className="flex justify-between flex-wrap items-center mb-4">
-            <h2 className="text-xl font-semibold">Tracked Expenses</h2>
-            <button
-              onClick={() => setShowAddExpense(true)}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            >
-              <Plus className="h-5 w-5 inline mr-2" />
-              Add Expense
-            </button>
+        {/* Weekly Budget and Monthly Spending */}
+        <div className="mb-6 flex flex-col md:flex-row gap-4">
+
+<div className="mb-6 flex flex-col md:flex-row gap-4">
+<div className="flex-1">
+  <label className="block text-sm font-medium text-gray-700">Weekly Budget</label>
+  <input
+    type="number"
+    value={weeklyBudget}
+    onChange={e => setWeeklyBudget(parseFloat(e.target.value))}
+    className="border rounded px-3 py-2 w-full"
+  />
+</div>
+
+  <button
+    onClick={saveWeeklyBudget}
+    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+  >
+    Save Budget
+  </button>
+  {weeklyBudget && (
+    <button
+      onClick={deleteWeeklyBudget}
+      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+    >
+      Delete Budget
+    </button>
+  )}
+</div>
+
+
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-gray-700">Monthly Spending</label>
+            <input
+              type="text"
+              value={`$${monthlySpending.toFixed(2)}`}
+              readOnly
+              className="border rounded px-3 py-2 w-full bg-gray-100"
+            />
           </div>
+        </div>
 
-          {showAddExpense && (
-            <div className="bg-gray-50 p-4 rounded mb-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  placeholder="Expense Name"
-                  value={newExpense.name}
-                  onChange={e => setNewExpense(prev => ({ ...prev, name: e.target.value }))}
-                  className="border rounded px-3 py-2"
-                />
-                <input
-                  type="number"
-                  placeholder="Amount"
-                  value={newExpense.amount}
-                  onChange={e => setNewExpense(prev => ({ ...prev, amount: parseFloat(e.target.value) }))}
-                  className="border rounded px-3 py-2"
-                />
-              </div>
-              <div className="mt-4 flex justify-end space-x-2">
-                <button
-                  onClick={() => setShowAddExpense(false)}
-                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={addTrackedExpense}
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                >
-                  Save Expense
-                </button>
-              </div>
-            </div>
-          )}
+        {/* Spending Insights */}
+        <div className="bg-white rounded-lg p-4 mb-6">
+          <p className="text-sm text-gray-700">{spendingInsights}</p>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {trackedExpenses.map(expense => (
-              <div key={expense.id} className="bg-gray-50 p-4 rounded relative">
-                <button
-                  onClick={() => deleteTrackedExpense(expense.id)}
-                  className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-                <h3 className="font-semibold">{expense.name}</h3>
-                <p className="text-xl font-bold">${expense.amount.toFixed(2)}</p>
-              </div>
-            ))}
-          </div>
-        </div> */}
-
-           {/* Add Transaction Form */}
-           <div className="mb-6">
+        {/* Add Transaction Form */}
+        <div className="mb-6">
           <button
             onClick={() => setShowAddForm(true)}
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
@@ -340,25 +369,7 @@ function App() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white border-2 border-dashed rounded-lg  p-6">
-            <h3 className="text-lg font-normal text-gray-700">Total Credits</h3>
-            <p className="text-base font-bold inline text-green-600">
-              ${summary.totalCredits.toFixed(2)}
-            </p>
-          </div>
-       
-          <div className="bg-white border-2 border-dashed rounded-lg  p-6">
-            <h3 className="text-lg font-normal text-gray-700">Net Balance</h3>
-            <p
-              className={`text-base font-bold inline ${
-                summary.netBalance >= 0 ? 'text-green-600' : 'text-red-600'
-              }`}
-            >
-              ${summary.netBalance.toFixed(2)}
-            </p>
-          </div>
-        </div>
+
 
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -366,12 +377,8 @@ function App() {
           </div>
         )}
 
-  
-
-     
-
         {showAddForm && (
-          <div className="bg-white rounded-lg  p-6 mb-6">
+          <div className="bg-white rounded-lg p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Add New Transaction</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
@@ -401,6 +408,20 @@ function App() {
                 step="0.01"
                 className="border rounded px-3 py-2"
               />
+              <select
+                value={newTransaction.category}
+                onChange={e => setNewTransaction(prev => ({ ...prev, category: e.target.value }))}
+                className="border rounded px-3 py-2"
+              >
+                <option value="food">Food</option>
+                <option value="shopping">Shopping</option>
+                <option value="transport">Transport</option>
+                <option value="housing">Housing</option>
+                <option value="entertainment">Entertainment</option>
+                <option value="gas">Gas</option>
+
+                <option value="other">Other</option>
+              </select>
             </div>
             <div className="mt-4 flex justify-end space-x-2">
               <button
@@ -418,8 +439,9 @@ function App() {
             </div>
           </div>
         )}
-      {/* Filters and Search */}
-      <div className="bg-white rounded-lg  p-4 mb-6">
+
+        {/* Filters and Search */}
+        <div className="bg-white rounded-lg p-4 mb-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -436,7 +458,7 @@ function App() {
             <div className="flex gap-2">
               <select
                 value={filterPeriod}
-                onChange={e => setFilterPeriod(e.target.value as FilterPeriod)}
+                onChange={e => setFilterPeriod(e.target.value)}
                 className="border rounded px-4 py-2"
               >
                 <option value="all">All Time</option>
@@ -456,7 +478,7 @@ function App() {
         </div>
 
         {/* Transactions Table */}
-        <div className="bg-white rounded-lg  overflow-hidden">
+        <div className="bg-white rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -466,6 +488,9 @@ function App() {
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Description
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Category
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Amount
@@ -511,6 +536,9 @@ function App() {
                       ) : (
                         transaction.description
                       )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {getCategoryIcon(transaction.category)}
                     </td>
                     <td
                       className={`px-6 py-4 whitespace-nowrap ${
@@ -578,7 +606,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;
-
