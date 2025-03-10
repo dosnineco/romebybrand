@@ -22,12 +22,20 @@ function App() {
       bgHover: "hover:bg-blue-50",
     },
     {
-      title: "spend",
+      title: "Expense",
       description: "Track and analyze your spending data",
       icon: BarChart2,
       path: "spend",
       color: "text-orange-600",
       bgHover: "hover:bg-orange-50",
+    },
+    {
+      title: "Quick Expense",
+      description: "Track and analyze your spending data",
+      icon: BarChart2,
+      path: "quick",
+      color: "text-green-600",
+      bgHover: "hover:bg-green-50",
     },
 
   ];
