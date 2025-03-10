@@ -20,8 +20,7 @@ const Header = () => {
             className="text-xl font-bold font-poppins text-inherit	"
           >
             <Link href="/" >
-Romebybrand
-            </Link>
+            expensehelper.com            </Link>
           </span>
         </div>
 
