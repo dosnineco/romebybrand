@@ -436,7 +436,7 @@ const App = () => {
       {spendingInsights.map((insight, index) => (
         <div
           key={insight.category}
-          className={`min-h-40 p-3 flex flex-col items-center text-center rounded-xl border-2 border-solid `}
+          className={`min-h-30 p-4 flex flex-col items-center text-center rounded-xl border-2 border-solid `}
         >
           <div className="flex  justify-between items-center w-full mb-1">
             <h3 className="text-sm font-semibold text-gray-900 capitalize inline">{insight.category}</h3>
