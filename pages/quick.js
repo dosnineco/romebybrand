@@ -91,7 +91,7 @@ export default function QuickExpenses() {
   };
 
   return (
-    <div className="p-4 w-[800px] sm:w-full mx-auto  text-gray-800 rounded-lg  relative">
+    <div className="p-4  mx-auto  text-gray-800 rounded-lg  relative">
       <h2 className="text-lg font-semibold mb-4">Quick Expenses</h2>
        <button className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/spend')}>
         ← Expenses
