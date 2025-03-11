@@ -426,7 +426,7 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen w-[800px] bg-white p-4 sm:p-6">
+    <div className="min-h-screen w-[800px] sm:w-full bg-white p-4 sm:p-6">
       <div className="w-full mx-auto">
         {/* <h1 className="text-xl font-semibold text-gray-900 mb-6">Smart Transaction Manager</h1> */}
         <button className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/quick')}>
