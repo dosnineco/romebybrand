@@ -426,10 +426,10 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white p-4 sm:p-6">
+    <div className="min-h-screen w-[800px] bg-white p-4 sm:p-6">
       <div className="w-full mx-auto">
         {/* <h1 className="text-xl font-semibold text-gray-900 mb-6">Smart Transaction Manager</h1> */}
-        <button className="bg-gray-700 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/quick')}>
+        <button className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/quick')}>
         ← Quick Expenses
       </button>
         <div className="p-2 mb-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
@@ -468,7 +468,7 @@ const App = () => {
         <div className="mb-6">
           <button
             onClick={() => setShowAddForm(true)}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 w-full sm:w-auto"
+            className="bg-primary-color text-black px-4 py-2 rounded-lg  max- sm:w-auto"
           >
             <Plus className="h-5 w-5 inline mr-2" />
             Add Transaction

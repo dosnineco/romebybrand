@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useUser } from "@clerk/clerk-react";
 import { Dialog } from "@headlessui/react";
 import { useRouter } from "next/router";
+import { FaPlusCircle } from 'react-icons/fa';
 
 
 export default function QuickExpenses() {
@@ -49,7 +50,7 @@ export default function QuickExpenses() {
         transaction_date: localDate,
         post_date: localDate,
         description: label,
-        amount: -amount,
+        amount: amount,
         category: "other"
       }
     ]);
@@ -90,16 +91,16 @@ export default function QuickExpenses() {
   };
 
   return (
-    <div className="p-4 w-96 mx-auto  text-gray-800 rounded-lg shadow-md relative">
+    <div className="p-4 w-[800px] mx-auto  text-gray-800 rounded-lg  relative">
       <h2 className="text-lg font-semibold mb-4">Quick Expenses</h2>
-       <button className="bg-gray-700 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/spend')}>
+       <button className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/spend')}>
         ← Expenses
       </button>
-      <div className=" bg-gray-100 flex flex-col gap-2 mb-4">
+      <div className="  flex flex-col gap-2 mb-4">
         {presets.map((preset) => (
           <motion.div
             key={preset.id}
-            className="bg-gray-200 text-gray-700 p-2 rounded-lg cursor-pointer flex justify-between items-center"
+            className="w-auto bg-gray-200 text-gray-700 p-2 rounded-lg cursor-pointer flex justify-between items-center"
             onClick={() => addExpense(preset.label, preset.amount)}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
@@ -111,11 +112,11 @@ export default function QuickExpenses() {
           </motion.div>
         ))}
       </div>
-      <button className="bg-gray-700 text-white p-2 rounded-lg" onClick={() => setIsDialogOpen(true)}>
-        + Add Preset
+      <button className="bg-gray-300  text-black  flex justify-start items-center p-4 rounded-lg" onClick={() => setIsDialogOpen(true)}>
+        <FaPlusCircle/>
       </button>
       <h3 className="text-lg font-semibold mt-4 mb-2">Expense Log</h3>
-      <ul className="bg-gray-200 p-2 rounded-lg">
+      <ul className=" p-2 rounded-lg">
         {expenses.map((expense, index) => (
           <motion.li key={index} className="border-b py-1 flex justify-between items-center">
             <span>{expense.label} - ${expense.amount} <span className="text-xs text-gray-500">({expense.date})</span></span>
