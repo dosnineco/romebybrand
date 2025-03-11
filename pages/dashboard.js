@@ -13,30 +13,24 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const tools = [
+
     {
-      title: "Website Analytics",
-      description: "Track and analyze your website traffic data",
+      title: "Quick Expense",
+      description: "Add your expenses with a single click",
       icon: BarChart2,
-      path: "/tools/website-traffic",
-      color: "text-blue-600",
-      bgHover: "hover:bg-blue-50",
+      path: "quick",
+      color: "text-green-600",
+      bgHover: "hover:bg-green-50",
     },
     {
-      title: "Expense",
+      title: "Expenses",
       description: "Track and analyze your spending data",
       icon: BarChart2,
       path: "spend",
       color: "text-orange-600",
       bgHover: "hover:bg-orange-50",
     },
-    {
-      title: "Quick Expense",
-      description: "Track and analyze your spending data",
-      icon: BarChart2,
-      path: "quick",
-      color: "text-green-600",
-      bgHover: "hover:bg-green-50",
-    },
+
 
   ];
 

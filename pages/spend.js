@@ -4,8 +4,10 @@ import { format, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, pars
 import { Edit2, Trash2, Save, X, Plus, Search, Filter, TrendingUp, AlertTriangle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { FaUtensils, FaShoppingCart, FaCar, FaHome, FaGamepad } from 'react-icons/fa';
+import { useRouter } from "next/router";
 
 const App = () => {
+  const router = useRouter();
   const { user } = useUser();
   const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState({ totalCredits: 0, totalDebits: 0, netBalance: 0 });
@@ -74,11 +76,7 @@ const App = () => {
       }
       else {
         recommendation = 'You are within budget.';
-        // recommendation = {
-        //   food: 'You are within budget for food spending.',
-        //   entertainment: 'You are within budget for entertainment spending.',
-        //   shopping: 'You are within budget for shopping spending.',
-        // }[category] || `You are within budget.;
+
       }
   
       return {
@@ -430,8 +428,10 @@ const App = () => {
   return (
     <div className="min-h-screen bg-white p-4 sm:p-6">
       <div className="w-full mx-auto">
-        <h1 className="text-xl font-semibold text-gray-900 mb-6">Smart Transaction Manager</h1>
-        
+        {/* <h1 className="text-xl font-semibold text-gray-900 mb-6">Smart Transaction Manager</h1> */}
+        <button className="bg-gray-700 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/quick')}>
+        ← Quick Expenses
+      </button>
         <div className="p-2 mb-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
       {spendingInsights.map((insight, index) => (
         <div

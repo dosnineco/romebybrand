@@ -2,12 +2,18 @@ import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { motion } from "framer-motion";
 import { useUser } from "@clerk/clerk-react";
+import { Dialog } from "@headlessui/react";
+import { useRouter } from "next/router";
+
 
 export default function QuickExpenses() {
   const { user } = useUser();
+  const router = useRouter();
   const userId = user ? user.id : null;
   const [expenses, setExpenses] = useState([]);
   const [presets, setPresets] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newPreset, setNewPreset] = useState({ label: "", amount: "" });
 
   useEffect(() => {
     if (userId) {
@@ -18,7 +24,7 @@ export default function QuickExpenses() {
   const fetchPresets = async () => {
     const { data, error } = await supabase
       .from("presets")
-      .select("label, amount")
+      .select("id, label, amount")
       .eq("user_id", userId);
     if (error) console.error("Error fetching presets:", error);
     else setPresets(data);
@@ -33,14 +39,13 @@ export default function QuickExpenses() {
     const newExpense = { label, amount, date: new Date().toLocaleString() };
     setExpenses([...expenses, newExpense]);
     
-    // Save to Supabase
     const { error } = await supabase.from("transactions").insert([
       {
         user_id: userId,
         transaction_date: new Date().toISOString().split("T")[0],
         post_date: new Date().toISOString().split("T")[0],
         description: label,
-        amount: -amount, // Assuming expenses are negative
+        amount: -amount,
         category: "other"
       }
     ]);
@@ -53,51 +58,91 @@ export default function QuickExpenses() {
       return;
     }
     
-    const label = prompt("Enter expense label:");
-    const amount = parseInt(prompt("Enter amount:"), 10);
-    if (label && !isNaN(amount)) {
-      setPresets([...presets, { label, amount }]);
-      
-      // Save preset to Supabase
-      const { error } = await supabase.from("presets").insert([
-        {
-          user_id: userId,
-          label,
-          amount
+    if (newPreset.label && newPreset.amount) {
+      const amount = parseFloat(newPreset.amount);
+      if (!isNaN(amount)) {
+        const { error } = await supabase.from("presets").insert([
+          {
+            user_id: userId,
+            label: newPreset.label,
+            amount
+          }
+        ]);
+        if (error) console.error("Error saving preset:", error);
+        else {
+          setPresets([...presets, { id: Date.now(), label: newPreset.label, amount }]);
+          setNewPreset({ label: "", amount: "" });
+          setIsDialogOpen(false);
         }
-      ]);
-      if (error) console.error("Error saving preset:", error);
+      }
     }
   };
 
+  const deletePreset = async (id) => {
+    setPresets(presets.filter((preset) => preset.id !== id));
+    
+    const { error } = await supabase.from("presets").delete().eq("id", id);
+    if (error) console.error("Error deleting preset:", error);
+  };
+
   return (
-    <div className="p-4 w-96 mx-auto bg-white ">
-      <h2 className="text-xl font-bold mb-4">Quick Expenses</h2>
-      <div className="grid grid-cols-2 gap-2 mb-4">
-        {presets.map((preset, index) => (
-          <button
-            key={index}
-            className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
+    <div className="p-4 w-96 mx-auto  text-gray-800 rounded-lg shadow-md relative">
+      <h2 className="text-lg font-semibold mb-4">Quick Expenses</h2>
+       <button className="bg-gray-700 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/spend')}>
+        ← Expenses
+      </button>
+      <div className=" bg-gray-100 flex flex-col gap-2 mb-4">
+        {presets.map((preset) => (
+          <motion.div
+            key={preset.id}
+            className="bg-gray-200 text-gray-700 p-2 rounded-lg cursor-pointer flex justify-between items-center"
             onClick={() => addExpense(preset.label, preset.amount)}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            onDragEnd={(event, info) => {
+              if (info.offset.x < -100) deletePreset(preset.id);
+            }}
           >
-            {preset.label} - ${preset.amount}
-          </button>
+            <span>{preset.label} - ${preset.amount}</span>
+          </motion.div>
         ))}
       </div>
-      <button className="bg-green-500 text-white p-2 rounded-lg mb-4" onClick={addPreset}>
+      <button className="bg-gray-700 text-white p-2 rounded-lg" onClick={() => setIsDialogOpen(true)}>
         + Add Preset
       </button>
-      <h3 className="text-lg font-semibold mb-2">Expense Log</h3>
-      <ul className="bg-gray-100 p-2 rounded-lg">
+      <h3 className="text-lg font-semibold mt-4 mb-2">Expense Log</h3>
+      <ul className="bg-gray-200 p-2 rounded-lg">
         {expenses.map((expense, index) => (
-          <motion.li
-            key={index}
-            className="border-b py-1 flex justify-between items-center"
-          >
+          <motion.li key={index} className="border-b py-1 flex justify-between items-center">
             <span>{expense.label} - ${expense.amount} <span className="text-xs text-gray-500">({expense.date})</span></span>
           </motion.li>
         ))}
       </ul>
+
+      {/* Add Preset Dialog */}
+      <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-80 relative">
+          <h2 className="text-lg font-semibold mb-4">Add Preset</h2>
+          <input
+            type="text"
+            placeholder="eg. Groceries"
+            className="w-full p-2 mb-2 border rounded"
+            value={newPreset.label}
+            onChange={(e) => setNewPreset({ ...newPreset, label: e.target.value })}
+          />
+          <input
+            type="number"
+            placeholder="eg. 5000"
+            className="w-full p-2 mb-4 border rounded"
+            value={newPreset.amount}
+            onChange={(e) => setNewPreset({ ...newPreset, amount: e.target.value })}
+          />
+          <div className="flex justify-end gap-2">
+            <button className="bg-gray-500 text-white p-2 rounded" onClick={() => setIsDialogOpen(false)}>Cancel</button>
+            <button className="bg-gray-700 text-white p-2 rounded" onClick={addPreset}>Save</button>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 }

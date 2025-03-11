@@ -16,3 +16,13 @@ CREATE TABLE transactions (
   amount numeric(10,2) NOT NULL,
   created_at timestamptz DEFAULT now()
 );
+
+
+
+  <ul className="bg-gray-200 p-2 rounded-lg">
+        {expenses.map((expense, index) => (
+          <motion.li key={index} className="border-b py-1 flex justify-between items-center">
+            <span>{expense.label} - ${expense.amount} <span className="text-xs text-gray-500">({expense.date})</span></span>
+          </motion.li>
+        ))}
+      </ul>
