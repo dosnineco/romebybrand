@@ -14,6 +14,10 @@ export default function QuickExpenses() {
   const [presets, setPresets] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newPreset, setNewPreset] = useState({ label: "", amount: "" });
+  const now = new Date();
+  const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+  .toISOString()
+  .split("T")[0];
 
   useEffect(() => {
     if (userId) {
@@ -42,8 +46,8 @@ export default function QuickExpenses() {
     const { error } = await supabase.from("transactions").insert([
       {
         user_id: userId,
-        transaction_date: new Date().toISOString().split("T")[0],
-        post_date: new Date().toISOString().split("T")[0],
+        transaction_date: localDate,
+        post_date: localDate,
         description: label,
         amount: -amount,
         category: "other"
