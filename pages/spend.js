@@ -15,7 +15,7 @@ const App = () => {
   const [editData, setEditData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [filterPeriod, setFilterPeriod] = useState('all');
+  const [filterPeriod, setFilterPeriod] = useState('month');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTransaction, setNewTransaction] = useState({
@@ -28,6 +28,8 @@ const App = () => {
   const [weeklyBudget, setWeeklyBudget] = useState(10000);
   const [monthlySpending, setMonthlySpending] = useState(0);
   const [spendingInsights, setSpendingInsights] = useState([]);
+  const [categoryLimits, setCategoryLimits] = useState([]);
+
 
   // Memoized filter function
   const filterTransactions = useCallback((data) => {
@@ -51,33 +53,88 @@ const App = () => {
     });
   }, [searchTerm, filterPeriod]);
 
-  // Memoized spending analysis
-  const analyzeSpending = useCallback((data) => {
-    const monthlyBudgetCap = parseFloat(weeklyBudget) * 4; // Monthly restriction
+
+  const fetchBudgetAndCategoryLimits = async () => {
+    if (!user) return;
   
-    // Calculate total spending per category
+    try {
+      // Fetch monthly budget
+      const { data: budgetData, error: budgetError } = await supabase
+        .from('monthly_budgets')
+        .select('amount')
+        .eq('user_id', user.id)
+        .eq('month', format(new Date(), 'yyyy-MM-01')) // Get current month
+  
+      if (budgetError) throw budgetError;
+      if (budgetData.length) setWeeklyBudget(budgetData[0].amount / 4); // Convert to weekly budget
+  
+      // Fetch category limits
+      const { data: categoryLimitsData, error: categoryLimitsError } = await supabase
+        .from('category_limits')
+        .select('*')
+        .eq('user_id', user.id);
+  
+      if (categoryLimitsError) throw categoryLimitsError;
+      
+      setCategoryLimits(categoryLimitsData || []);
+    } catch (err) {
+      setError(err.message || 'Error fetching budget data');
+    }
+  };
+  
+
+  // // Memoized spending analysis
+  // const analyzeSpending = useCallback((data) => {
+  //   const monthlyBudgetCap = parseFloat(weeklyBudget) * 4; // Monthly restriction
+  
+  //   // Calculate total spending per category
+  //   const categoryTotals = data.reduce((acc, { category, amount }) => {
+  //     acc[category] = (acc[category] || 0) + Math.abs(amount);
+  //     return acc;
+  //   }, {});
+  
+  //   // Process insights based on spending analysis
+  //   const insights = Object.entries(categoryTotals).map(([category, total]) => {
+  //     const categoryCap = monthlyBudgetCap * 0.2; // Assume 20% of budget per category
+  //     const isOverBudget = total > categoryCap;
+  
+  //     let recommendation = '';
+  //     if (isOverBudget) {
+  //       recommendation = {
+  //         food: 'Consider meal prepping or cooking at home more often.',
+  //         entertainment: 'Look for free or low-cost entertainment options.',
+  //         shopping: 'Stick to a shopping list to avoid impulse purchases.',
+  //       }[category] || 'Review your spending in this category for potential savings.';
+  //     }
+  //     else {
+  //       recommendation = 'You are within budget.';
+
+  //     }
+  
+  //     return {
+  //       category,
+  //       total,
+  //       trend: isOverBudget ? 'up' : 'down',
+  //       recommendation,
+  //     };
+  //   });
+  
+  //   return insights.sort((a, b) => b.total - a.total); // Sort by highest spending
+  // }, [weeklyBudget]); 
+
+  const analyzeSpending = useCallback((data) => {
     const categoryTotals = data.reduce((acc, { category, amount }) => {
       acc[category] = (acc[category] || 0) + Math.abs(amount);
       return acc;
     }, {});
   
-    // Process insights based on spending analysis
     const insights = Object.entries(categoryTotals).map(([category, total]) => {
-      const categoryCap = monthlyBudgetCap * 0.2; // Assume 20% of budget per category
-      const isOverBudget = total > categoryCap;
+      const categoryLimit = categoryLimits.find(limit => limit.category === category)?.limit_amount || (weeklyBudget * 4) * 0.2;
+      const isOverBudget = total > categoryLimit;
   
-      let recommendation = '';
-      if (isOverBudget) {
-        recommendation = {
-          food: 'Consider meal prepping or cooking at home more often.',
-          entertainment: 'Look for free or low-cost entertainment options.',
-          shopping: 'Stick to a shopping list to avoid impulse purchases.',
-        }[category] || 'Review your spending in this category for potential savings.';
-      }
-      else {
-        recommendation = 'You are within budget.';
-
-      }
+      let recommendation = isOverBudget
+        ? `You've exceeded your budget for ${category}. Consider reducing expenses.`
+        : 'You are within budget.';
   
       return {
         category,
@@ -87,8 +144,16 @@ const App = () => {
       };
     });
   
-    return insights.sort((a, b) => b.total - a.total); // Sort by highest spending
-  }, [weeklyBudget]); 
+    return insights.sort((a, b) => b.total - a.total);
+  }, [weeklyBudget, categoryLimits]);
+
+  
+  useEffect(() => {
+    if (!user) return;
+    fetchTransactions();
+    fetchBudgetAndCategoryLimits();
+  }, [user]);
+  
   
 
   const handleEdit = (transaction) => {
@@ -344,7 +409,6 @@ const App = () => {
   </optgroup>
 
   <optgroup label="Miscellaneous">
-    <option value="gas">Gas</option>
     <option value="healthcare">Healthcare</option>
     <option value="insurance">Insurance</option>
     <option value="education">Education</option>
@@ -429,9 +493,22 @@ const App = () => {
     <div className="min-h-screen  bg-white p-4 sm:p-6">
       <div className="w-full mx-auto">
         {/* <h1 className="text-xl font-semibold text-gray-900 mb-6">Smart Transaction Manager</h1> */}
-        <button className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/quick')}>
-        ← Quick Expenses
-      </button>
+        <div className="flex space-x-4 mb-4">
+  <button
+    className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
+    onClick={() => router.push('/quick')}
+  >
+    ← Quick Expenses
+  </button>
+
+  <button
+    className="bg-gray-500 text-white p-2 rounded-lg  items-center"
+    onClick={() => router.push('/settings')}
+  >
+    ⚙ Settings
+  </button>
+</div>
+
         <div className="p-2 mb-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
       {spendingInsights.map((insight, index) => (
         <div
@@ -452,7 +529,7 @@ const App = () => {
           )}
         </div>
       ))}
-      <div className="p-3 rounded-xl bg-gray-200 flex flex-col items-center text-center">
+      {/* <div className="p-3 rounded-xl bg-gray-200 flex flex-col items-center text-center">
         <label className="text-sm font-medium text-gray-900 mb-1">
           Monthly Spending
         </label>
@@ -462,7 +539,40 @@ const App = () => {
           readOnly
           className="w-full rounded-md px-3 py-2 bg-white text-center text-gray-900"
         />
-      </div>
+      </div> */}
+
+<div className="p-3 rounded-xl bg-gray-200 flex flex-col items-center text-center">
+  <label className="text-sm font-medium text-gray-900 mb-1">
+    Monthly Spending
+  </label>
+  <input
+    type="text"
+    value={`$${monthlySpending.toFixed(2)}`}
+    readOnly
+    className="w-full rounded-md px-3 py-2 bg-white text-center text-gray-900"
+  />
+</div>
+
+<div className="p-3 rounded-xl bg-gray-200 flex flex-col items-center text-center">
+  <label className="text-sm font-medium text-gray-900 mb-1">
+    Remaining Budget
+  </label>
+  <input
+    type="text"
+    value={`$${(weeklyBudget * 4 - monthlySpending).toFixed(2)}`}
+    readOnly
+    className={`w-full rounded-md px-3 py-2 text-center ${
+      monthlySpending > weeklyBudget * 4 ? 'bg-red-200 text-red-900' : 'bg-white text-gray-900'
+    }`}
+  />
+  {monthlySpending > weeklyBudget * 4 && (
+    <p className="text-red-600 text-sm mt-2">
+      Warning: You’ve exceeded your budget!
+    </p>
+  )}
+</div>
+
+
     </div>
         {/* Add Transaction Button */}
         <div className="mb-6">
@@ -572,7 +682,6 @@ const App = () => {
   </optgroup>
 
   <optgroup label="Miscellaneous">
-    <option value="gas">Gas</option>
     <option value="healthcare">Healthcare</option>
     <option value="insurance">Insurance</option>
     <option value="education">Education</option>
@@ -707,7 +816,6 @@ const App = () => {
                         <option value="transport">Transport</option>
                         <option value="housing">Housing</option>
                         <option value="entertainment">Entertainment</option>
-                        <option value="gas">Gas</option>
                         <option value="other">Other</option>
                       </select>
                     </div>

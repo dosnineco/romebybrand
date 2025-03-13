@@ -138,7 +138,7 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
+    <div className="min-h-screen p-4 sm:p-6">
       <div className="max-w-4xl mx-auto">
         <button 
           className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center"
@@ -147,18 +147,18 @@ const Settings = () => {
           ← Back to Transactions
         </button>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white  p-6">
           <h1 className="text-2xl font-semibold text-gray-900 mb-6">Budget Settings</h1>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg flex items-center">
+            <div className="mb-3 w-full p-3 bg-red-100 text-red-700 rounded-lg flex items-center">
               <AlertTriangle className="h-5 w-5 mr-2" />
               {error}
             </div>
           )}
 
           {success && (
-            <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
+            <div className="mb-3 w-full p-3 bg-green-100 text-green-700 rounded-lg">
               {success}
             </div>
           )}
@@ -171,8 +171,8 @@ const Settings = () => {
               type="number"
               value={monthlyBudget}
               onChange={(e) => setMonthlyBudget(e.target.value)}
-              className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
-              placeholder="0.00"
+              className="focus:ring-gray-500 focus:border-gray-200 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md w-40 pl-10 pr-4 py-2 border rounded-lg"
+              placeholder="00.00"
               step="0.01"
             />
           </div>
@@ -192,8 +192,8 @@ const Settings = () => {
                       ...prev,
                       [category]: e.target.value
                     }))}
-                    className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
-                    placeholder="0.00"
+                    className="focus:ring-gray-500 focus:border-gray-200 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md w-full pl-10 pr-4 py-2 border rounded-lg"
+                    placeholder="00.00"
                     step="0.01"
                   />
                 </div>
