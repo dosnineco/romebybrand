@@ -30,6 +30,14 @@ function App() {
       color: "text-orange-600",
       bgHover: "hover:bg-orange-50",
     },
+    {
+      title: "Settings",
+      description: "Add budget and category limits",
+      icon: Settings,
+      path: "settings",
+      color: "text-blue-600",
+      bgHover: "hover:bg-blue-50",
+    },
 
 
   ];
