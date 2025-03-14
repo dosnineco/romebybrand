@@ -30,7 +30,13 @@ const App = () => {
   const [spendingInsights, setSpendingInsights] = useState([]);
   const [categoryLimits, setCategoryLimits] = useState([]);
 
+  useEffect(() => {
+    if (!user) return;
+    fetchTransactions();
+    fetchBudgetAndCategoryLimits();
+  }, [user]);
 
+  
   // Memoized filter function
   const filterTransactions = useCallback((data) => {
     return data.filter(t => {
@@ -83,44 +89,6 @@ const App = () => {
   };
   
 
-  // // Memoized spending analysis
-  // const analyzeSpending = useCallback((data) => {
-  //   const monthlyBudgetCap = parseFloat(weeklyBudget) * 4; // Monthly restriction
-  
-  //   // Calculate total spending per category
-  //   const categoryTotals = data.reduce((acc, { category, amount }) => {
-  //     acc[category] = (acc[category] || 0) + Math.abs(amount);
-  //     return acc;
-  //   }, {});
-  
-  //   // Process insights based on spending analysis
-  //   const insights = Object.entries(categoryTotals).map(([category, total]) => {
-  //     const categoryCap = monthlyBudgetCap * 0.2; // Assume 20% of budget per category
-  //     const isOverBudget = total > categoryCap;
-  
-  //     let recommendation = '';
-  //     if (isOverBudget) {
-  //       recommendation = {
-  //         food: 'Consider meal prepping or cooking at home more often.',
-  //         entertainment: 'Look for free or low-cost entertainment options.',
-  //         shopping: 'Stick to a shopping list to avoid impulse purchases.',
-  //       }[category] || 'Review your spending in this category for potential savings.';
-  //     }
-  //     else {
-  //       recommendation = 'You are within budget.';
-
-  //     }
-  
-  //     return {
-  //       category,
-  //       total,
-  //       trend: isOverBudget ? 'up' : 'down',
-  //       recommendation,
-  //     };
-  //   });
-  
-  //   return insights.sort((a, b) => b.total - a.total); // Sort by highest spending
-  // }, [weeklyBudget]); 
 
   const analyzeSpending = useCallback((data) => {
     const categoryTotals = data.reduce((acc, { category, amount }) => {
@@ -148,11 +116,7 @@ const App = () => {
   }, [weeklyBudget, categoryLimits]);
 
   
-  useEffect(() => {
-    if (!user) return;
-    fetchTransactions();
-    fetchBudgetAndCategoryLimits();
-  }, [user]);
+
   
   
 
@@ -314,12 +278,7 @@ const App = () => {
 
 
 
-  // Initial data fetch
-  useEffect(() => {
-    if (!user) return;
-    fetchTransactions();
-    // fetchWeeklyBudget();
-  }, [user]);
+
 
   const getCategoryIcon = (category) => {
     switch (category) {
@@ -494,20 +453,20 @@ const App = () => {
       <div className="w-full mx-auto">
         {/* <h1 className="text-xl font-semibold text-gray-900 mb-6">Smart Transaction Manager</h1> */}
         <div className="flex space-x-4 mb-4">
-  <button
-    className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
-    onClick={() => router.push('/quick')}
-  >
-    ← Quick Expenses
-  </button>
+      <button
+        className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
+        onClick={() => router.push('/quick')}
+      >
+        Quick Expenses
+      </button>
 
-  <button
-    className="bg-gray-500 text-white p-2 rounded-lg  items-center"
-    onClick={() => router.push('/settings')}
-  >
-    ⚙ Settings
-  </button>
-</div>
+      <button
+        className="bg-gray-500 text-white p-2 rounded-lg  items-center"
+        onClick={() => router.push('/settings')}
+      >
+        Settings
+      </button>
+    </div>
 
         <div className="p-2 mb-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
       {spendingInsights.map((insight, index) => (
