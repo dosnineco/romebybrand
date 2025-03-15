@@ -5,6 +5,7 @@ import { useUser } from "@clerk/clerk-react";
 import { Dialog } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { FaPlusCircle } from 'react-icons/fa';
+import { Settings, FilePlus } from 'lucide-react';
 
 
 export default function QuickExpenses() {

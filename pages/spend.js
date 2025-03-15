@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { format, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, parseISO } from 'date-fns';
-import { Edit2, Trash2, Save, X, Plus, Search, Filter, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Settings,  PlusCircle,FilePlus ,Edit2, Trash2, Save, X, Plus, Search, Filter, TrendingUp, AlertTriangle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { FaUtensils, FaShoppingCart, FaCar, FaHome, FaGamepad } from 'react-icons/fa';
 import { useRouter } from "next/router";
@@ -332,59 +332,59 @@ const App = () => {
             />
           </td>
           <td className="px-4 py-2">
-          <select
-  value={editData.category}
-  onChange={(e) => handleInputChange('category', e.target.value)}
-  className="w-full border rounded px-2 py-1"
->
-  <optgroup label="Food & Dining">
-    <option value="food">Food</option>
-    <option value="groceries">Groceries</option>
-    <option value="dining_out">Dining Out</option>
-  </optgroup>
+            <select
+    value={editData.category}
+    onChange={(e) => handleInputChange('category', e.target.value)}
+    className="w-full border rounded px-2 py-1"
+  >
+    <optgroup label="Food & Dining">
+      <option value="food">Food</option>
+      <option value="groceries">Groceries</option>
+      <option value="dining_out">Dining Out</option>
+    </optgroup>
 
-  <optgroup label="Shopping">
-    <option value="shopping">Shopping</option>
-    <option value="clothing">Clothing</option>
-    <option value="electronics">Electronics</option>
-  </optgroup>
+    <optgroup label="Shopping">
+      <option value="shopping">Shopping</option>
+      <option value="clothing">Clothing</option>
+      <option value="electronics">Electronics</option>
+    </optgroup>
 
-  <optgroup label="Transport">
-    <option value="transport">Transport</option>
-    <option value="fuel">Fuel</option>
-    <option value="public_transport">Public Transport</option>
-  </optgroup>
+    <optgroup label="Transport">
+      <option value="transport">Transport</option>
+      <option value="fuel">Fuel</option>
+      <option value="public_transport">Public Transport</option>
+    </optgroup>
 
-  <optgroup label="Housing">
-    <option value="housing">Housing</option>
-    <option value="rent">Rent</option>
-    <option value="mortgage">Mortgage</option>
-    <option value="utilities">Utilities</option>
-    <option value="electricity">Electricity</option>
-    <option value="water">Water</option>
-    <option value="internet">Internet</option>
-  </optgroup>
+    <optgroup label="Housing">
+      <option value="housing">Housing</option>
+      <option value="rent">Rent</option>
+      <option value="mortgage">Mortgage</option>
+      <option value="utilities">Utilities</option>
+      <option value="electricity">Electricity</option>
+      <option value="water">Water</option>
+      <option value="internet">Internet</option>
+    </optgroup>
 
-  <optgroup label="Entertainment">
-    <option value="entertainment">Entertainment</option>
-    <option value="movies">Movies</option>
-    <option value="subscriptions">Subscriptions</option>
-  </optgroup>
+    <optgroup label="Entertainment">
+      <option value="entertainment">Entertainment</option>
+      <option value="movies">Movies</option>
+      <option value="subscriptions">Subscriptions</option>
+    </optgroup>
 
-  <optgroup label="Miscellaneous">
-    <option value="healthcare">Healthcare</option>
-    <option value="insurance">Insurance</option>
-    <option value="education">Education</option>
-    <option value="investments">Investments</option>
-    <option value="donations">Donations</option>
-    <option value="travel">Travel</option>
-    <option value="fitness">Fitness</option>
-    <option value="pets">Pets</option>
-  </optgroup>
+    <optgroup label="Miscellaneous">
+      <option value="healthcare">Healthcare</option>
+      <option value="insurance">Insurance</option>
+      <option value="education">Education</option>
+      <option value="investments">Investments</option>
+      <option value="donations">Donations</option>
+      <option value="travel">Travel</option>
+      <option value="fitness">Fitness</option>
+      <option value="pets">Pets</option>
+    </optgroup>
 
-  <option value="miscellaneous">Miscellaneous</option>
-  <option value="other">Other</option>
-</select>
+    <option value="miscellaneous">Miscellaneous</option>
+    <option value="other">Other</option>
+            </select>
 
           </td>
           <td className="px-4 py-2">
@@ -418,16 +418,16 @@ const App = () => {
 
     return (
       <tr key={transaction.id}>
-        <td className="px-4 py-4 whitespace-nowrap">
+        <td className="px-4 text-base py-4 whitespace-nowrap">
           {format(new Date(transaction.transaction_date), "MMM d, yyyy")}
         </td>
-        <td className="px-4 py-4">{transaction.description}</td>
+        <td className="px-4 py-4 text-base ">{transaction.description}</td>
         <td className="px-4 py-4 whitespace-nowrap">
           {getCategoryIcon(transaction.category)}
         </td>
         <td
           className={`px-4 py-4 whitespace-nowrap ${
-            transaction.amount >= 0 ? "text-green-600" : "text-red-600"
+            transaction.amount >= 0 ? "text-gray-600" : "text-red-400"
           }`}
         >
           ${Math.abs(transaction.amount).toFixed(2)}
@@ -454,24 +454,25 @@ const App = () => {
 
   return (
     <div className="min-h-screen  bg-white p-4 sm:p-6">
+
       <div className="w-full mx-auto">
-        {/* <h1 className="text-xl font-semibold text-gray-900 mb-6">Smart Transaction Manager</h1> */}
-        <div className="flex space-x-4 mb-4">
-      <button
-        className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
-        onClick={() => router.push('/quick')}
-      >
-        Quick Expenses
-      </button>
+      <div className="flex justify-between mb-4">
+  {/* Left-aligned button */}
+  <button
+    className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
+    onClick={() => router.push('/quick')}
+  >
+  Quick Expenses
+  </button>
 
-      <button
-        className="bg-gray-500 text-white p-2 rounded-lg  items-center"
-        onClick={() => router.push('/settings')}
-      >
-        Settings
-      </button>
-    </div>
-
+  {/* Right-aligned button */}
+  <button
+    className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
+    onClick={() => router.push('/settings')}
+  >
+    <Settings className="w-6 h-6" />
+  </button>
+</div>
         <div className="p-2 mb-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
       {spendingInsights.map((insight, index) => (
         <div
@@ -492,48 +493,38 @@ const App = () => {
           )}
         </div>
       ))}
-      {/* <div className="p-3 rounded-xl bg-gray-200 flex flex-col items-center text-center">
-        <label className="text-sm font-medium text-gray-900 mb-1">
-          Monthly Spending
-        </label>
-        <input
-          type="text"
-          value={`$${monthlySpending.toFixed(2)}`}
-          readOnly
-          className="w-full rounded-md px-3 py-2 bg-white text-center text-gray-900"
-        />
-      </div> */}
 
-<div className="p-3 rounded-xl bg-gray-200 flex flex-col items-center text-center">
-  <label className="text-sm font-medium text-gray-900 mb-1">
-    Monthly Spending
-  </label>
-  <input
-    type="text"
-    value={`$${monthlySpending.toFixed(2)}`}
-    readOnly
-    className="w-full rounded-md px-3 py-2 bg-white text-center text-gray-900"
-  />
-</div>
 
-<div className="p-3 rounded-xl bg-gray-200 flex flex-col items-center text-center">
-  <label className="text-sm font-medium text-gray-900 mb-1">
-    Remaining Budget
-  </label>
-  <input
-    type="text"
-    value={`$${(weeklyBudget * 4 - monthlySpending).toFixed(2)}`}
-    readOnly
-    className={`w-full rounded-md px-3 py-2 text-center ${
-      monthlySpending > weeklyBudget * 4 ? 'bg-red-200 text-red-900' : 'bg-white text-gray-900'
-    }`}
-  />
-  {monthlySpending > weeklyBudget * 4 && (
-    <p className="text-red-600 text-sm mt-2">
-      Warning: You’ve exceeded your budget!
-    </p>
-  )}
-</div>
+    <div className="p-3 rounded-xl bg-gray-200 flex flex-col items-center text-center">
+      <label className="text-sm font-medium text-gray-900 mb-1">
+        Monthly Spending
+      </label>
+      <input
+        type="text"
+        value={`$${monthlySpending.toFixed(2)}`}
+        readOnly
+        className="w-full rounded-md px-3 py-2 bg-white text-center text-gray-900"
+      />
+    </div>
+
+    <div className="p-3 rounded-xl bg-gray-200 flex flex-col items-center text-center">
+      <label className="text-sm font-medium text-gray-900 mb-1">
+        Remaining Budget
+      </label>
+      <input
+        type="text"
+        value={`$${(weeklyBudget * 4 - monthlySpending).toFixed(2)}`}
+        readOnly
+        className={`w-full rounded-md px-3 py-2 text-center ${
+          monthlySpending > weeklyBudget * 4 ? 'bg-red-200 text-red-900' : 'bg-white text-gray-900'
+        }`}
+      />
+      {monthlySpending > weeklyBudget * 4 && (
+        <p className="text-red-600 text-sm mt-2">
+          Warning: You’ve exceeded your budget!
+        </p>
+      )}
+    </div>
 
 
     </div>
@@ -541,11 +532,11 @@ const App = () => {
         <div className="mb-6">
           <button
             onClick={() => setShowAddForm(true)}
-            className="bg-primary-color text-black px-4 py-2 rounded-lg  max- sm:w-auto"
+            className="bg-green-500 text-black px-4 py-2 rounded-lg  max- sm:w-auto"
           >
-            <Plus className="h-5 w-5 inline mr-2" />
-            Add Transaction
-          </button>
+            {/* <Plus className="h-5 w-5 inline mr-2" /> */}
+            <PlusCircle className="w-6 h-6" />
+            </button>
         </div>
 
         {/* Add Transaction Form */}
@@ -670,7 +661,7 @@ const App = () => {
                 onClick={addTransaction}
                 className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
               >
-                Add Transaction
+                S
               </button>
             </div>
           </div>

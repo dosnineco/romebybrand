@@ -21,15 +21,15 @@
 
 
 ::selection{
-  background-color: #2ecc71;
+  background-color: #348656;
   color:#fff;
 }
 
 /* Default Dosnine Theme */
 .Default {
   --bkg: #fff;       /* Softer, premium off-white */
-  --primary:#9ce4b4;   /* Richer blue for a more modern, tech feel */
-  --shade: #09122C; 
+  --primary:#50a76d;   /* Richer blue for a more modern, tech feel */
+  --shade: #3b3b3b; 
 }
  
 
@@ -52,7 +52,7 @@ body {
 
 h1{
   margin: 0;
-  color: var(--black);
+  color: var(--shade);
   font-size: var(--heading);
   line-height: 1.2;
   font-weight: 700;
