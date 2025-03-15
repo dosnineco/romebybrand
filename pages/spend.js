@@ -91,14 +91,21 @@ const App = () => {
 
 
   const analyzeSpending = useCallback((data) => {
-    const categoryTotals = data.reduce((acc, { category, amount }) => {
-      acc[category] = (acc[category] || 0) + Math.abs(amount);
-      return acc;
-    }, {});
+    if (!Array.isArray(data) || data.length === 0) return [];
   
-    const insights = Object.entries(categoryTotals).map(([category, total]) => {
-      const categoryLimit = categoryLimits.find(limit => limit.category === category)?.limit_amount || (weeklyBudget * 4) * 0.2;
-      const isOverBudget = total > categoryLimit;
+      // Use a Map for category totals (faster lookups)
+      const categoryTotals = new Map();
+    
+      for (const { category, amount } of data) {
+        categoryTotals.set(category, (categoryTotals.get(category) || 0) + Math.abs(amount));
+      }
+    
+      // Convert categoryLimits array into a Map for O(1) lookups
+      const categoryLimitMap = new Map(categoryLimits.map(({ category, limit_amount }) => [category, limit_amount]));
+    
+      const insights = Array.from(categoryTotals.entries()).map(([category, total]) => {
+        const categoryLimit = categoryLimitMap.get(category) ?? (weeklyBudget * 4) * 0.2;
+        const isOverBudget = total > categoryLimit;
   
       let recommendation = isOverBudget
         ? `You've exceeded your budget for ${category}. Consider reducing expenses.`
@@ -115,10 +122,7 @@ const App = () => {
     return insights.sort((a, b) => b.total - a.total);
   }, [weeklyBudget, categoryLimits]);
 
-  
-
-  
-  
+   
 
   const handleEdit = (transaction) => {
     setEditingId(transaction.id);
