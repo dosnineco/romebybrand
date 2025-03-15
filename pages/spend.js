@@ -5,6 +5,8 @@ import { Settings,  PlusCircle,FilePlus ,Edit2, Trash2, Save, X, Plus, Search, F
 import { supabase } from '../lib/supabase';
 import { FaUtensils, FaShoppingCart, FaCar, FaHome, FaGamepad } from 'react-icons/fa';
 import { useRouter } from "next/router";
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+
 
 const App = () => {
   const router = useRouter();
@@ -25,17 +27,18 @@ const App = () => {
     amount: '',
     category: 'other',
   });
-  const [weeklyBudget, setWeeklyBudget] = useState(10000);
+
   const [monthlySpending, setMonthlySpending] = useState(0);
+  const [weeklyBudget, setWeeklyBudget] = useState(() => JSON.parse(localStorage.getItem('weeklyBudget')) || 10000);
+  const [categoryLimits, setCategoryLimits] = useState(() => JSON.parse(localStorage.getItem('categoryLimits')) || []);
   const [spendingInsights, setSpendingInsights] = useState([]);
-  const [categoryLimits, setCategoryLimits] = useState([]);
+
 
   useEffect(() => {
     if (!user) return;
-    fetchTransactions();
-    fetchBudgetAndCategoryLimits();
+    fetchBudgetAndCategoryLimits().then(() => fetchTransactions());
   }, [user]);
-
+  
   
   // Memoized filter function
   const filterTransactions = useCallback((data) => {
@@ -60,35 +63,56 @@ const App = () => {
   }, [searchTerm, filterPeriod]);
 
 
+  // const fetchBudgetAndCategoryLimits = async () => {
+  //   if (!user) return;
+  
+  //   try {
+  //     // Fetch monthly budget
+  //     const { data: budgetData, error: budgetError } = await supabase
+  //       .from('monthly_budgets')
+  //       .select('amount')
+  //       .eq('user_id', user.id)
+  //       .eq('month', format(new Date(), 'yyyy-MM-01')) // Get current month
+  
+  //     if (budgetError) throw budgetError;
+  //     if (budgetData.length) setWeeklyBudget(budgetData[0].amount / 4); // Convert to weekly budget
+  
+  //     // Fetch category limits
+  //     const { data: categoryLimitsData, error: categoryLimitsError } = await supabase
+  //       .from('category_limits')
+  //       .select('*')
+  //       .eq('user_id', user.id);
+  
+  //     if (categoryLimitsError) throw categoryLimitsError;
+      
+  //     setCategoryLimits(categoryLimitsData || []);
+  //   } catch (err) {
+  //     setError(err.message || 'Error fetching budget data');
+  //   }
+  // };
+  
   const fetchBudgetAndCategoryLimits = async () => {
     if (!user) return;
-  
     try {
-      // Fetch monthly budget
-      const { data: budgetData, error: budgetError } = await supabase
-        .from('monthly_budgets')
-        .select('amount')
-        .eq('user_id', user.id)
-        .eq('month', format(new Date(), 'yyyy-MM-01')) // Get current month
-  
+      const [{ data: budgetData, error: budgetError }, { data: categoryLimitsData, error: categoryLimitsError }] = await Promise.all([
+        supabase.from('monthly_budgets').select('amount').eq('user_id', user.id).eq('month', format(new Date(), 'yyyy-MM-01')),
+        supabase.from('category_limits').select('*').eq('user_id', user.id)
+      ]);
+      
       if (budgetError) throw budgetError;
-      if (budgetData.length) setWeeklyBudget(budgetData[0].amount / 4); // Convert to weekly budget
-  
-      // Fetch category limits
-      const { data: categoryLimitsData, error: categoryLimitsError } = await supabase
-        .from('category_limits')
-        .select('*')
-        .eq('user_id', user.id);
-  
       if (categoryLimitsError) throw categoryLimitsError;
       
+      const budget = budgetData.length ? budgetData[0].amount / 4 : 10000;
+      setWeeklyBudget(budget);
+      localStorage.setItem('weeklyBudget', JSON.stringify(budget));
+      
       setCategoryLimits(categoryLimitsData || []);
+      localStorage.setItem('categoryLimits', JSON.stringify(categoryLimitsData || []));
     } catch (err) {
       setError(err.message || 'Error fetching budget data');
     }
   };
   
-
 
   const analyzeSpending = useCallback((data) => {
     if (!Array.isArray(data) || data.length === 0) return [];
@@ -304,8 +328,11 @@ const App = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex flex-col items-center">
+        <AiOutlineLoading3Quarters className="animate-spin text-4xl text-blue-500" />
+        <p className="mt-4 text-lg text-gray-600">Loading, please wait...</p>
       </div>
+    </div>
     );
   }
 

@@ -3,6 +3,7 @@ import { useUser } from '@clerk/clerk-react';
 import { supabase } from '../lib/supabase';
 import { Save, AlertTriangle } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 const Settings = () => {
   const { user } = useUser();
@@ -65,6 +66,8 @@ const Settings = () => {
 
   const handleSave = async () => {
     if (!user) return;
+
+    
     setSaving(true);
     setError('');
     setSuccess('');
@@ -121,6 +124,8 @@ const Settings = () => {
       }
 
       setSuccess('Settings saved successfully!');
+
+
     } catch (err) {
       console.error('Save Error:', err);
       setError('Failed to save settings.');
@@ -132,8 +137,11 @@ const Settings = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex flex-col items-center">
+        <AiOutlineLoading3Quarters className="animate-spin text-4xl text-blue-500" />
+        <p className="mt-4 text-lg text-gray-600">Loading, please wait...</p>
       </div>
+    </div>
     );
   }
 
@@ -150,18 +158,7 @@ const Settings = () => {
         <div className="bg-white  p-6">
           <h1 className="text-2xl font-semibold text-gray-900 mb-6">Budget Settings</h1>
 
-          {error && (
-            <div className="mb-3 w-full p-3 bg-red-100 text-red-700 rounded-lg flex items-center">
-              <AlertTriangle className="h-5 w-5 mr-2" />
-              {error}
-            </div>
-          )}
-
-          {success && (
-            <div className="mb-3 w-full p-3 bg-green-100 text-green-700 rounded-lg">
-              {success}
-            </div>
-          )}
+       
 
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -200,6 +197,21 @@ const Settings = () => {
               ))}
             </div>
           </div>
+
+          
+          {error && (
+            <div className="mb-3 w-full p-3 bg-red-100 text-red-700 rounded-lg flex items-center">
+              <AlertTriangle className="h-5 w-5 mr-2" />
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="mb-3 w-full p-3 bg-green-100 text-green-700 rounded-lg">
+              {success}
+            </div>
+          )}
+
 
           <div className="flex justify-end">
             <button
