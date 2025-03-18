@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
-  const isIndexPage = router.pathname === '/' || router.pathname === '/register';
+  const isIndexPage = router.pathname === '/';
 
   return (
     <ClerkProvider {...pageProps}>

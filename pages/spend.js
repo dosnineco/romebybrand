@@ -8,6 +8,8 @@ import { useRouter } from "next/router";
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 
+
+
 const App = () => {
   const router = useRouter();
   const { user } = useUser();
@@ -479,27 +481,28 @@ const App = () => {
     );
   };
 
+
   return (
     <div className="min-h-screen  bg-white p-4 sm:p-6">
-
       <div className="w-full mx-auto">
       <div className="flex justify-between mb-4">
-  {/* Left-aligned button */}
-  <button
-    className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
-    onClick={() => router.push('/quick')}
-  >
-  Quick Expenses
-  </button>
+            {/* Left-aligned button */}
 
-  {/* Right-aligned button */}
-  <button
-    className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
-    onClick={() => router.push('/settings')}
-  >
-    <Settings className="w-6 h-6" />
-  </button>
-</div>
+            <button
+              className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
+              onClick={() => router.push('/quick')}
+            >
+            Quick Expenses
+            </button>
+
+            {/* Right-aligned button */}
+            <button
+              className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
+              onClick={() => router.push('/settings')}
+            >
+              <Settings className="w-6 h-6" />
+            </button>
+        </div>
         <div className="p-2 mb-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
       {spendingInsights.map((insight, index) => (
         <div
