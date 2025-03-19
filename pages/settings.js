@@ -16,14 +16,14 @@ const Settings = () => {
   const [success, setSuccess] = useState('');
 
   const categories = [
-    'food', 'groceries', 'dining_out',
-    'shopping', 'clothing', 'electronics',
-    'transport', 'fuel', 'public_transport',
-    'housing', 'rent', 'utilities',
-    'entertainment', 'movies', 'subscriptions',
-    'healthcare', 'insurance', 'education',
-    'investments', 'donations', 'travel',
-    'fitness', 'pets', 'other'
+    'food', 
+    'shopping', 
+    'transport', 
+    'housing', 
+    'entertainment', 
+    'healthcare', 
+    'investments', 
+    'savings',
   ];
 
   useEffect(() => {

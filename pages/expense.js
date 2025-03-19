@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase';
 import { FaUtensils, FaShoppingCart, FaCar, FaHome, FaGamepad } from 'react-icons/fa';
 import { useRouter } from "next/router";
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { TiRefresh } from "react-icons/ti";
 
 
 
@@ -15,6 +16,10 @@ const App = () => {
   const { user } = useUser();
   const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState({ totalCredits: 0, totalDebits: 0, netBalance: 0 });
+
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [customStartDate, setCustomStartDate] = useState('');
+const [customEndDate, setCustomEndDate] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -44,55 +49,32 @@ const App = () => {
   
   // Memoized filter function
   const filterTransactions = useCallback((data) => {
-    return data.filter(t => {
-      const matchesSearch = searchTerm 
+    return data.filter((t) => {
+      const matchesSearch = searchTerm
         ? t.description.toLowerCase().includes(searchTerm.toLowerCase())
         : true;
-
+  
       let matchesFilter = true;
       const date = parseISO(t.transaction_date);
-
+  
       if (filterPeriod === 'day') {
         matchesFilter = date >= subDays(new Date(), 1);
       } else if (filterPeriod === 'week') {
         matchesFilter = date >= startOfWeek(new Date()) && date <= endOfWeek(new Date());
       } else if (filterPeriod === 'month') {
         matchesFilter = date >= startOfMonth(new Date()) && date <= endOfMonth(new Date());
+      } else if (filterPeriod === 'year') {
+        matchesFilter = date.getFullYear() === parseInt(selectedYear, 10);
+      } else if (filterPeriod === 'custom range') {
+        matchesFilter =
+          date >= new Date(customStartDate) && date <= new Date(customEndDate);
       }
-
+  
       return matchesSearch && matchesFilter;
     });
-  }, [searchTerm, filterPeriod]);
+  }, [searchTerm, filterPeriod, selectedYear, customStartDate, customEndDate]);
 
 
-  // const fetchBudgetAndCategoryLimits = async () => {
-  //   if (!user) return;
-  
-  //   try {
-  //     // Fetch monthly budget
-  //     const { data: budgetData, error: budgetError } = await supabase
-  //       .from('monthly_budgets')
-  //       .select('amount')
-  //       .eq('user_id', user.id)
-  //       .eq('month', format(new Date(), 'yyyy-MM-01')) // Get current month
-  
-  //     if (budgetError) throw budgetError;
-  //     if (budgetData.length) setWeeklyBudget(budgetData[0].amount / 4); // Convert to weekly budget
-  
-  //     // Fetch category limits
-  //     const { data: categoryLimitsData, error: categoryLimitsError } = await supabase
-  //       .from('category_limits')
-  //       .select('*')
-  //       .eq('user_id', user.id);
-  
-  //     if (categoryLimitsError) throw categoryLimitsError;
-      
-  //     setCategoryLimits(categoryLimitsData || []);
-  //   } catch (err) {
-  //     setError(err.message || 'Error fetching budget data');
-  //   }
-  // };
-  
   const fetchBudgetAndCategoryLimits = async () => {
     if (!user) return;
     try {
@@ -329,7 +311,7 @@ const App = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen  flex items-center justify-center">
       <div className="flex flex-col items-center">
         <AiOutlineLoading3Quarters className="animate-spin text-4xl text-blue-500" />
         <p className="mt-4 text-lg text-gray-600">Loading, please wait...</p>
@@ -337,6 +319,23 @@ const App = () => {
     </div>
     );
   }
+  if (transactions.length === 0) {
+    return (
+      <div className="min-h-screen  flex items-center justify-center">  
+      <div className="flex flex-col items-center">
+        <p className="text-lg text-gray-600">No transactions Added.</p>
+        <button
+          onClick={() => setShowAddForm(true)}
+          className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+        >
+          Add Transaction
+        </button>
+      </div>
+    </div>
+    );
+  }
+
+
 
   const renderTableRow = (transaction) => {
     const isEditing = editingId === transaction.id;
@@ -366,53 +365,14 @@ const App = () => {
     onChange={(e) => handleInputChange('category', e.target.value)}
     className="w-full border rounded px-2 py-1"
   >
-    <optgroup label="Food & Dining">
-      <option value="food">Food</option>
-      <option value="groceries">Groceries</option>
-      <option value="dining_out">Dining Out</option>
-    </optgroup>
-
-    <optgroup label="Shopping">
-      <option value="shopping">Shopping</option>
-      <option value="clothing">Clothing</option>
-      <option value="electronics">Electronics</option>
-    </optgroup>
-
-    <optgroup label="Transport">
-      <option value="transport">Transport</option>
-      <option value="fuel">Fuel</option>
-      <option value="public_transport">Public Transport</option>
-    </optgroup>
-
-    <optgroup label="Housing">
-      <option value="housing">Housing</option>
-      <option value="rent">Rent</option>
-      <option value="mortgage">Mortgage</option>
-      <option value="utilities">Utilities</option>
-      <option value="electricity">Electricity</option>
-      <option value="water">Water</option>
-      <option value="internet">Internet</option>
-    </optgroup>
-
-    <optgroup label="Entertainment">
-      <option value="entertainment">Entertainment</option>
-      <option value="movies">Movies</option>
-      <option value="subscriptions">Subscriptions</option>
-    </optgroup>
-
-    <optgroup label="Miscellaneous">
-      <option value="healthcare">Healthcare</option>
-      <option value="insurance">Insurance</option>
-      <option value="education">Education</option>
-      <option value="investments">Investments</option>
-      <option value="donations">Donations</option>
-      <option value="travel">Travel</option>
-      <option value="fitness">Fitness</option>
-      <option value="pets">Pets</option>
-    </optgroup>
-
-    <option value="miscellaneous">Miscellaneous</option>
-    <option value="other">Other</option>
+     <option value="food">Food</option>
+            <option value="shopping">Shopping</option>
+            <option value="transport">Transport</option>
+            <option value="housing">Housing</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="investments">Investments</option>
+          <option value="savings">Savings</option>
+            <option value="other">Other</option>
             </select>
 
           </td>
@@ -559,15 +519,16 @@ const App = () => {
 
     </div>
         {/* Add Transaction Button */}
-        <div className="mb-6">
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="bg-green-500 text-black px-4 py-2 rounded-lg  max- sm:w-auto"
-          >
-            {/* <Plus className="h-5 w-5 inline mr-2" /> */}
-            <PlusCircle className="w-6 h-6" />
-            </button>
-        </div>
+        <div className="mb-6 flex justify-center">
+  <button
+    onClick={() => setShowAddForm(true)}
+    className="flex items-center justify-center bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition duration-200"
+    aria-label="Add New Transaction"
+  >
+    <PlusCircle className="w-6 h-6 mr-2" />
+    <span className="text-sm font-medium">Add Transaction</span>
+  </button>
+</div>
 
         {/* Add Transaction Form */}
         {showAddForm && (
@@ -622,62 +583,24 @@ const App = () => {
                 className="border rounded-lg px-3 py-2"
               />
              <select
-  value={newTransaction.category}
-  onChange={(e) =>
-    setNewTransaction((prev) => ({
-      ...prev,
-      category: e.target.value,
-    }))
-  }
-  className="border rounded-lg px-3 py-2"
->
-  <optgroup label="Food & Dining">
-    <option value="food">Food</option>
-    <option value="groceries">Groceries</option>
-    <option value="dining_out">Dining Out</option>
-  </optgroup>
-
-  <optgroup label="Shopping">
-    <option value="shopping">Shopping</option>
-    <option value="clothing">Clothing</option>
-    <option value="electronics">Electronics</option>
-  </optgroup>
-
-  <optgroup label="Transport">
-    <option value="transport">Transport</option>
-    <option value="fuel">Fuel</option>
-    <option value="public_transport">Public Transport</option>
-  </optgroup>
-
-  <optgroup label="Housing">
-    <option value="housing">Housing</option>
-    <option value="rent">Rent</option>
-    <option value="mortgage">Mortgage</option>
-    <option value="utilities">Utilities</option>
-    <option value="electricity">Electricity</option>
-    <option value="water">Water</option>
-    <option value="internet">Internet</option>
-  </optgroup>
-
-  <optgroup label="Entertainment">
-    <option value="entertainment">Entertainment</option>
-    <option value="movies">Movies</option>
-    <option value="subscriptions">Subscriptions</option>
-  </optgroup>
-
-  <optgroup label="Miscellaneous">
-    <option value="healthcare">Healthcare</option>
-    <option value="insurance">Insurance</option>
-    <option value="education">Education</option>
-    <option value="investments">Investments</option>
-    <option value="donations">Donations</option>
-    <option value="travel">Travel</option>
-    <option value="fitness">Fitness</option>
-    <option value="pets">Pets</option>
-  </optgroup>
-
-  <option value="other">Other</option>
-</select>
+                value={newTransaction.category}
+                onChange={(e) =>
+                  setNewTransaction((prev) => ({
+                    ...prev,
+                    category: e.target.value,
+                  }))
+                }
+                className="border rounded-lg px-3 py-2"
+              >
+             <option value="food">Food</option>
+            <option value="shopping">Shopping</option>
+            <option value="transport">Transport</option>
+            <option value="housing">Housing</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="investments">Investments</option>
+            <option value="savings">Savings</option>
+            <option value="other">Other</option>
+            </select>
 
             </div>
             <div className="mt-4 flex flex-col sm:flex-row gap-2">
@@ -691,14 +614,14 @@ const App = () => {
                 onClick={addTransaction}
                 className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
               >
-                S
+                Save
               </button>
             </div>
           </div>
         )}
 
         {/* Filters and Search */}
-        <div className="bg-gray-50 rounded-lg p-4 mb-6">
+        {/* <div className="bg-gray-50 rounded-lg p-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
               <input
@@ -720,6 +643,8 @@ const App = () => {
                 <option value="day">Last 24 Hours</option>
                 <option value="week">This Week</option>
                 <option value="month">This Month</option>
+                <option value="year">This Year</option>
+                <option value="custom range">Custom Range</option>
               </select>
               <button
                 onClick={() => fetchTransactions()}
@@ -730,7 +655,96 @@ const App = () => {
               </button>
             </div>
           </div>
+        </div> */}
+
+<div className="bg-gray-50 rounded-lg p-4 mb-6">
+  <div className="flex flex-col sm:flex-row gap-4">
+    <div className="flex-1 relative">
+      <input
+        type="text"
+        placeholder="Search transactions..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full pl-10 pr-4 py-2 border rounded-lg"
+      />
+      <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+    </div>
+    <div className="flex gap-2">
+      <select
+        value={filterPeriod}
+        onChange={(e) => setFilterPeriod(e.target.value)}
+        className="border rounded-lg px-4 py-2 flex-1"
+      >
+        <option value="all">All Time</option>
+        <option value="day">Last 24 Hours</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+        <option value="year">This Year</option>
+        <option value="custom range">Custom Range</option>
+      </select>
+      <button
+        onClick={() => fetchTransactions()}
+        className="bg-blue-500 text-sm text-center items-center justify-center center text-white px-4 py-2 rounded-lg"
+      >
+        <TiRefresh className="h-6 w-6 inline mr-2" />
+          Refresh 
+      </button>
+    </div>
+  </div>
+
+  {/* Conditional Form for Custom Range or Year */}
+  {(filterPeriod === 'custom range' || filterPeriod === 'year') && (
+    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {filterPeriod === 'custom range' && (
+        <>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Start Date
+            </label>
+            <input
+              type="date"
+              value={customStartDate}
+              onChange={(e) => setCustomStartDate(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              End Date
+            </label>
+            <input
+              type="date"
+              value={customEndDate}
+              onChange={(e) => setCustomEndDate(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2"
+            />
+          </div>
+        </>
+      )}
+      {filterPeriod === 'year' && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Select Year
+          </label>
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2"
+          >
+            {Array.from({ length: 10 }, (_, i) => {
+              const year = new Date().getFullYear() - i;
+              return (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              );
+            })}
+          </select>
         </div>
+      )}
+    </div>
+  )}
+</div>
 
         {/* Transactions Table */}
         <div className="bg-white rounded-lg overflow-hidden">
@@ -757,7 +771,7 @@ const App = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className=" bg-white divide-y divide-gray-200">
                   {transactions.map(renderTableRow)}
                 </tbody>
               </table>
@@ -795,11 +809,13 @@ const App = () => {
                         onChange={(e) => handleInputChange('category', e.target.value)}
                         className="w-full border rounded px-2 py-1"
                       >
-                        <option value="food">Food</option>
+                            <option value="food">Food</option>
                         <option value="shopping">Shopping</option>
                         <option value="transport">Transport</option>
                         <option value="housing">Housing</option>
                         <option value="entertainment">Entertainment</option>
+                        <option value="investments">Investments</option>
+                        <option value="savings">Savings</option>
                         <option value="other">Other</option>
                       </select>
                     </div>
@@ -817,7 +833,7 @@ const App = () => {
                         onClick={handleSave}
                         className="text-green-600 hover:text-green-900"
                       >
-                        <Save className="h-5 w-5" />
+                        <Save className="h-7 w-7" />
                       </button>
                       <button
                         onClick={handleCancelEdit}
@@ -855,13 +871,13 @@ const App = () => {
                         onClick={() => handleEdit(transaction)}
                         className="text-blue-600 hover:text-blue-900"
                       >
-                        <Edit2 className="h-5 w-5" />
+                        <Edit2 className="h-7 w-7" />
                       </button>
                       <button
                         onClick={() => handleDelete(transaction.id)}
                         className="text-red-600 hover:text-red-900"
                       >
-                        <Trash2 className="h-5 w-5" />
+                        <Trash2 className="h-7 w-7" />
                       </button>
                     </div>
                   </>

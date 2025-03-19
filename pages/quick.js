@@ -5,21 +5,21 @@ import { useUser } from "@clerk/clerk-react";
 import { Dialog } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { FaPlusCircle } from 'react-icons/fa';
-import { Settings, FilePlus } from 'lucide-react';
 
 
 export default function QuickExpenses() {
   const { user } = useUser();
   const router = useRouter();
   const userId = user ? user.id : null;
+
   const [expenses, setExpenses] = useState([]);
   const [presets, setPresets] = useState([]);
+  const [newPreset, setNewPreset] = useState({ label: "", amount: "", category: "other" });
+
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newPreset, setNewPreset] = useState({ label: "", amount: "" });
   const now = new Date();
-  const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
-  .toISOString()
-  .split("T")[0];
+  const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().split("T")[0];
 
   useEffect(() => {
     if (userId) {
@@ -30,7 +30,7 @@ export default function QuickExpenses() {
   const fetchPresets = async () => {
     const { data, error } = await supabase
       .from("presets")
-      .select("id, label, amount")
+      .select("id, label, amount, category")
       .eq("user_id", userId);
     if (error) console.error("Error fetching presets:", error);
     else setPresets(data);
@@ -71,13 +71,14 @@ export default function QuickExpenses() {
           {
             user_id: userId,
             label: newPreset.label,
-            amount
+            amount,
+            category: newPreset.category // Save category
           }
         ]);
         if (error) console.error("Error saving preset:", error);
         else {
-          setPresets([...presets, { id: Date.now(), label: newPreset.label, amount }]);
-          setNewPreset({ label: "", amount: "" });
+          setPresets([...presets, { id: Date.now(), label: newPreset.label, amount, category: newPreset.category }]);
+          setNewPreset({ label: "", amount: "", category: "other" });
           setIsDialogOpen(false);
         }
       }
@@ -91,41 +92,133 @@ export default function QuickExpenses() {
     if (error) console.error("Error deleting preset:", error);
   };
 
+  const ListofPresets = () => {
+    if (presets.length === 0) {
+      return <p className="text-gray-500 text-base">No presets added.</p>;
+    }
+    return presets.map((preset) => (
+      <motion.div
+        key={preset.id}
+        className="w-auto bg-gray-200 text-gray-700 p-2 rounded-lg cursor-pointer flex justify-between items-center"
+        onClick={() => addExpense(preset.label, preset.amount)}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        onDragEnd={(event, info) => {
+          if (info.offset.x < -100) deletePreset(preset.id);
+        }}
+      >
+        <span>{preset.label} - ${preset.amount} <span className="text-xs text-gray-500">({preset.category})</span></span>
+      </motion.div>
+    ));
+  };
+
+  const LogofExpenses = () => {
+
+    if (expenses.length === 0) {
+      return <p className="text-gray-500 text-base">No expenses logged yet.</p>;
+    }
+    return expenses.map((expense, index) => (
+      <motion.li
+        key={index}
+        className="border-b py-1 flex justify-between items-center"
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        onDragEnd={(event, info) => {
+          if (info.offset.x < -100) {
+            setExpenses(expenses.filter((_, i) => i !== index));
+          }
+        }}
+      >
+        <span>{expense.label} - ${expense.amount} <span className="text-xs text-gray-500">({expense.date})</span></span>
+      </motion.li>
+    ));
+  }
+
+
+  if (userId === null) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500 text-base">Please log in to view your expenses.</p>
+      </div>
+    );
+  }
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500 text-base">Loading...</p>
+      </div>
+    );
+  }
+  if (userId === undefined) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500 text-base">User not found.</p>
+      </div>
+    );
+  }
+  if (presets === undefined) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500 text-base">Loading presets...</p>
+      </div>
+    );
+  }
+  if (presets === null) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500 text-base">No presets found.</p>
+      </div>
+    );
+  }
+  if (expenses === undefined) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500 text-base">Loading expenses...</p>
+      </div>
+    );
+  }
+  if (expenses === null) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500 text-base">No expenses found.</p>
+      </div>
+    );
+  }
+  if (isDialogOpen === undefined) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500 text-base">Loading dialog...</p>
+      </div>
+    );
+  }
+  if (isDialogOpen === null) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500 text-base">Dialog not found.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 w-full max-w-[600px] mx-auto text-gray-800 rounded-lg">
       <h2 className="text-lg font-semibold mb-4">Quick Expenses</h2>
-       <button className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/spend')}>
+       <button className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/expense')}>
         ← Expenses
       </button>
+
+      {/* Presents */}
       <div className="  flex flex-col gap-2 mb-4">
-        {presets.map((preset) => (
-          <motion.div
-            key={preset.id}
-            className="w-auto bg-gray-200 text-gray-700 p-2 rounded-lg cursor-pointer flex justify-between items-center"
-            onClick={() => addExpense(preset.label, preset.amount)}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            onDragEnd={(event, info) => {
-              if (info.offset.x < -100) deletePreset(preset.id);
-            }}
-          >
-            <span>{preset.label} - ${preset.amount}</span>
-          </motion.div>
-        ))}
+        <ListofPresets />
       </div>
+
+
       <div className="flex justify-center">
       <button className="bg-gray-300 text-black flex items-center p-4 rounded-lg" onClick={() => setIsDialogOpen(true)}>
         <FaPlusCircle />
       </button>
     </div>
       <h3 className="text-lg font-semibold mt-4 mb-2">Expense Log</h3>
-      <ul className=" p-2 rounded-lg">
-        {expenses.map((expense, index) => (
-          <motion.li key={index} className="border-b py-1 flex justify-between items-center">
-            <span>{expense.label} - ${expense.amount} <span className="text-xs text-gray-500">({expense.date})</span></span>
-          </motion.li>
-        ))}
-      </ul>
+      <LogofExpenses />
 
       {/* Add Preset Dialog */}
       <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -145,6 +238,20 @@ export default function QuickExpenses() {
             value={newPreset.amount}
             onChange={(e) => setNewPreset({ ...newPreset, amount: e.target.value })}
           />
+          <select
+            value={newPreset.category || "other"}
+            onChange={(e) => setNewPreset({ ...newPreset, category: e.target.value })}
+            className="w-full border rounded px-2 py-1 mb-4"
+          >
+            <option value="food">Food</option>
+            <option value="shopping">Shopping</option>
+            <option value="transport">Transport</option>
+            <option value="housing">Housing</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="investments">Investments</option>
+            <option value="savings">Savings</option>
+            <option value="other">Other</option>
+          </select>
           <div className="flex justify-end gap-2">
             <button className="bg-gray-500 text-white p-2 rounded" onClick={() => setIsDialogOpen(false)}>Cancel</button>
             <button className="bg-gray-700 text-white p-2 rounded" onClick={addPreset}>Save</button>

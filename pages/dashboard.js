@@ -26,7 +26,7 @@ function App() {
       title: "Expenses",
       description: "Track and analyze your spending data",
       icon: BarChart2,
-      path: "spend",
+      path: "expense",
       color: "text-orange-600",
       bgHover: "hover:bg-orange-50",
     },
