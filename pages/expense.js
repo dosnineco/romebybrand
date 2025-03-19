@@ -319,21 +319,7 @@ const [customEndDate, setCustomEndDate] = useState('');
     </div>
     );
   }
-  if (transactions.length === 0) {
-    return (
-      <div className="min-h-screen  flex items-center justify-center">  
-      <div className="flex flex-col items-center">
-        <p className="text-lg text-gray-600">No transactions Added.</p>
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
-        >
-          Add Transaction
-        </button>
-      </div>
-    </div>
-    );
-  }
+ 
 
 
 
