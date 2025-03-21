@@ -40,6 +40,10 @@ const [customEndDate, setCustomEndDate] = useState('');
   const [categoryLimits, setCategoryLimits] = useState(() => JSON.parse(localStorage.getItem('categoryLimits')) || []);
   const [spendingInsights, setSpendingInsights] = useState([]);
 
+  const [savingsProgress, setSavingsProgress] = useState(0);
+  const [savingsGoal, setSavingsGoal] = useState(0); // Savings goal from category limits
+  const [savingsTotal, setSavingsTotal] = useState(0); // Total savings so far
+
 
   useEffect(() => {
     if (!user) return;
@@ -98,22 +102,63 @@ const [customEndDate, setCustomEndDate] = useState('');
   };
   
 
+  // const analyzeSpending = useCallback((data) => {
+  //   if (!Array.isArray(data) || data.length === 0) return [];
+  
+  //     // Use a Map for category totals (faster lookups)
+  //     const categoryTotals = new Map();
+    
+  //     for (const { category, amount } of data) {
+  //       categoryTotals.set(category, (categoryTotals.get(category) || 0) + Math.abs(amount));
+  //     }
+    
+  //     // Convert categoryLimits array into a Map for O(1) lookups
+  //     const categoryLimitMap = new Map(categoryLimits.map(({ category, limit_amount }) => [category, limit_amount]));
+    
+  //     const insights = Array.from(categoryTotals.entries()).map(([category, total]) => {
+  //       const categoryLimit = categoryLimitMap.get(category) ?? (weeklyBudget * 4) * 0.2;
+  //       const isOverBudget = total > categoryLimit;
+  
+  //     let recommendation = isOverBudget
+  //       ? `You've exceeded your budget for ${category}. Consider reducing expenses.`
+  //       : 'You are within budget.';
+  
+  //     return {
+  //       category,
+  //       total,
+  //       trend: isOverBudget ? 'up' : 'down',
+  //       recommendation,
+  //     };
+  //   });
+  
+  //   return insights.sort((a, b) => b.total - a.total);
+  // }, [weeklyBudget, categoryLimits]);
+
   const analyzeSpending = useCallback((data) => {
     if (!Array.isArray(data) || data.length === 0) return [];
   
-      // Use a Map for category totals (faster lookups)
-      const categoryTotals = new Map();
-    
-      for (const { category, amount } of data) {
+    const categoryTotals = new Map();
+    let savingsTotal = 0;
+  
+    for (const { category, amount } of data) {
+      if (category === 'savings') {
+        savingsTotal += Math.abs(amount); // Track savings separately
+      } else {
         categoryTotals.set(category, (categoryTotals.get(category) || 0) + Math.abs(amount));
       }
-    
-      // Convert categoryLimits array into a Map for O(1) lookups
-      const categoryLimitMap = new Map(categoryLimits.map(({ category, limit_amount }) => [category, limit_amount]));
-    
-      const insights = Array.from(categoryTotals.entries()).map(([category, total]) => {
-        const categoryLimit = categoryLimitMap.get(category) ?? (weeklyBudget * 4) * 0.2;
-        const isOverBudget = total > categoryLimit;
+    }
+  
+    // Calculate savings progress
+    const savingsLimit = categoryLimits.find((limit) => limit.category === 'savings')?.limit_amount || 0;
+    setSavingsGoal(savingsLimit);
+    setSavingsTotal(savingsTotal);
+    setSavingsProgress((savingsTotal / savingsLimit) * 100);
+  
+    const categoryLimitMap = new Map(categoryLimits.map(({ category, limit_amount }) => [category, limit_amount]));
+  
+    const insights = Array.from(categoryTotals.entries()).map(([category, total]) => {
+      const categoryLimit = categoryLimitMap.get(category) ?? (weeklyBudget * 4) * 0.2;
+      const isOverBudget = total > categoryLimit;
   
       let recommendation = isOverBudget
         ? `You've exceeded your budget for ${category}. Consider reducing expenses.`
@@ -129,8 +174,6 @@ const [customEndDate, setCustomEndDate] = useState('');
   
     return insights.sort((a, b) => b.total - a.total);
   }, [weeklyBudget, categoryLimits]);
-
-   
 
   const handleEdit = (transaction) => {
     setEditingId(transaction.id);
@@ -450,7 +493,29 @@ const [customEndDate, setCustomEndDate] = useState('');
             </button>
         </div>
         <div className="p-2 mb-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
-      {spendingInsights.map((insight, index) => (
+        <div className="p-4 bg-white rounded-lg shadow-md mb-6">
+
+        {/* Savings insight */}
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Savings Progress</h2>
+          <div className="relative w-full bg-gray-200 rounded-full h-4">
+            <div
+              className="absolute top-0 left-0 h-4 bg-green-500 rounded-full"
+              style={{ width: `${savingsProgress}%` }}
+            ></div>
+          </div>
+          <p className="mt-2 text-sm text-gray-700">
+            You have saved <strong>${savingsTotal.toFixed(2)}</strong> out of your goal of <strong>${savingsGoal.toFixed(2)}</strong>.
+          </p>
+          {savingsProgress >= 100 ? (
+            <p className="mt-2 text-sm text-green-600">Congratulations! You've reached your savings goal!</p>
+          ) : (
+            <p className="mt-2 text-sm text-gray-600">
+              Keep going! You're <strong>{(savingsGoal - savingsTotal).toFixed(2)}</strong> away from your goal.
+            </p>
+          )}
+        </div>
+              
+      {/* {spendingInsights.map((insight, index) => (
         <div
           key={insight.category}
           className={`min-h-30 p-4 flex flex-col items-center text-center rounded-xl border-2 border-solid `}
@@ -468,7 +533,29 @@ const [customEndDate, setCustomEndDate] = useState('');
             <p className="text-xs text-gray-700 m-0">{insight.recommendation}</p>
           )}
         </div>
-      ))}
+      ))} */}
+
+{spendingInsights.map((insight, index) => (
+    <div
+      key={insight.category}
+      className={`min-h-30 p-4 flex flex-col items-center text-center rounded-xl border-2 border-solid ${
+        insight.trend === 'up' ? 'border-red-500' : 'border-green-500'
+      }`}
+    >
+      <div className="flex justify-between items-center w-full mb-1">
+        <h3 className="text-sm font-semibold text-gray-900 capitalize inline">{insight.category}</h3>
+        {insight.trend === 'up' ? (
+          <AlertTriangle className="h-4 w-4 text-red-500" />
+        ) : (
+          <TrendingUp className="h-4 w-4 text-green-500" />
+        )}
+      </div>
+      <p className="text-base m-0 font-bold text-gray-900 inline">${insight.total.toFixed(2)}</p>
+      {insight.recommendation && (
+        <p className="text-xs text-gray-700 m-0">{insight.recommendation}</p>
+      )}
+    </div>
+  ))}
 
 
     <div className="p-3 rounded-xl bg-gray-200 flex flex-col items-center text-center">

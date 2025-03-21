@@ -36,13 +36,13 @@ export default function QuickExpenses() {
     else setPresets(data);
   };
 
-  const addExpense = async (label, amount) => {
+  const addExpense = async (label, amount,category) => {
     if (!userId) {
       console.error("User not logged in");
       return;
     }
 
-    const newExpense = { label, amount, date: new Date().toLocaleString() };
+    const newExpense = { label, amount, category, date: new Date().toLocaleString() };
     setExpenses([...expenses, newExpense]);
     
     const { error } = await supabase.from("transactions").insert([
@@ -52,7 +52,7 @@ export default function QuickExpenses() {
         post_date: localDate,
         description: label,
         amount: amount,
-        category: "other"
+        category: category  // Use category from preset or default to "other"
       }
     ]);
     if (error) console.error("Error saving expense:", error);
@@ -100,7 +100,7 @@ export default function QuickExpenses() {
       <motion.div
         key={preset.id}
         className="w-auto bg-gray-200 text-gray-700 p-2 rounded-lg cursor-pointer flex justify-between items-center"
-        onClick={() => addExpense(preset.label, preset.amount)}
+        onClick={() => addExpense(preset.label, preset.amount, preset.category)}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         onDragEnd={(event, info) => {

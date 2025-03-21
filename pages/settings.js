@@ -136,7 +136,7 @@ const Settings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen  flex items-center justify-center">
       <div className="flex flex-col items-center">
         <AiOutlineLoading3Quarters className="animate-spin text-4xl text-blue-500" />
         <p className="mt-4 text-lg text-gray-600">Loading, please wait...</p>
@@ -150,7 +150,7 @@ const Settings = () => {
       <div className="max-w-4xl mx-auto">
         <button 
           className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center"
-          onClick={() => router.push('spend')}
+          onClick={() => router.push('expense')}
         >
           ← Back to Transactions
         </button>
