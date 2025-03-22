@@ -103,38 +103,6 @@ const [customEndDate, setCustomEndDate] = useState('');
   };
   
 
-  // const analyzeSpending = useCallback((data) => {
-  //   if (!Array.isArray(data) || data.length === 0) return [];
-  
-  //     // Use a Map for category totals (faster lookups)
-  //     const categoryTotals = new Map();
-    
-  //     for (const { category, amount } of data) {
-  //       categoryTotals.set(category, (categoryTotals.get(category) || 0) + Math.abs(amount));
-  //     }
-    
-  //     // Convert categoryLimits array into a Map for O(1) lookups
-  //     const categoryLimitMap = new Map(categoryLimits.map(({ category, limit_amount }) => [category, limit_amount]));
-    
-  //     const insights = Array.from(categoryTotals.entries()).map(([category, total]) => {
-  //       const categoryLimit = categoryLimitMap.get(category) ?? (weeklyBudget * 4) * 0.2;
-  //       const isOverBudget = total > categoryLimit;
-  
-  //     let recommendation = isOverBudget
-  //       ? `You've exceeded your budget for ${category}. Consider reducing expenses.`
-  //       : 'You are within budget.';
-  
-  //     return {
-  //       category,
-  //       total,
-  //       trend: isOverBudget ? 'up' : 'down',
-  //       recommendation,
-  //     };
-  //   });
-  
-  //   return insights.sort((a, b) => b.total - a.total);
-  // }, [weeklyBudget, categoryLimits]);
-
   const analyzeSpending = useCallback((data) => {
     if (!Array.isArray(data) || data.length === 0) return [];
   
@@ -194,23 +162,70 @@ const [customEndDate, setCustomEndDate] = useState('');
   };
 
   // Optimized fetch with local state updates
+  // const fetchTransactions = async () => {
+  //   if (!user) return;
+
+  //   try {
+  //     const { data, error: fetchError } = await supabase
+  //       .from('transactions')
+  //       .select('*')
+  //       .eq('user_id', user.id)
+  //       .order('transaction_date', { ascending: false });
+
+  //     if (fetchError) throw fetchError;
+
+  //     const filteredData = filterTransactions(data || []);
+  //     setTransactions(filteredData);
+      
+  //     // Update summary and insights
+  //     const summary = filteredData.reduce(
+  //       (acc, curr) => {
+  //         if (curr.amount >= 0) {
+  //           acc.totalCredits += curr.amount;
+  //         } else {
+  //           acc.totalDebits += Math.abs(curr.amount);
+  //         }
+  //         return acc;
+  //       },
+  //       { totalCredits: 0, totalDebits: 0, netBalance: 0 }
+  //     );
+
+  //     summary.netBalance = summary.totalCredits - summary.totalDebits;
+  //     setSummary(summary);
+      
+  //     const monthlyTotal = filteredData.reduce((acc, curr) => acc + Math.abs(curr.amount), 0);
+  //     setMonthlySpending(monthlyTotal);
+      
+  //     const insights = analyzeSpending(filteredData);
+  //     setSpendingInsights(insights);
+  //   } catch (err) {
+  //     setError(err.message || 'An error occurred');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchTransactions = async () => {
     if (!user) return;
-
+  
     try {
       const { data, error: fetchError } = await supabase
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
         .order('transaction_date', { ascending: false });
-
+  
       if (fetchError) throw fetchError;
-
+  
       const filteredData = filterTransactions(data || []);
       setTransactions(filteredData);
-      
-      // Update summary and insights
-      const summary = filteredData.reduce(
+  
+      // Exclude savings from summary and monthly spending calculations
+      const nonSavingsTransactions = filteredData.filter(
+        (transaction) => transaction.category !== 'savings'
+      );
+  
+      const summary = nonSavingsTransactions.reduce(
         (acc, curr) => {
           if (curr.amount >= 0) {
             acc.totalCredits += curr.amount;
@@ -221,13 +236,16 @@ const [customEndDate, setCustomEndDate] = useState('');
         },
         { totalCredits: 0, totalDebits: 0, netBalance: 0 }
       );
-
+  
       summary.netBalance = summary.totalCredits - summary.totalDebits;
       setSummary(summary);
-      
-      const monthlyTotal = filteredData.reduce((acc, curr) => acc + Math.abs(curr.amount), 0);
+  
+      const monthlyTotal = nonSavingsTransactions.reduce(
+        (acc, curr) => acc + Math.abs(curr.amount),
+        0
+      );
       setMonthlySpending(monthlyTotal);
-      
+  
       const insights = analyzeSpending(filteredData);
       setSpendingInsights(insights);
     } catch (err) {
@@ -335,7 +353,6 @@ const [customEndDate, setCustomEndDate] = useState('');
 
 
 
-
   const getCategoryIcon = (category) => {
     switch (category) {
       case 'food':
@@ -348,6 +365,12 @@ const [customEndDate, setCustomEndDate] = useState('');
         return <FaHome className="text-purple-500" />;
       case 'entertainment':
         return <FaGamepad className="text-yellow-500" />;
+      case 'investments':
+        return <TrendingUp className="text-indigo-500" />;
+      case 'savings':
+        return <DollarSign className="text-teal-500" />;
+      case 'other':
+        return <AlertTriangle className="text-gray-500" />;
       default:
         return <FaShoppingCart className="text-gray-500" />;
     }
@@ -476,19 +499,9 @@ const [customEndDate, setCustomEndDate] = useState('');
   };
   return (
     <div className="min-h-screen  bg-white p-4 sm:p-6">
-  <div className="p-6 rounded-xl bg-gray-50 text-gray-900 shadow-md border border-gray-300 mx-4 my-6 flex flex-col items-center text-center">
-      <div className="flex items-center gap-2 mb-2">
-        <DollarSign className="h-5 w-5 text-gray-500" />
-        <label className="text-lg font-semibold tracking-wide">Monthly Spending</label>
-      </div>
-      <input
-        type="text"
-        value={`$${formatMoney(monthlySpending)}`}
-        readOnly
-        className="w-full text-2xl font-bold bg-transparent text-center outline-none tracking-wide"
-      />
-      <p className="mt-2 text-sm text-gray-600">Stay in control of your expenses.</p>
-    </div>
+        <div className="w-full max-w-screen-md"> {/* Added container with max width */}
+
+   
 
 {/* non */}
       <div className="w-full mx-auto">
@@ -511,11 +524,25 @@ const [customEndDate, setCustomEndDate] = useState('');
               </button>
         </div>
 
-        <div className="p-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
+
+        <div className="p-6 mt-4 mb-5 bg-gray-50 text-gray-900 shadow-md border border-gray-300  flex flex-col items-center text-center">
+          <div className="flex items-center gap-2 mb-2">
+            <label className="text-lg font-semibold tracking-wide">Monthly Spending</label>
+          </div>
+          <input
+            type="text"
+            value={`$${formatMoney(monthlySpending)}`}
+            readOnly
+            className="w-full text-2xl font-bold bg-transparent text-center outline-none tracking-wide"
+          />
+          <p className="mt-2 text-sm text-gray-600">Stay in control of your expenses.</p>
+        </div>
+
+        <div className="mt-4 mb-5 grid gap-4 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
           {/* Savings Progress */}
-            <div className="p-5 bg-white col-span-2  h-32 rounded-xl border border-gray-200">
+            <div className="flex items-center justify-center flex-col p-5 bg-white col-span-2  h-48  border border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">Savings Progress</h2>
-              <div className="relative w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+              <div className="relative  w-full bg-gray-200 rounded-full h-4 overflow-hidden">
                 <div
                   className="absolute top-0 left-0 h-4 bg-green-500 rounded-full transition-all duration-500"
                   style={{ width: `${savingsProgress}%` }}
@@ -526,16 +553,15 @@ const [customEndDate, setCustomEndDate] = useState('');
               </p>
             </div>
 
-              
-
           
             {/* Spending Insights */}
+{/* 
             {spendingInsights.map((insight) => (
               <div
                 key={insight.category}
-                className={`p-5 flex flex-col items-center text-center  ${
+                className={`p-5 flex items-center justify-center flex-col h-48  text-center  ${
                   insight.trend === "up" ? "border-red-500 bg-red-50" : "border-green-500 bg-green-50"
-                } shadow-md`}
+                } shadow-sm`}
               >
                 <div className="flex justify-between items-center  w-full mb-1">
                   <h3 className="text-sm font-semibold text-centertext-gray-900 capitalize">{insight.category}</h3>
@@ -548,10 +574,41 @@ const [customEndDate, setCustomEndDate] = useState('');
                 <p className="text-lg font-bold text-gray-900">${insight.total.toFixed(2)}</p>
                 {insight.recommendation && <p className="text-xs text-gray-700">{insight.recommendation}</p>}
               </div>
-            ))}
+            ))} */}
+
+            {/* Spending Insights */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  {spendingInsights.map((insight) => (
+    <div
+      key={insight.category}
+      className={`p-4 flex flex-col items-center justify-center text-center rounded-lg ${
+        insight.trend === "up"
+          ? "border-red-500 bg-gradient-to-br from-red-100 to-red-200"
+          : "border-green-500 bg-gradient-to-br from-green-100 to-green-200"
+      }`}
+    >
+      <div className="flex items-center justify-center gap-2 mb-2">
+        <h3 className="text-sm font-semibold text-gray-900 capitalize">
+          {insight.category}
+        </h3>
+        {insight.trend === "up" ? (
+          <AlertTriangle className="h-5 w-5 text-red-600" />
+        ) : (
+          <TrendingUp className="h-5 w-5 text-green-600" />
+        )}
+      </div>
+      <p className="text-xl font-extrabold text-gray-800">
+        ${insight.total.toFixed(2)}
+      </p>
+      {insight.recommendation && (
+        <p className="text-sm text-gray-700 mt-2">{insight.recommendation}</p>
+      )}
+    </div>
+  ))}
+</div>
 
               {/* Remaining Budget */}
-              <div className="p-4 rounded-xl col-span-1  border border-gray-200  flex flex-col items-center text-center ">
+              <div className="p-4  flex items-center justify-center flex-col col-span-2 h-48 border border-gray-200 text-center ">
                   <label className="text-sm font-medium text-gray-900 mb-1">Remaining Budget</label>
                   <input
                     type="text"
@@ -672,42 +729,7 @@ const [customEndDate, setCustomEndDate] = useState('');
           </div>
         )}
 
-        {/* Filters and Search */}
-        {/* <div className="bg-gray-50 rounded-lg p-4 mb-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                placeholder="Search transactions..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border rounded-lg"
-              />
-              <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-            </div>
-            <div className="flex gap-2">
-              <select
-                value={filterPeriod}
-                onChange={(e) => setFilterPeriod(e.target.value)}
-                className="border rounded-lg px-4 py-2 flex-1"
-              >
-                <option value="all">All Time</option>
-                <option value="day">Last 24 Hours</option>
-                <option value="week">This Week</option>
-                <option value="month">This Month</option>
-                <option value="year">This Year</option>
-                <option value="custom range">Custom Range</option>
-              </select>
-              <button
-                onClick={() => fetchTransactions()}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-              >
-                <Filter className="h-5 w-5 inline mr-2" />
-                Apply
-              </button>
-            </div>
-          </div>
-        </div> */}
+
 
 <div className="bg-gray-50 rounded-lg p-4 mb-6">
   <div className="flex flex-col sm:flex-row gap-4">
@@ -938,6 +960,7 @@ const [customEndDate, setCustomEndDate] = useState('');
             ))}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
