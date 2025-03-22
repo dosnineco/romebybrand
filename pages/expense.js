@@ -7,6 +7,7 @@ import { FaUtensils, FaShoppingCart, FaCar, FaHome, FaGamepad } from 'react-icon
 import { useRouter } from "next/router";
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { TiRefresh } from "react-icons/ti";
+import { DollarSign } from "lucide-react";
 
 
 
@@ -470,138 +471,116 @@ const [customEndDate, setCustomEndDate] = useState('');
     );
   };
 
-
+  const formatMoney = (amount) => {
+    return amount.toLocaleString("en-US", { minimumFractionDigits: 2 });
+  };
   return (
     <div className="min-h-screen  bg-white p-4 sm:p-6">
-      <div className="w-full mx-auto">
-      <div className="flex justify-between mb-4">
-            {/* Left-aligned button */}
-
-            <button
-              className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
-              onClick={() => router.push('/quick')}
-            >
-            Quick Expenses
-            </button>
-
-            {/* Right-aligned button */}
-            <button
-              className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
-              onClick={() => router.push('/settings')}
-            >
-              <Settings className="w-6 h-6" />
-            </button>
-        </div>
-        <div className="p-2 mb-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
-        <div className="p-4 bg-white rounded-lg shadow-md mb-6">
-
-        {/* Savings insight */}
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Savings Progress</h2>
-          <div className="relative w-full bg-gray-200 rounded-full h-4">
-            <div
-              className="absolute top-0 left-0 h-4 bg-green-500 rounded-full"
-              style={{ width: `${savingsProgress}%` }}
-            ></div>
-          </div>
-          <p className="mt-2 text-sm text-gray-700">
-            You have saved <strong>${savingsTotal.toFixed(2)}</strong> out of your goal of <strong>${savingsGoal.toFixed(2)}</strong>.
-          </p>
-          {savingsProgress >= 100 ? (
-            <p className="mt-2 text-sm text-green-600">Congratulations! You've reached your savings goal!</p>
-          ) : (
-            <p className="mt-2 text-sm text-gray-600">
-              Keep going! You're <strong>{(savingsGoal - savingsTotal).toFixed(2)}</strong> away from your goal.
-            </p>
-          )}
-        </div>
-              
-      {/* {spendingInsights.map((insight, index) => (
-        <div
-          key={insight.category}
-          className={`min-h-30 p-4 flex flex-col items-center text-center rounded-xl border-2 border-solid `}
-        >
-          <div className="flex  justify-between items-center w-full mb-1">
-            <h3 className="text-sm font-semibold text-gray-900 capitalize inline">{insight.category}</h3>
-            {insight.trend === "up" ? (
-              <AlertTriangle className="h-4 w-4 text-red-500" />
-            ) : (
-              <TrendingUp className="h-4 w-4 text-green-500" />
-            )}
-          </div>
-          <p className="text-base m-0 font-bold text-gray-900 inline">${insight.total.toFixed(2)}</p>
-          {insight.recommendation && (
-            <p className="text-xs text-gray-700 m-0">{insight.recommendation}</p>
-          )}
-        </div>
-      ))} */}
-
-{spendingInsights.map((insight, index) => (
-    <div
-      key={insight.category}
-      className={`min-h-30 p-4 flex flex-col items-center text-center rounded-xl border-2 border-solid ${
-        insight.trend === 'up' ? 'border-red-500' : 'border-green-500'
-      }`}
-    >
-      <div className="flex justify-between items-center w-full mb-1">
-        <h3 className="text-sm font-semibold text-gray-900 capitalize inline">{insight.category}</h3>
-        {insight.trend === 'up' ? (
-          <AlertTriangle className="h-4 w-4 text-red-500" />
-        ) : (
-          <TrendingUp className="h-4 w-4 text-green-500" />
-        )}
+  <div className="p-6 rounded-xl bg-gray-50 text-gray-900 shadow-md border border-gray-300 mx-4 my-6 flex flex-col items-center text-center">
+      <div className="flex items-center gap-2 mb-2">
+        <DollarSign className="h-5 w-5 text-gray-500" />
+        <label className="text-lg font-semibold tracking-wide">Monthly Spending</label>
       </div>
-      <p className="text-base m-0 font-bold text-gray-900 inline">${insight.total.toFixed(2)}</p>
-      {insight.recommendation && (
-        <p className="text-xs text-gray-700 m-0">{insight.recommendation}</p>
-      )}
-    </div>
-  ))}
-
-
-    <div className="p-3 rounded-xl bg-gray-200 flex flex-col items-center text-center">
-      <label className="text-sm font-medium text-gray-900 mb-1">
-        Monthly Spending
-      </label>
       <input
         type="text"
-        value={`$${monthlySpending.toFixed(2)}`}
+        value={`$${formatMoney(monthlySpending)}`}
         readOnly
-        className="w-full rounded-md px-3 py-2 bg-white text-center text-gray-900"
+        className="w-full text-2xl font-bold bg-transparent text-center outline-none tracking-wide"
       />
+      <p className="mt-2 text-sm text-gray-600">Stay in control of your expenses.</p>
     </div>
 
-    <div className="p-3 rounded-xl bg-gray-200 flex flex-col items-center text-center">
-      <label className="text-sm font-medium text-gray-900 mb-1">
-        Remaining Budget
-      </label>
-      <input
-        type="text"
-        value={`$${(weeklyBudget * 4 - monthlySpending).toFixed(2)}`}
-        readOnly
-        className={`w-full rounded-md px-3 py-2 text-center ${
-          monthlySpending > weeklyBudget * 4 ? 'bg-red-200 text-red-900' : 'bg-white text-gray-900'
-        }`}
-      />
-      {monthlySpending > weeklyBudget * 4 && (
-        <p className="text-red-600 text-sm mt-2">
-          Warning: You’ve exceeded your budget!
-        </p>
-      )}
-    </div>
+{/* non */}
+      <div className="w-full mx-auto">
+        <div className="flex justify-between mb-4">
+              {/* Left-aligned button */}
+
+              <button
+                className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
+                onClick={() => router.push('/quick')}
+              >
+              Quick Expenses
+              </button>
+
+              {/* Right-aligned button */}
+              <button
+                className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
+                onClick={() => router.push('/settings')}
+              >
+                <Settings className="w-6 h-6" />
+              </button>
+        </div>
+
+        <div className="p-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
+          {/* Savings Progress */}
+            <div className="p-5 bg-white col-span-2  h-32 rounded-xl border border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">Savings Progress</h2>
+              <div className="relative w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                <div
+                  className="absolute top-0 left-0 h-4 bg-green-500 rounded-full transition-all duration-500"
+                  style={{ width: `${savingsProgress}%` }}
+                ></div>
+              </div>
+              <p className="mt-2 text-sm text-gray-700">
+                You have saved <strong>${formatMoney(savingsTotal)}</strong> out of your goal of <strong>${formatMoney(savingsGoal)}</strong>.
+              </p>
+            </div>
+
+              
+
+          
+            {/* Spending Insights */}
+            {spendingInsights.map((insight) => (
+              <div
+                key={insight.category}
+                className={`p-5 flex flex-col items-center text-center  ${
+                  insight.trend === "up" ? "border-red-500 bg-red-50" : "border-green-500 bg-green-50"
+                } shadow-md`}
+              >
+                <div className="flex justify-between items-center  w-full mb-1">
+                  <h3 className="text-sm font-semibold text-centertext-gray-900 capitalize">{insight.category}</h3>
+                  {insight.trend === "up" ? (
+                    <AlertTriangle className="h-4 w-4 text-red-500" />
+                  ) : (
+                    <TrendingUp className="h-4 w-4 text-green-500" />
+                  )}
+                </div>
+                <p className="text-lg font-bold text-gray-900">${insight.total.toFixed(2)}</p>
+                {insight.recommendation && <p className="text-xs text-gray-700">{insight.recommendation}</p>}
+              </div>
+            ))}
+
+              {/* Remaining Budget */}
+              <div className="p-4 rounded-xl col-span-1  border border-gray-200  flex flex-col items-center text-center ">
+                  <label className="text-sm font-medium text-gray-900 mb-1">Remaining Budget</label>
+                  <input
+                    type="text"
+                    value={`$${formatMoney(weeklyBudget * 4 - monthlySpending)}`}
+                    readOnly
+                    className={`w-full rounded-md px-3 py-2 text-center font-semibold ${
+                      monthlySpending > weeklyBudget * 4 ? "bg-red-200 text-red-900" : "bg-white text-gray-900"
+                    }`}
+                  />
+                  {monthlySpending > weeklyBudget * 4 && (
+                    <p className="text-red-600 text-sm mt-2">Warning: You’ve exceeded your budget!</p>
+                  )}
+                </div>
 
 
+    
     </div>
+
         {/* Add Transaction Button */}
         <div className="mb-6 flex justify-center">
-  <button
-    onClick={() => setShowAddForm(true)}
-    className="flex items-center justify-center bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition duration-200"
-    aria-label="Add New Transaction"
-  >
-    <PlusCircle className="w-6 h-6 mr-2" />
-    <span className="text-sm font-medium">Add Transaction</span>
-  </button>
-</div>
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="flex items-center justify-center bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition duration-200"
+            aria-label="Add New Transaction"
+          >
+            <PlusCircle className="w-6 h-6 mr-2" />
+            <span className="text-sm font-medium">Add Transaction</span>
+          </button>
+        </div>
 
         {/* Add Transaction Form */}
         {showAddForm && (
