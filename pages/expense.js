@@ -537,10 +537,10 @@ const [customEndDate, setCustomEndDate] = useState('');
           />
           <p className="mt-2 text-sm text-gray-600">Stay in control of your expenses.</p>
         </div>
+    <div className="mt-4 mb-5 grid  sm:grid-cols-1 md:grid-cols-3  gap-4">
 
-        <div className="mt-4 mb-5 grid gap-4 sm:grid-cols-2 md:grid-cols-3 grid-cols-1">
-          {/* Savings Progress */}
-            <div className="flex items-center justify-center flex-col p-5 bg-white col-span-2  h-48  border border-gray-200">
+         {/* Savings Progress */}
+         <div className="flex items-center justify-center flex-col p-5 bg-white col-span-2  h-48  border border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">Savings Progress</h2>
               <div className="relative  w-full bg-gray-200 rounded-full h-4 overflow-hidden">
                 <div
@@ -553,59 +553,29 @@ const [customEndDate, setCustomEndDate] = useState('');
               </p>
             </div>
 
-          
-            {/* Spending Insights */}
-{/* 
-            {spendingInsights.map((insight) => (
-              <div
-                key={insight.category}
-                className={`p-5 flex items-center justify-center flex-col h-48  text-center  ${
-                  insight.trend === "up" ? "border-red-500 bg-red-50" : "border-green-500 bg-green-50"
-                } shadow-sm`}
-              >
-                <div className="flex justify-between items-center  w-full mb-1">
-                  <h3 className="text-sm font-semibold text-centertext-gray-900 capitalize">{insight.category}</h3>
-                  {insight.trend === "up" ? (
-                    <AlertTriangle className="h-4 w-4 text-red-500" />
-                  ) : (
-                    <TrendingUp className="h-4 w-4 text-green-500" />
-                  )}
-                </div>
-                <p className="text-lg font-bold text-gray-900">${insight.total.toFixed(2)}</p>
-                {insight.recommendation && <p className="text-xs text-gray-700">{insight.recommendation}</p>}
-              </div>
-            ))} */}
 
-            {/* Spending Insights */}
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
   {spendingInsights.map((insight) => (
     <div
       key={insight.category}
-      className={`p-4 flex flex-col items-center justify-center text-center rounded-lg ${
-        insight.trend === "up"
-          ? "border-red-500 bg-gradient-to-br from-red-100 to-red-200"
-          : "border-green-500 bg-gradient-to-br from-green-100 to-green-200"
-      }`}
+      className={`p-4 flex items-center col-span-1 justify-center flex-col h-48 text-center ${
+        insight.trend === "up" ? "border-red-500 bg-red-50" : "border-green-500 bg-green-50"
+      } shadow-sm`}
     >
-      <div className="flex items-center justify-center gap-2 mb-2">
-        <h3 className="text-sm font-semibold text-gray-900 capitalize">
-          {insight.category}
-        </h3>
+      <div className="flex justify-between items-center w-full mb-1">
+        <h3 className="text-base font-semibold text-center text-gray-900 capitalize">{insight.category}</h3>
         {insight.trend === "up" ? (
-          <AlertTriangle className="h-5 w-5 text-red-600" />
+          <AlertTriangle className="h-4 w-4 text-red-500" />
         ) : (
-          <TrendingUp className="h-5 w-5 text-green-600" />
+          <TrendingUp className="h-4 w-4 text-green-500" />
         )}
       </div>
-      <p className="text-xl font-extrabold text-gray-800">
-        ${insight.total.toFixed(2)}
-      </p>
-      {insight.recommendation && (
-        <p className="text-sm text-gray-700 mt-2">{insight.recommendation}</p>
-      )}
+
+      <p className="text-lg flex items-center justify-center font-bold text-center text-gray-900">${formatMoney(insight.total)}</p>
+     <p className="text-xs text-gray-700">{insight.recommendation}</p>
     </div>
   ))}
-</div>
+
+
 
               {/* Remaining Budget */}
               <div className="p-4  flex items-center justify-center flex-col col-span-2 h-48 border border-gray-200 text-center ">
@@ -623,9 +593,8 @@ const [customEndDate, setCustomEndDate] = useState('');
                   )}
                 </div>
 
+</div>
 
-    
-    </div>
 
         {/* Add Transaction Button */}
         <div className="mb-6 flex justify-center">
