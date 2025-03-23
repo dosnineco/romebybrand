@@ -9,16 +9,22 @@ import ContactForm from "../components/ContactForms/ContactForm";
 import WhatsAppChat from '../components/Misc/WhatsAppChat';
 import SocialMedia from '../components/Misc/SocialMedia';
 import PricingComponent from '../components/Misc/PricingComponent';
-
+import ImagePopup from '../components/Misc/ImagePopup';
 export default function Home() {
 
   return (
     <>
-      <Seo siteTitle='Dosnine' pageTitle={`Service-based business Template - Dosnine Media`} description='Service-based business Template paired with 5+ workflow tools
-for common business needs.' url='www.dosnine.com'/>
+      <Seo 
+          siteTitle="Expense Goose"
+          pageTitle="Best Online Expense Software & Business Expense Tracking"
+          description="Expense Goose is the leading free expense tracking software for small businesses. Manage your finances with powerful expense management tools and tracking software."
+          url="https://www.expensegoose.com"
+          image="https://www.expensegoose.com/images/hero.jpg"
+      />
 
 
       <Hero />
+    <ImagePopup src='/mobil-side.png' alt='Expense Goose' width='100%' height='100%' />
 
     </>
   );
