@@ -91,7 +91,7 @@ const [customEndDate, setCustomEndDate] = useState('');
       if (budgetError) throw budgetError;
       if (categoryLimitsError) throw categoryLimitsError;
       
-      const budget = budgetData.length ? budgetData[0].amount / 4 : 10000;
+      const budget = budgetData.length ? budgetData[0].amount / 4 : 0;
       setWeeklyBudget(budget);
       localStorage.setItem('weeklyBudget', JSON.stringify(budget));
       
