@@ -7,9 +7,8 @@ import { Waitlist } from '@clerk/nextjs';
 const Hero = () => {
   return (
     <section className={styles.promoSection}>
-      <div className={styles.imageWrapper}>
+      {/* <div className={styles.imageWrapper}>
 
-        {/* Waitlist Form */}
         <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full justify-center items-center">
           <Waitlist
             afterJoinWaitlistUrl="/thank-you" // Redirect after joining the waitlist
@@ -23,7 +22,7 @@ const Hero = () => {
             fallback={<div>Unable to load the waitlist form. Please try again later.</div>}
           />
         </div>
-      </div>
+      </div> */}
 
       <div className={styles.content}>
         <h1>Smart Expense Tracking
