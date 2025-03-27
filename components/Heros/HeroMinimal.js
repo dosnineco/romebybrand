@@ -4,7 +4,7 @@ import Image from "next/image";
 
 // Hero 3: Minimalist Centered Hero with Subtle Overlay
 export default function  HeroMinimal() {
-    const backgroundImage = "https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80";
+    const backgroundImage = "/mobil-side.png";
     return (
       <section className="relative w-full h-[500px] flex items-center justify-center bg-black bg-opacity-50">
         <Image

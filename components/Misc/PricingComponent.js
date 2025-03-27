@@ -14,19 +14,19 @@ const PricingComponent = () => {
           <div className="px-8 py-12">
             <div className="text-center">
               <div className="inline-flex items-baseline mb-6">
-                <span className="text-5xl font-extrabold text-white">$178</span>
+                <span className="text-5xl font-extrabold text-white">Free</span>
                 <span className="ml-2 text-xl font-medium text-white">/1yr</span>
               </div>
-              <p className="text-sm text-white mb-8">Save $321 off for the first 64 customers (11 left)</p>
+              <p className="text-sm text-white mb-8">Save $79 off for the first 8000 customers (4561 left)</p>
               
               <ul className="space-y-4 mb-12">
     {[
-      'Service-based Business Template',
-      'Free Domain & Dashboard - save $100',
-      'Free Maintenance & Updates - save $190',
-      '50 Free Professional Emails - save $31',
-      '24/7 Priority Support',
-      '30-day Money-back Guarantee'
+      'Ai-powered insights',
+      'Real-time expense tracking',
+      'Unlimited expense entries',
+      'Quick expense logging',
+      'Catergory limit alerts',
+      'add saving goals',
     ].map((feature) => {
       const parts = feature.split(" - save ");
       return (

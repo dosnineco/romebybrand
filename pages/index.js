@@ -10,6 +10,8 @@ import WhatsAppChat from '../components/Misc/WhatsAppChat';
 import SocialMedia from '../components/Misc/SocialMedia';
 import PricingComponent from '../components/Misc/PricingComponent';
 import ImagePopup from '../components/Misc/ImagePopup';
+import HeroMinimal from '../components/Heros/HeroMinimal';
+
 export default function Home() {
 
   return (
@@ -24,7 +26,10 @@ export default function Home() {
 
 
       <Hero />
-    <ImagePopup src='/mobil-side.png' alt='Expense Goose' width='100%' height='100%' />
+      <PricingComponent />
+            {/* <HowItWorks /> */}
+      {/* <WhatsNew /> */}
+      {/* <Faq /> */}
 
     </>
   );
