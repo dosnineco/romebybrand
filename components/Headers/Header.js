@@ -40,10 +40,6 @@ const Header = () => {
           </SignedIn>
 
           <SignedOut>
-    
-          <Link href="/register" className="text-inherit	  text-sm font-bold">
-              Register
-            </Link>
             <Link href="/dashboard" className=" text-inherit	 text-sm font-bold">
               Login
             </Link>

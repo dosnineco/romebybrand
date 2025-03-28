@@ -29,7 +29,7 @@ export default function Home() {
       <PricingComponent />
             {/* <HowItWorks /> */}
       {/* <WhatsNew /> */}
-      {/* <Faq /> */}
+      <Faq />
 
     </>
   );

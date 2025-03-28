@@ -3,17 +3,16 @@ import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
 const FAQ = () => {
   const faqs = [
-    { question: 'What is the cost of your website creation service?', answer: 'Our boilerplate is for $178USD/1yr.' },
-    { question: 'Are there any hidden fees or additional charges?', answer: 'No additional fees; all domain names are renewed every 2 years, which you have to pay for.' },
-    {
-      question: 'What can the websites that we create do?',
-      answer: 'The website offers a variety of functionalities, including showcasing your business, advertising your services, adding workflow, booking appointments, capturing leads, providing information, and facilitating contact with potential clients.',
-    },
-    { question: 'How long does it take to create and launch the website?', answer: 'All our sites are deployed in 1–2 business days.' },
-    { question: 'Can I update the content on my website myself?', answer: 'No, changes are done by our team. Just state what you need.' },
-    { question: 'Do you provide domain registration and hosting services?', answer: 'No, this is external to us.' },
-    { question: 'How customizable are the templates?', answer: 'The boilerplate is as is. You can only add your business information and change the theme.' },
-    { question: 'Will my website be mobile-friendly?', answer: 'All sites are made for all devices by default.' },
+    {question:'do expense goose track travel expenses? ',answer:'Yes, it tracks all expenses.'},
+    
+    {question: 'What is Expense goose?', answer: 'it is a free expense tracking software for small businesses. Manage your finances with powerful expense management tools and tracking software.'},
+    {question: 'How do I get started?', answer: 'Check out a live demo. at https://www.expensegoose.com'}, 
+    {question:'How much does it cost?', answer: 'It is free for small businesses and personal use.'},
+    {question: 'What are the benefits of using Expense Goose?', answer: 'Expense Goose is the leading free expense tracking software for small businesses. Manage your finances with powerful expense management tools and tracking software.'},
+    {question:'Do you have a paid version?', answer: 'no, everything is free.'},
+    {question:'How do I get help?', answer: 'You can contact us at https://www.expensegoose.com/contact-us'},
+    {question:'what is the best way to track expenses?', answer: 'Expense Goose is the leading free expense tracking software for small businesses. Manage your finances with powerful expense management tools and tracking software.'},
+
   ];
 
   const [activeIndex, setActiveIndex] = useState(null);
