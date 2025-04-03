@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Quill from 'quill';
-import 'quill/dist/quill.snow.css'; // Import Quill styles
+import 'quill/dist/quill.snow.css';
 
 const QuillEditor = ({ template, onClose, onSave }) => {
   const quillRef = useRef(null);
@@ -8,51 +8,27 @@ const QuillEditor = ({ template, onClose, onSave }) => {
   const [recipient, setRecipient] = useState(template.recipient);
 
   useEffect(() => {
-    if (quillRef.current) {
+    if (typeof window !== 'undefined' && quillRef.current) {
       const quill = new Quill(quillRef.current, {
         theme: 'snow',
       });
 
-      quill.root.innerHTML = template.template_content; // Set the initial content
+      quill.root.innerHTML = template.template_content;
 
-      // Handle save button click
       const handleSaveClick = () => {
         const updatedContent = quill.root.innerHTML;
         onSave({ ...template, subject, recipient, template_content: updatedContent });
         onClose();
       };
 
-      // Handle copy button click
-      const handleCopyClick = () => {
-        const range = document.createRange();
-        range.selectNodeContents(quill.root);
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-        document.execCommand('copy');
-        selection.removeAllRanges();
-        alert('Content copied to clipboard');
-      };
-
-      // Attach the save handler to the save button
       const saveButton = document.getElementById('save-button');
       if (saveButton) {
         saveButton.addEventListener('click', handleSaveClick);
       }
 
-      // Attach the copy handler to the copy button
-      const copyButton = document.getElementById('copy-button');
-      if (copyButton) {
-        copyButton.addEventListener('click', handleCopyClick);
-      }
-
-      // Clean up the event listeners on unmount
       return () => {
         if (saveButton) {
           saveButton.removeEventListener('click', handleSaveClick);
-        }
-        if (copyButton) {
-          copyButton.removeEventListener('click', handleCopyClick);
         }
       };
     }
@@ -98,9 +74,6 @@ const QuillEditor = ({ template, onClose, onSave }) => {
           </button>
           <button id="save-button" className="py-1 px-3 bg-blue-500 text-inherit rounded-md">
             Save
-          </button>
-          <button id="copy-button" className="py-1 px-3 bg-green-500 text-inherit rounded-md">
-            Copy
           </button>
         </div>
       </div>

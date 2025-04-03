@@ -45,7 +45,7 @@ function SaveUserToDatabase() {
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  const publicRoutes = ['/', '/blog']; // Allow home and all blog pages
+  const publicRoutes = ['/', '/tools']; // Allow home and all blog pages
 
   const isPublicRoute = publicRoutes.some((route) =>
     router.pathname === route || router.pathname.startsWith(`${route}/`)

@@ -7,6 +7,9 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
           <Head>
+          <meta name="description" content="Read our latest blog posts on various topics." />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://expensegoose.com/blog" />
           <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
           <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
           <meta name="theme-color" content="#ffffff"/>

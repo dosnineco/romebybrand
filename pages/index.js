@@ -11,6 +11,7 @@ import SocialMedia from '../components/Misc/SocialMedia';
 import PricingComponent from '../components/Misc/PricingComponent';
 import ImagePopup from '../components/Misc/ImagePopup';
 import HeroMinimal from '../components/Heros/HeroMinimal';
+import { ArrowRight, PenTool as Tool, Zap, Users, BookOpen } from "lucide-react";
 
 export default function Home() {
 
@@ -27,6 +28,8 @@ export default function Home() {
 
       <Hero />
       <PricingComponent />
+            {/* Features Section */}
+    
             {/* <HowItWorks /> */}
       {/* <WhatsNew /> */}
       <Faq />
