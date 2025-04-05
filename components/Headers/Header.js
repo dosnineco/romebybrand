@@ -33,6 +33,9 @@ const Header = () => {
         <div className="flex items-center space-x-4">
       
           <SignedIn>
+          <Link href="/tools" className=" text-inherit	 text-sm font-bold">
+              Free Tools
+            </Link>
             <Link href="/dashboard" className="text-inherit	  text-sm font-bold">
               Dashboard
             </Link>
@@ -40,6 +43,9 @@ const Header = () => {
           </SignedIn>
 
           <SignedOut>
+          <Link href="/tools" className=" text-inherit	 text-sm font-bold">
+              Tools
+            </Link>
             <Link href="/dashboard" className=" text-inherit	 text-sm font-bold">
               Login
             </Link>
