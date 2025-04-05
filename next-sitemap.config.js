@@ -1,5 +1,5 @@
 module.exports = {
-    siteUrl: 'https://www.dosnine.com',
+    siteUrl: 'https://www.expensegoose.com',
     generateRobotsTxt: true, // (optional)
     robotsTxtOptions: {
       policies: [{ userAgent: "*", disallow: "/api", disallow: "/404",disallow:'/500' }],
