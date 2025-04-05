@@ -1,0 +1,263 @@
+import React, { useState, useEffect } from 'react';
+import { format } from 'date-fns';
+import { Edit2, Trash2, Save, X, PlusCircle } from 'lucide-react';
+
+const SalesTracker = () => {
+  const [sales, setSales] = useState([]);
+  const [totalSales, setTotalSales] = useState(0);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editData, setEditData] = useState({});
+  const [newSale, setNewSale] = useState({
+    date: format(new Date(), 'yyyy-MM-dd'),
+    description: '',
+    amount: '',
+    category: 'product',
+  });
+
+  useEffect(() => {
+    calculateTotalSales();
+  }, [sales]);
+
+  const calculateTotalSales = () => {
+    const total = sales.reduce((acc, sale) => acc + parseFloat(sale.amount || 0), 0);
+    setTotalSales(total);
+  };
+
+  const addSale = () => {
+    if (!newSale.description || !newSale.amount) return;
+
+    const sale = {
+      id: Date.now(),
+      ...newSale,
+      amount: parseFloat(newSale.amount),
+    };
+
+    setSales((prev) => [sale, ...prev]);
+    setShowAddForm(false);
+    setNewSale({
+      date: format(new Date(), 'yyyy-MM-dd'),
+      description: '',
+      amount: '',
+      category: 'product',
+    });
+  };
+
+  const handleEdit = (sale) => {
+    setEditingId(sale.id);
+    setEditData({ ...sale });
+  };
+
+  const handleSave = () => {
+    setSales((prev) =>
+      prev.map((sale) => (sale.id === editingId ? { ...sale, ...editData } : sale))
+    );
+    setEditingId(null);
+    setEditData({});
+  };
+
+  const handleDelete = (id) => {
+    setSales((prev) => prev.filter((sale) => sale.id !== id));
+  };
+
+  const renderTableRow = (sale) => {
+    const isEditing = editingId === sale.id;
+
+    if (isEditing) {
+      return (
+        <tr key={sale.id}>
+          <td className="px-4 py-2">
+            <input
+              type="date"
+              value={editData.date}
+              onChange={(e) => setEditData((prev) => ({ ...prev, date: e.target.value }))}
+              className="w-full border rounded px-2 py-1"
+            />
+          </td>
+          <td className="px-4 py-2">
+            <input
+              type="text"
+              value={editData.description}
+              onChange={(e) =>
+                setEditData((prev) => ({ ...prev, description: e.target.value }))
+              }
+              className="w-full border rounded px-2 py-1"
+            />
+          </td>
+          <td className="px-4 py-2">
+            <select
+              value={editData.category}
+              onChange={(e) =>
+                setEditData((prev) => ({ ...prev, category: e.target.value }))
+              }
+              className="w-full border rounded px-2 py-1"
+            >
+              <option value="product">Product</option>
+              <option value="service">Service</option>
+              <option value="other">Other</option>
+            </select>
+          </td>
+          <td className="px-4 py-2">
+            <input
+              type="number"
+              value={editData.amount}
+              onChange={(e) =>
+                setEditData((prev) => ({ ...prev, amount: parseFloat(e.target.value) }))
+              }
+              className="w-full border rounded px-2 py-1"
+              step="0.01"
+            />
+          </td>
+          <td className="px-4 py-2 text-right">
+            <div className="flex justify-end gap-2">
+              <button onClick={handleSave} className="text-green-600 hover:text-green-900">
+                <Save className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => setEditingId(null)}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </td>
+        </tr>
+      );
+    }
+
+    return (
+      <tr key={sale.id}>
+        <td className="px-4 py-2">{format(new Date(sale.date), 'MMM d, yyyy')}</td>
+        <td className="px-4 py-2">{sale.description}</td>
+        <td className="px-4 py-2">{sale.category}</td>
+        <td className="px-4 py-2">${sale.amount.toFixed(2)}</td>
+        <td className="px-4 py-2 text-right">
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => handleEdit(sale)}
+              className="text-blue-600 hover:text-blue-900"
+            >
+              <Edit2 className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => handleDelete(sale.id)}
+              className="text-red-600 hover:text-red-900"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+          </div>
+        </td>
+      </tr>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <div className="container mx-auto max-w-screen-md">
+        <h1 className="text-3xl font-bold mb-6 text-center">Sales Tracker</h1>
+        <p className="text-lg text-gray-700 mb-6 text-center">
+          Track your sales, analyze trends, and manage your business effectively.
+        </p>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="mb-6 flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Total Sales: ${totalSales.toFixed(2)}</h2>
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="flex items-center justify-center bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition duration-200"
+            >
+              <PlusCircle className="w-6 h-6 mr-2" />
+              <span className="text-sm font-medium">Add Sale</span>
+            </button>
+          </div>
+          {showAddForm && (
+            <div className="bg-gray-50 p-4 rounded-lg mb-6">
+              <h3 className="text-lg font-semibold mb-4">Add New Sale</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input
+                  type="date"
+                  value={newSale.date}
+                  onChange={(e) =>
+                    setNewSale((prev) => ({ ...prev, date: e.target.value }))
+                  }
+                  className="border rounded-lg px-3 py-2"
+                />
+                <input
+                  type="text"
+                  placeholder="Description"
+                  value={newSale.description}
+                  onChange={(e) =>
+                    setNewSale((prev) => ({ ...prev, description: e.target.value }))
+                  }
+                  className="border rounded-lg px-3 py-2"
+                />
+                <select
+                  value={newSale.category}
+                  onChange={(e) =>
+                    setNewSale((prev) => ({ ...prev, category: e.target.value }))
+                  }
+                  className="border rounded-lg px-3 py-2"
+                >
+                  <option value="product">Product</option>
+                  <option value="service">Service</option>
+                  <option value="other">Other</option>
+                </select>
+                <input
+                  type="number"
+                  placeholder="Amount"
+                  value={newSale.amount}
+                  onChange={(e) =>
+                    setNewSale((prev) => ({ ...prev, amount: e.target.value }))
+                  }
+                  step="0.01"
+                  className="border rounded-lg px-3 py-2"
+                />
+              </div>
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  onClick={() => setShowAddForm(false)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={addSale}
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          )}
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 bg-gray-50 p-6 rounded-lg shadow-md">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Description
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Category
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Amount
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {sales.map(renderTableRow)}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SalesTracker;

@@ -161,49 +161,7 @@ const [customEndDate, setCustomEndDate] = useState('');
     }));
   };
 
-  // Optimized fetch with local state updates
-  // const fetchTransactions = async () => {
-  //   if (!user) return;
 
-  //   try {
-  //     const { data, error: fetchError } = await supabase
-  //       .from('transactions')
-  //       .select('*')
-  //       .eq('user_id', user.id)
-  //       .order('transaction_date', { ascending: false });
-
-  //     if (fetchError) throw fetchError;
-
-  //     const filteredData = filterTransactions(data || []);
-  //     setTransactions(filteredData);
-      
-  //     // Update summary and insights
-  //     const summary = filteredData.reduce(
-  //       (acc, curr) => {
-  //         if (curr.amount >= 0) {
-  //           acc.totalCredits += curr.amount;
-  //         } else {
-  //           acc.totalDebits += Math.abs(curr.amount);
-  //         }
-  //         return acc;
-  //       },
-  //       { totalCredits: 0, totalDebits: 0, netBalance: 0 }
-  //     );
-
-  //     summary.netBalance = summary.totalCredits - summary.totalDebits;
-  //     setSummary(summary);
-      
-  //     const monthlyTotal = filteredData.reduce((acc, curr) => acc + Math.abs(curr.amount), 0);
-  //     setMonthlySpending(monthlyTotal);
-      
-  //     const insights = analyzeSpending(filteredData);
-  //     setSpendingInsights(insights);
-  //   } catch (err) {
-  //     setError(err.message || 'An error occurred');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const fetchTransactions = async () => {
     if (!user) return;
@@ -460,20 +418,23 @@ const [customEndDate, setCustomEndDate] = useState('');
 
     return (
       <tr key={transaction.id}>
-        <td className="px-4 text-base py-4 whitespace-nowrap">
+        <td className="px-4 text-gray-600 text-base py-4 whitespace-nowrap">
           {format(new Date(transaction.transaction_date), "MMM d, yyyy")}
         </td>
-        <td className="px-4 py-4 text-base ">{transaction.description}</td>
+        <td className="px-4 text-gray-600 py-4 text-base ">{transaction.description}</td>
         <td className="px-4 py-4 whitespace-nowrap">
           {getCategoryIcon(transaction.category)}
         </td>
+        
+
         <td
           className={`px-4 py-4 whitespace-nowrap ${
             transaction.amount >= 0 ? "text-gray-600" : "text-red-400"
           }`}
         >
-          ${Math.abs(transaction.amount).toFixed(2)}
+          ${formatMoney(Math.abs(transaction.amount))}
         </td>
+
         <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
           <div className="flex justify-end gap-2">
             <button
@@ -871,59 +832,65 @@ const [customEndDate, setCustomEndDate] = useState('');
                         step="0.01"
                       />
                     </div>
-                    <div className="flex justify-end gap-2">
+                    <div className=" flex justify-end gap-2">
                       <button
                         onClick={handleSave}
-                        className="text-green-600 hover:text-green-900"
+                        className="m-2 p-2 bg-gray-50 rounded text-green-600 hover:text-green-900"
                       >
                         <Save className="h-7 w-7" />
                       </button>
                       <button
                         onClick={handleCancelEdit}
-                        className="text-gray-600 hover:text-gray-900"
+                        className="m-2 p-2 bg-gray-50 rounded text-gray-600 hover:text-gray-900"
                       >
-                        <X className="h-5 w-5" />
+                        <X className="h-7 w-7" />
                       </button>
                     </div>
                   </div>
                 ) : (
                   <>
-                    <div className="flex justify-between items-center">
-                      <div className="text-sm font-medium text-gray-900">
-                        {format(new Date(transaction.transaction_date), "MMM d, yyyy")}
-                      </div>
-                      <div
-                        className={`text-sm ${
-                          transaction.amount >= 0 ? "text-green-600" : "text-red-600"
-                        }`}
-                      >
-                        ${Math.abs(transaction.amount).toFixed(2)}
-                      </div>
+                  <div className="flex justify-between items-center">
+                    <div className="text-sm font-medium text-gray-900">
+                      {format(new Date(transaction.transaction_date), "MMM d, yyyy")}
                     </div>
-                    <div className="mt-2 text-sm text-gray-500">
-                      {transaction.description}
+                    <div
+                      className={`text-sm ${
+                        transaction.amount >= 0 ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
+                      ${Math.abs(transaction.amount).toFixed(2)}
                     </div>
-                    <div className="mt-2 flex items-center gap-2">
-                      {getCategoryIcon(transaction.category)}
-                      <span className="text-sm text-gray-700">
-                        {transaction.category}
-                      </span>
-                    </div>
-                    <div className="mt-2 flex gap-2">
-                      <button
-                        onClick={() => handleEdit(transaction)}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        <Edit2 className="h-7 w-7" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(transaction.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        <Trash2 className="h-7 w-7" />
-                      </button>
-                    </div>
-                  </>
+                  </div>
+                
+                  <div className="mt-2 text-sm text-gray-500">
+                    {transaction.description}
+                  </div>
+                
+                  <div className="mt-2 flex items-center gap-2">
+                    {getCategoryIcon(transaction.category)}
+                    <span className="text-sm text-gray-700">
+                      {transaction.category}
+                    </span>
+                  </div>
+                
+                  <div className="mt-2 flex justify-end space-x-4">
+
+                  <button
+                      onClick={() => handleDelete(transaction.id)}
+                      className="p-2 bg-gray-50 rounded text-red-600 hover:text-red-900"
+                    >
+                      <Trash2 className="h-7 w-7" />
+                    </button> 
+                    <button
+                      onClick={() => handleEdit(transaction)}
+                      className="p-2 bg-gray-50 rounded text-blue-600 hover:text-blue-900"
+                    >
+                      <Edit2 className="h-7 w-7" />
+                    </button>
+                   
+                  </div>
+                </>
+                
                 )}
               </div>
             ))}
