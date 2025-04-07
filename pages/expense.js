@@ -486,7 +486,7 @@ const [customEndDate, setCustomEndDate] = useState('');
         </div>
 
 
-        <div className="p-6 mt-4 mb-5 bg-gray-50 text-gray-900 shadow-md border border-gray-300  flex flex-col items-center text-center">
+        <div className="p-6 mt-4 mb-5 bg-gray-50 text-gray-900  flex flex-col items-center text-center">
           <div className="flex items-center gap-2 mb-2">
             <label className="text-lg font-semibold tracking-wide">Monthly Spending</label>
           </div>

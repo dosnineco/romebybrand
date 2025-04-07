@@ -21,14 +21,14 @@
 
 
 ::selection{
-  background-color: #348656;
+  background-color: #ffc107;
   color:#fff;
 }
 
 /* Default Dosnine Theme */
 .Default {
-  --bkg: #fff;       /* Softer, premium off-white */
-  --primary:#50a76d;   /* Richer blue for a more modern, tech feel */
+  --bkg: #fcfcfc;       /* Softer, premium off-white */
+  --primary:#ffc107;   /* Richer blue for a more modern, tech feel */
   --shade: #2b2b2b; 
 }
  

@@ -27,6 +27,7 @@ export default function Home() {
 
 
       <Hero />
+      
       <PricingComponent />
             {/* Features Section */}
     
