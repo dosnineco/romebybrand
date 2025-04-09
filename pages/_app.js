@@ -10,6 +10,7 @@ import PageViewTracker from '../components/Misc/PageViewTracker';
 
 function SaveUserToDatabase() {
   const { user } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     const saveUserToDatabase = async () => {
@@ -22,6 +23,7 @@ function SaveUserToDatabase() {
                 clerk_id: user.id,
                 email: user.primaryEmailAddress?.emailAddress,
                 full_name: user.fullName,
+                is_subscribed: false, // Add a field to track subscription status
               },
               { onConflict: 'clerk_id' }
             );
@@ -30,6 +32,11 @@ function SaveUserToDatabase() {
             console.error('Error saving user to database:', error);
           } else {
             console.log('User saved to database:', data);
+
+            // Redirect to pricing page if the user is not subscribed
+            if (!data[0]?.is_subscribed) {
+              router.push('/pricing');
+            }
           }
         } catch (err) {
           console.error('Unexpected error saving user:', err);
@@ -38,18 +45,33 @@ function SaveUserToDatabase() {
     };
 
     saveUserToDatabase();
-  }, [user]);
+  }, [user, router]);
 
   return null;
 }
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  const publicRoutes = ['/', '/tools']; // Allow home and all blog pages
+  const publicRoutes = ['/', '/tools','/pricing']; // Allow home and all blog pages
 
   const isPublicRoute = publicRoutes.some((route) =>
     router.pathname === route || router.pathname.startsWith(`${route}/`)
   );
+
+  useEffect(() => {
+    // Load Paddle script
+    const script = document.createElement('script');
+    script.src = 'https://cdn.paddle.com/paddle/paddle.js';
+    script.async = true;
+    script.onload = () => {
+      window.Paddle.Setup({ vendor: 223616 });
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   return (
     <ClerkProvider {...pageProps}>
