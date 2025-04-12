@@ -8,17 +8,10 @@ import Layout from '../components/Misc/Layout';
 import Header from '../components/Headers/Header';
 import Footer from '../components/Footers/Footer';
 import PageViewTracker from '../components/Misc/PageViewTracker';
-import { Analytics } from "@vercel/analytics/react";
 
-function MyApp({ Component, pageProps }) {
-  const router = useRouter();
-  const publicRoutes = ['/', '/tools', '/pricing']; // Define public routes
-  const isPublicRoute = publicRoutes.some((route) =>
-    router.pathname === route || router.pathname.startsWith(`${route}/`)
-  );
-
+function Paywall({ isSubscribed, setIsSubscribed }) {
   const { user } = useUser();
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,7 +42,7 @@ function MyApp({ Component, pageProps }) {
     checkSubscription();
   }, [user]);
 
-  const handlePaymentSuccess = async () => {
+  const handlePaymentSuccess = async (paymentId) => {
     if (user) {
       try {
         const { data, error } = await supabase
@@ -61,6 +54,8 @@ function MyApp({ Component, pageProps }) {
               full_name: user.fullName,
               is_subscribed: true,
               subscription_date: new Date().toISOString(),
+              payment_id: paymentId, // Save the PayPal payment ID
+              payment_status: 'completed', // Mark the payment as completed
             },
             { onConflict: 'clerk_id' }
           );
@@ -86,9 +81,9 @@ function MyApp({ Component, pageProps }) {
     );
   }
 
-  if (!isSubscribed && !isPublicRoute) {
+  if (!isSubscribed) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex flex-col w-full items-center justify-center min-h-screen bg-gray-50">
         <h1 className="text-2xl font-bold mb-4">Complete Your Subscription</h1>
         <PayPalScriptProvider options={{ "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}>
           <PayPalButtons
@@ -105,8 +100,9 @@ function MyApp({ Component, pageProps }) {
               });
             }}
             onApprove={(data, actions) => {
-              return actions.order.capture().then(() => {
-                handlePaymentSuccess(); // Mark payment as complete and save subscription
+              return actions.order.capture().then((details) => {
+                const paymentId = details.id; // Get the PayPal payment ID
+                handlePaymentSuccess(paymentId); // Save the payment details
               });
             }}
             onError={(err) => {
@@ -117,6 +113,18 @@ function MyApp({ Component, pageProps }) {
       </div>
     );
   }
+
+  return null; // If subscribed, render nothing here
+}
+
+function MyApp({ Component, pageProps }) {
+  const router = useRouter();
+  const publicRoutes = ['/', '/tools', '/pricing']; // Define public routes
+  const isPublicRoute = publicRoutes.some((route) =>
+    router.pathname === route || router.pathname.startsWith(`${route}/`)
+  );
+
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
   return (
     <ClerkProvider {...pageProps}>
@@ -133,7 +141,11 @@ function MyApp({ Component, pageProps }) {
         <SignedIn>
           <Header />
           <Layout className="container mx-auto px-4 py-8">
-            <Component {...pageProps} />
+            {!isSubscribed ? (
+              <Paywall isSubscribed={isSubscribed} setIsSubscribed={setIsSubscribed} />
+            ) : (
+              <Component {...pageProps} />
+            )}
           </Layout>
           <Footer />
         </SignedIn>
@@ -142,14 +154,13 @@ function MyApp({ Component, pageProps }) {
         <SignedOut>
           <div className="flex items-center justify-center min-h-screen bg-gray-50">
             <div className="text-center">
-              <h1 className="text-4xl font-bold text-primary-color mb-4">Welcome to Expense Goose</h1>
               <p className="text-xl text-inherit mb-6">Please sign in to continue.</p>
               <div className="flex space-x-4 justify-center">
-                <SignInButton>
-                  <button className="px-6 py-3 text-white bg-primary-color rounded-lg shadow-lg">Sign In</button>
+              <SignInButton>
+                  <button className="px-6 py-3 text-gray-900 bg-primary-color rounded-lg ">Sign In</button>
                 </SignInButton>
                 <SignUpButton>
-                  <button className="px-6 py-3 text-white bg-primary-color rounded-lg shadow-lg">Sign Up</button>
+                  <button className="px-6 py-3 text-white bg-gray-900 rounded-lg ">Sign Up</button>
                 </SignUpButton>
               </div>
             </div>

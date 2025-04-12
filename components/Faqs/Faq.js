@@ -5,13 +5,12 @@ const FAQ = () => {
   const faqs = [
     {question:'do expense goose track travel expenses? ',answer:'Yes, it tracks all expenses.'},
     
-    {question: 'What is Expense goose?', answer: 'it is a free expense tracking software for small businesses. Manage your finances with powerful expense management tools and tracking software.'},
-    {question: 'How do I get started?', answer: 'Check out a live demo. at https://www.expensegoose.com'}, 
-    {question:'How much does it cost?', answer: 'It is free for small businesses and personal use.'},
+    {question: 'What is Expense goose?', answer: 'it is a expense tracking software for small businesses. Manage your finances with powerful expense management tools and tracking software.'},
+    {question:'How much does it cost?', answer: 'It is 15USD for small businesses and personal use.'},
     {question: 'What are the benefits of using Expense Goose?', answer: 'Expense Goose is the leading free expense tracking software for small businesses. Manage your finances with powerful expense management tools and tracking software.'},
-    {question:'Do you have a paid version?', answer: 'no, everything is free.'},
+    {question:'Do you have a paid version?', answer: 'Yes, it is 15USD for small businesses and personal use.'},
     {question:'How do I get help?', answer: 'You can contact us at https://www.expensegoose.com/contact-us'},
-    {question:'what is the best way to track expenses?', answer: 'Expense Goose is the leading free expense tracking software for small businesses. Manage your finances with powerful expense management tools and tracking software.'},
+    {question:'what is the best way to track expenses?', answer: 'The best way to track expenses is to use a software that allows you to categorize and track your expenses in real-time.'},
 
   ];
 

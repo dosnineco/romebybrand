@@ -53,12 +53,7 @@ const Header = () => {
         {/* Navigation Links */}
         <div className="hidden md:flex items-center space-x-4">
           <SignedIn>
-            <Link href="/pricing" className="text-inherit text-sm font-bold">
-              Pricing
-            </Link>
-            <Link href="/tools" className="text-inherit text-sm font-bold">
-              Tools
-            </Link>
+  
             <Link href="/dashboard" className="text-inherit text-sm font-bold">
               Dashboard
             </Link>
@@ -66,12 +61,8 @@ const Header = () => {
           </SignedIn>
 
           <SignedOut>
-            <Link href="/tools" className="text-inherit text-sm font-bold">
-              Tools
-            </Link>
-            <Link href="/pricing" className="text-inherit text-sm font-bold">
-              Pricing
-            </Link>
+
+        
             <Link href="/dashboard" className="text-inherit text-sm font-bold">
               Login
             </Link>
@@ -109,20 +100,7 @@ const Header = () => {
             </SignedIn>
 
             <SignedOut>
-              <Link
-                href="/tools"
-                className="text-gray-700 text-sm font-bold"
-                onClick={() => setIsOpen(false)}
-              >
-                Tools
-              </Link>
-              <Link
-                href="/pricing"
-                className="text-gray-700 text-sm font-bold"
-                onClick={() => setIsOpen(false)}
-              >
-                Pricing
-              </Link>
+            
               <Link
                 href="/dashboard"
                 className="text-gray-700 text-sm font-bold"

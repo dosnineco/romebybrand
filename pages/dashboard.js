@@ -16,12 +16,10 @@ import {
   ClipboardList
 } from "lucide-react";
 
-
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const tools = [
-
     {
       title: "Expenses",
       description: "Track and analyze your spending data",
@@ -45,6 +43,7 @@ function App() {
       path: "monthly-budget-calculator",
       color: "text-yellow-600",
       bgHover: "hover:bg-yellow-50",
+      comingSoon: true,
     },
     {
       title: "Emergency Fund Calculator",
@@ -53,6 +52,7 @@ function App() {
       path: "emergency-fund-calculator",
       color: "text-red-600",
       bgHover: "hover:bg-red-50",
+      comingSoon: true,
     },
     {
       title: "Retirement Spending Calculator",
@@ -61,6 +61,7 @@ function App() {
       path: "retirement-spending-calculator",
       color: "text-indigo-600",
       bgHover: "hover:bg-indigo-50",
+      comingSoon: true,
     },
     {
       title: "Grocery Budget Calculator",
@@ -69,6 +70,7 @@ function App() {
       path: "grocery-budget-calculator",
       color: "text-pink-600",
       bgHover: "hover:bg-pink-50",
+      comingSoon: true,
     },
     {
       title: "Relocation Calculator",
@@ -77,6 +79,7 @@ function App() {
       path: "relocation-calculator",
       color: "text-teal-600",
       bgHover: "hover:bg-teal-50",
+      comingSoon: true,
     },
     {
       title: "Cost of Living Comparison",
@@ -85,6 +88,7 @@ function App() {
       path: "cost-of-living-comparison",
       color: "text-amber-600",
       bgHover: "hover:bg-amber-50",
+      comingSoon: true,
     },
     {
       title: "Net Worth Calculator",
@@ -93,6 +97,7 @@ function App() {
       path: "net-worth-calculator",
       color: "text-lime-600",
       bgHover: "hover:bg-lime-50",
+      comingSoon: true,
     },
     {
       title: "Saving Money Tips",
@@ -101,6 +106,7 @@ function App() {
       path: "saving-money",
       color: "text-rose-600",
       bgHover: "hover:bg-rose-50",
+      comingSoon: true,
     },
     {
       title: "Every Dollar Tool",
@@ -109,6 +115,7 @@ function App() {
       path: "every-dollar",
       color: "text-cyan-600",
       bgHover: "hover:bg-cyan-50",
+      comingSoon: true,
     },
     {
       title: "You Need a Budget",
@@ -117,6 +124,7 @@ function App() {
       path: "you-need-a-budget",
       color: "text-emerald-600",
       bgHover: "hover:bg-emerald-50",
+      comingSoon: true,
     },
     {
       title: "Zero-Based Budgeting",
@@ -125,6 +133,7 @@ function App() {
       path: "zero-based-budgeting",
       color: "text-fuchsia-600",
       bgHover: "hover:bg-fuchsia-50",
+      comingSoon: true,
     },
     {
       title: "Define Budget",
@@ -133,6 +142,7 @@ function App() {
       path: "define-budget",
       color: "text-sky-600",
       bgHover: "hover:bg-sky-50",
+      comingSoon: true,
     },
     {
       title: "Cost of Living Comparison (Cities)",
@@ -141,6 +151,7 @@ function App() {
       path: "cost-of-living-comparison-by-city",
       color: "text-gray-700",
       bgHover: "hover:bg-gray-100",
+      comingSoon: true,
     },
     {
       title: "Saving Money Calculator",
@@ -149,7 +160,9 @@ function App() {
       path: "saving-money-calculator",
       color: "text-stone-600",
       bgHover: "hover:bg-stone-50",
+      comingSoon: true,
     },
+ 
   ];
   
   const filteredTools = tools.filter(tool =>
@@ -163,11 +176,9 @@ function App() {
         <div className="bg-white rounded-xl shadow-sm p-6 md:p-8">
           {/* Header */}
           <div className="mb-8">
-    
             <p className="text-inherit font-semibold text-xl mb-2">
-            <Settings className="animate-spin	 inline mr-2"/>
-
-            Dashboard
+              <Settings className=" inline mr-2" />
+              Dashboard
             </p>
           </div>
 
@@ -184,10 +195,25 @@ function App() {
           </div>
 
           {/* Tools Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             {filteredTools.map((tool) => {
               const Icon = tool.icon;
-              return (
+              return tool.comingSoon ? (
+                <div
+                  key={tool.title}
+                  className={`group block p-3 py-2 rounded-lg border border-gray-200 transition-all duration-200 ${tool.bgHover}`}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className={`p-2 rounded-lg ${tool.color} bg-opacity-10`}>
+                      <Icon className="w-6 h-6 text-gray-400" />
+                    </div>
+                    <h2 className="text-base font-semibold text-gray-400">
+                      {tool.title}
+                    </h2>
+                  </div>
+                  <p className="text-gray-400 text-sm italic">Coming Soon</p>
+                </div>
+              ) : (
                 <a
                   key={tool.path}
                   href={tool.path}
@@ -197,13 +223,11 @@ function App() {
                     <div className={`p-2 rounded-lg ${tool.color} bg-opacity-10`}>
                       <Icon className={`w-6 h-6 ${tool.color}`} />
                     </div>
-                    <h2 className="text-lg font-semibold text-inherit">
+                    <h2 className="text-base font-semibold text-inherit">
                       {tool.title}
                     </h2>
                   </div>
-                  <p className="text-inherit text-sm">
-                    {tool.description}
-                  </p>
+                  <p className="text-inherit text-sm">{tool.description}</p>
                 </a>
               );
             })}
