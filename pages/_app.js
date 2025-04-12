@@ -28,6 +28,8 @@ function Paywall({ isSubscribed, setIsSubscribed }) {
             console.error('Error fetching subscription status:', error);
           } else if (data?.is_subscribed) {
             setIsSubscribed(true); // User is subscribed
+          } else {
+            setIsSubscribed(false); // User is not subscribed
           }
         } catch (err) {
           console.error('Unexpected error checking subscription:', err);
@@ -42,38 +44,7 @@ function Paywall({ isSubscribed, setIsSubscribed }) {
     checkSubscription();
   }, [user]);
 
-  // const handlePaymentSuccess = async (paymentId) => {
-  //   if (user) {
-  //     try {
-  //       const { data, error } = await supabase
-  //         .from('users')
-  //         .upsert(
-  //           {
-  //             clerk_id: user.id,
-  //             email: user.primaryEmailAddress?.emailAddress,
-  //             full_name: user.fullName,
-  //             is_subscribed: true,
-  //             subscription_date: new Date().toISOString(),
-  //             payment_id: paymentId, // Save the PayPal payment ID
-  //             payment_status: 'completed', // Mark the payment as completed
-  //           },
-  //           { onConflict: 'clerk_id' }
-  //         );
-
-  //       if (error) {
-  //         console.error('Error saving subscription:', error);
-  //       } else {
-  //         console.log('Subscription saved:', data);
-  //         setIsSubscribed(true); // Update the state to reflect the subscription
-  //         router.push('/dashboard'); // Redirect to the dashboard after payment
-  //       }
-  //     } catch (err) {
-  //       console.error('Unexpected error saving subscription:', err);
-  //     }
-  //   }
-  // };
-  const handlePaymentSuccess = async (paymentId) => {
-    console.log('Payment successful, paymentId:', paymentId);
+  const handlePaymentSuccess = async () => {
     if (user) {
       try {
         const { data, error } = await supabase
@@ -85,55 +56,23 @@ function Paywall({ isSubscribed, setIsSubscribed }) {
               full_name: user.fullName,
               is_subscribed: true,
               subscription_date: new Date().toISOString(),
-              payment_id: paymentId,
-              payment_status: 'completed',
             },
             { onConflict: 'clerk_id' }
           );
-  
+
         if (error) {
           console.error('Error saving subscription:', error);
         } else {
           console.log('Subscription saved:', data);
           setIsSubscribed(true);
-          router.push('/dashboard');
+          router.push('/dashboard'); // Redirect to dashboard after payment
         }
       } catch (err) {
         console.error('Unexpected error saving subscription:', err);
       }
     }
   };
-  
-  useEffect(() => {
-    console.log('Checking subscription status...');
-    const checkSubscription = async () => {
-      if (user) {
-        try {
-          const { data, error } = await supabase
-            .from('users')
-            .select('is_subscribed')
-            .eq('clerk_id', user.id)
-            .single();
-  
-          if (error) {
-            console.error('Error fetching subscription status:', error);
-          } else {
-            console.log('Subscription status:', data?.is_subscribed);
-            setIsSubscribed(data?.is_subscribed || false);
-          }
-        } catch (err) {
-          console.error('Unexpected error checking subscription:', err);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
-      }
-    };
-  
-    checkSubscription();
-  }, [user]);
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -154,16 +93,15 @@ function Paywall({ isSubscribed, setIsSubscribed }) {
                 purchase_units: [
                   {
                     amount: {
-                      value: '0.99', // Subscription amount
+                      value: '4.99', // Subscription amount
                     },
                   },
                 ],
               });
             }}
             onApprove={(data, actions) => {
-              return actions.order.capture().then((details) => {
-                const paymentId = details.id; // Get the PayPal payment ID
-                handlePaymentSuccess(paymentId); // Save the payment details
+              return actions.order.capture().then(() => {
+                handlePaymentSuccess(); // Mark payment as complete and save subscription
               });
             }}
             onError={(err) => {
@@ -215,13 +153,14 @@ function MyApp({ Component, pageProps }) {
         <SignedOut>
           <div className="flex items-center justify-center min-h-screen bg-gray-50">
             <div className="text-center">
+              <h1 className="text-4xl font-bold text-primary-color mb-4">Welcome to Expense Goose</h1>
               <p className="text-xl text-inherit mb-6">Please sign in to continue.</p>
               <div className="flex space-x-4 justify-center">
-              <SignInButton>
-                  <button className="px-6 py-3 text-gray-900 bg-primary-color rounded-lg ">Sign In</button>
+                <SignInButton>
+                  <button className="px-6 py-3 text-white bg-primary-color rounded-lg shadow-lg">Sign In</button>
                 </SignInButton>
                 <SignUpButton>
-                  <button className="px-6 py-3 text-white bg-gray-900 rounded-lg ">Sign Up</button>
+                  <button className="px-6 py-3 text-white bg-primary-color rounded-lg shadow-lg">Sign Up</button>
                 </SignUpButton>
               </div>
             </div>
