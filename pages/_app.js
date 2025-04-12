@@ -96,7 +96,7 @@ function MyApp({ Component, pageProps }) {
                   purchase_units: [
                     {
                       amount: {
-                        value: '0.1', // Subscription amount
+                        value: '4.99', // Subscription amount
                       },
                     },
                   ],
