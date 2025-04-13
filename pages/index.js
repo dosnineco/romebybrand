@@ -219,10 +219,27 @@ function Tools() {
         <div className="bg-white rounded-xl shadow-sm p-6 md:p-8">
           {/* Header */}
           <div className="mb-8">
-            <p className="text-inherit font-semibold text-xl mb-2">
-              <Settings className=" inline mr-2" />
+            <p className="text-inherit capitalize font-bold text-xl mb-2">
+              {/* <Settings className=" inline mr-2" /> */}
               Track spending with 100+ financial tools.
             </p>
+            <div className="mt-6">
+          <a
+            href="https://www.producthunt.com/posts/expense-goose?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-expense&#0045;goose"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=950226&theme=dark&t=1743996217555"
+              alt="Expense&#0032;Goose - Track&#0032;spending&#0032;with&#0032;100&#0043;&#0032;free&#0032;financial&#0032;tools&#0046; | Product Hunt"
+              style={{ width: '250px', height: '54px' }}
+              width="250"
+              height="54"
+            />
+
+            
+          </a>
+        </div>
           </div>
 
           {/* Search */}
@@ -297,6 +314,7 @@ export default function Home() {
 
 
       {/* <Hero /> */}
+
       <Tools /> 
       <PricingComponent />
       <Faq />
