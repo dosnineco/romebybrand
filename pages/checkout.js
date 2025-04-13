@@ -122,7 +122,7 @@ export default function Payment() {
                 purchase_units: [
                   {
                     amount: {
-                      value: '4.99', // Subscription amount
+                      value: '0.01', // Subscription amount
                     },
                   },
                 ],
