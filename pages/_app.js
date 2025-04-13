@@ -123,7 +123,7 @@ function MyApp({ Component, pageProps }) {
     router.pathname === route || router.pathname.startsWith(`${route}/`)
   );
 
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(true);
 
   return (
     <ClerkProvider {...pageProps}>
