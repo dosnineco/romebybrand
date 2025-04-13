@@ -85,7 +85,7 @@ const PricingComponent = () => {
               </ul>
 
               <a
-                href="/dashboard"
+                href="/checkout"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-white hover:bg-gray-300 text-black font-bold py-4 px-8 rounded-xl transition-colors duration-200 text-center block"

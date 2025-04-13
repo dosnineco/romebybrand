@@ -1,120 +1,10 @@
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { ClerkProvider, SignedIn, SignedOut, useUser, SignInButton, SignUpButton } from '@clerk/nextjs';
-import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
-import { supabase } from '../lib/supabase';
+import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton } from '@clerk/nextjs';
 import '../styles/globals.css';
 import Layout from '../components/Misc/Layout';
 import Header from '../components/Headers/Header';
 import Footer from '../components/Footers/Footer';
 import PageViewTracker from '../components/Misc/PageViewTracker';
-
-function Paywall({ isSubscribed, setIsSubscribed }) {
-  const { user } = useUser();
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkSubscription = async () => {
-      if (user) {
-        try {
-          const { data, error } = await supabase
-            .from('users')
-            .select('is_subscribed')
-            .eq('clerk_id', user.id)
-            .single();
-
-          if (error) {
-            console.error('Error fetching subscription status:', error);
-          } else if (data?.is_subscribed) {
-            setIsSubscribed(true); // User is subscribed
-          } else {
-            setIsSubscribed(false); // User is not subscribed
-          }
-        } catch (err) {
-          console.error('Unexpected error checking subscription:', err);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
-      }
-    };
-
-    checkSubscription();
-  }, [user]);
-
-  const handlePaymentSuccess = async () => {
-    if (user) {
-      try {
-        const { data, error } = await supabase
-          .from('users')
-          .upsert(
-            {
-              clerk_id: user.id,
-              email: user.primaryEmailAddress?.emailAddress,
-              full_name: user.fullName,
-              is_subscribed: true,
-              subscription_date: new Date().toISOString(),
-            },
-            { onConflict: 'clerk_id' }
-          );
-
-        if (error) {
-          console.error('Error saving subscription:', error);
-        } else {
-          console.log('Subscription saved:', data);
-          setIsSubscribed(true);
-          router.push('/dashboard'); // Redirect to dashboard after payment
-        }
-      } catch (err) {
-        console.error('Unexpected error saving subscription:', err);
-      }
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  if (!isSubscribed) {
-    return (
-      <div className="flex flex-col w-full items-center justify-center min-h-screen bg-gray-50">
-        <h1 className="text-2xl font-bold mb-4">Complete Your Subscription</h1>
-        <PayPalScriptProvider options={{ "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}>
-          <PayPalButtons
-            style={{ layout: 'vertical' }}
-            createOrder={(data, actions) => {
-              return actions.order.create({
-                purchase_units: [
-                  {
-                    amount: {
-                      value: '4.99', // Subscription amount
-                    },
-                  },
-                ],
-              });
-            }}
-            onApprove={(data, actions) => {
-              return actions.order.capture().then(() => {
-                handlePaymentSuccess(); // Mark payment as complete and save subscription
-              });
-            }}
-            onError={(err) => {
-              console.error('PayPal Checkout Error:', err);
-            }}
-          />
-        </PayPalScriptProvider>
-      </div>
-    );
-  }
-
-  return null; // If subscribed, render nothing here
-}
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -122,8 +12,6 @@ function MyApp({ Component, pageProps }) {
   const isPublicRoute = publicRoutes.some((route) =>
     router.pathname === route || router.pathname.startsWith(`${route}/`)
   );
-
-  const [isSubscribed, setIsSubscribed] = useState(true);
 
   return (
     <ClerkProvider {...pageProps}>
@@ -140,11 +28,7 @@ function MyApp({ Component, pageProps }) {
         <SignedIn>
           <Header />
           <Layout className="container mx-auto px-4 py-8">
-            {!isSubscribed ? (
-              <Paywall isSubscribed={isSubscribed} setIsSubscribed={setIsSubscribed} />
-            ) : (
-              <Component {...pageProps} />
-            )}
+            <Component {...pageProps} />
           </Layout>
           <Footer />
         </SignedIn>
