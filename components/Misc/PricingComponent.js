@@ -42,7 +42,7 @@ const PricingComponent = () => {
               </div>
               {/* Dynamically display spots left */}
               <p className="text-sm text-white mb-8">
-                Save $14 off for the first {totalSpots} customers (
+                Save $11 off for the first {totalSpots} customers (
                 {spotsLeft !== null ? `${spotsLeft} left` : 'Loading...'})
               </p>
 
