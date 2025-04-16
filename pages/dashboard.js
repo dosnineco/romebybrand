@@ -21,8 +21,8 @@ function App() {
 
   const tools = [
     {
-      title: "Expenses",
-      description: "Track and analyze your spending data",
+      title: "Expenses and Savings Pro Tracker",
+      description: "Track your expenses and savings",
       icon: BarChart2,
       path: "expense",
       color: "text-orange-600",

@@ -17,6 +17,25 @@ const App = () => {
   const { user } = useUser();
   const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState({ totalCredits: 0, totalDebits: 0, netBalance: 0 });
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+
+  // Function to handle category click
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
+    setShowPopup(true);
+  };
+
+  // Function to close the popup
+  const closePopup = () => {
+    setSelectedCategory(null);
+    setShowPopup(false);
+  };
+
+  // Filter transactions by the selected category
+  const filteredTransactions = transactions.filter(
+    (transaction) => transaction.category === selectedCategory
+  );
 
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [customStartDate, setCustomStartDate] = useState('');
@@ -344,8 +363,6 @@ const [customEndDate, setCustomEndDate] = useState('');
     </div>
     );
   }
- 
-
 
 
   const renderTableRow = (transaction) => {
@@ -461,7 +478,10 @@ const [customEndDate, setCustomEndDate] = useState('');
   return (
     <div className="min-h-screen  bg-white p-4 sm:p-6">
         <div className="w-full max-w-screen-md"> {/* Added container with max width */}
-
+        <h1 className="text-3xl font-bold mb-6 text-center">Budget Calculator</h1>
+          <p className="text-lg text-gray-700 mb-6 text-center">
+          Track your expenses and savings
+          </p>
    
 
 {/* non */}
@@ -515,29 +535,72 @@ const [customEndDate, setCustomEndDate] = useState('');
             </div>
 
 
-  {spendingInsights.map((insight) => (
-    <div
-      key={insight.category}
-      className={`p-4 flex items-center col-span-1 justify-center flex-col h-48 text-center ${
-        insight.trend === "up" ? "border-red-500 bg-red-50" : "border-green-500 bg-green-50"
-      } shadow-sm`}
-    >
-      <div className="flex justify-between items-center w-full mb-1">
-        <h3 className="text-base font-semibold text-center text-gray-900 capitalize">{insight.category}</h3>
-        {insight.trend === "up" ? (
-          <AlertTriangle className="h-4 w-4 text-red-500" />
+        {spendingInsights.map((insight) => (
+          <div
+            key={insight.category}
+            className={`p-4 flex items-center col-span-1 justify-center flex-col h-48 text-center ${
+              insight.trend === "up" ? "border-red-500 bg-red-50" : "border-green-500 bg-green-50"
+            } shadow-sm`}
+            onClick={() => handleCategoryClick(insight.category)}
+            aria-label={`View transactions for ${insight.category}`}
+          >
+            <div className="flex justify-between items-center w-full mb-1">
+              <h3 className="text-base font-semibold text-center text-gray-900 capitalize">{insight.category}</h3>
+              {insight.trend === "up" ? (
+                <AlertTriangle className="h-4 w-4 text-red-500" />
+              ) : (
+                <TrendingUp className="h-4 w-4 text-green-500" />
+              )}
+            </div>
+
+            <p className="text-lg flex items-center justify-center font-bold text-center text-gray-900">${formatMoney(insight.total)}</p>
+          <p className="text-xs text-gray-700">{insight.recommendation}</p>
+          </div>
+        ))}
+
+{/* Popup */}
+{showPopup && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40">
+    <div className="bg-white rounded-2xl shadow-2xl w-11/12 max-w-lg p-6 relative overflow-y-auto max-h-[80vh]">
+      
+      {/* Close Button */}
+      <button
+        onClick={closePopup}
+        className="absolute top-2 right-2 p-2 rounded bg-gray-200 text-gray-400 hover:text-gray-700 text-xl"
+        aria-label="Close"
+      >
+        ✕
+      </button>
+
+      <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800 capitalize">
+        Transactions for {selectedCategory}
+      </h2>
+
+      {/* Transactions List */}
+      <div className="space-y-3">
+        {filteredTransactions.length > 0 ? (
+          <ol className="list-decimal pl-5 text-gray-700 text-sm md:text-base">
+            {filteredTransactions.map((transaction) => (
+              <li key={transaction.id}>
+                <span className="font-medium">{transaction.description}</span>{" "}
+                - {format(new Date(transaction.transaction_date), "MMM d, yyyy")} -{" "}
+                <span className="font-bold text-gray-900">
+                  ${formatMoney(transaction.amount)}
+                </span>
+              </li>
+            ))}
+          </ol>
         ) : (
-          <TrendingUp className="h-4 w-4 text-green-500" />
+          <p className="text-center text-gray-500">
+            No transactions found for this category.
+          </p>
         )}
       </div>
-
-      <p className="text-lg flex items-center justify-center font-bold text-center text-gray-900">${formatMoney(insight.total)}</p>
-     <p className="text-xs text-gray-700">{insight.recommendation}</p>
     </div>
-  ))}
+  </div>
+)}
 
-
-
+     
               {/* Remaining Budget */}
               <div className="p-4  flex items-center justify-center flex-col col-span-2 h-48 border border-gray-200 text-center ">
                   <label className="text-sm font-medium text-gray-900 mb-1">Remaining Budget</label>

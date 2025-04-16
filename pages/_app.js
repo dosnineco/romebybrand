@@ -37,14 +37,14 @@ function MyApp({ Component, pageProps }) {
         <SignedOut>
           <div className="flex items-center justify-center min-h-screen bg-gray-50">
             <div className="text-center">
-              <h1 className="text-4xl font-bold text-primary-color mb-4">Welcome to Expense Goose</h1>
-              <p className="text-xl text-inherit mb-6">Please sign in to continue.</p>
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to Expense Goose</h1>
+              <p className="text-xl text-gray-700 text-inherit mb-6">Please sign in to continue.</p>
               <div className="flex space-x-4 justify-center">
                 <SignInButton>
-                  <button className="px-6 py-3 text-white bg-primary-color rounded-lg shadow-lg">Sign In</button>
+                  <button className="px-6 py-3 font-bold text-white bg-gray-900 rounded-lg ">Sign In</button>
                 </SignInButton>
                 <SignUpButton>
-                  <button className="px-6 py-3 text-white bg-primary-color rounded-lg shadow-lg">Sign Up</button>
+                  <button className="px-6 py-3 font-bold text-white bg-gray-900 rounded-lg ">Sign Up</button>
                 </SignUpButton>
               </div>
             </div>

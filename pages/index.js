@@ -38,7 +38,7 @@ function Tools() {
   const tools = [
 
     {
-      title: "Expenses",
+      title: "Expenses and Savings Pro Tracker",
       description: "Track and analyze your spending data",
       icon: BarChart2,
       path: "expense",
