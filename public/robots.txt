@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://www.dosnine.com
+Host: https://www.expensegoose.com
 
 # Sitemaps
-Sitemap: https://www.dosnine.com/sitemap.xml
+Sitemap: https://www.expensegoose.com/sitemap.xml
