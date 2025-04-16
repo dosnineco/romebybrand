@@ -40,7 +40,7 @@ function Tools() {
     {
       title: "Expenses and Savings Pro Tracker",
       description: "Track and analyze your spending data",
-      icon: BarChart2,
+      icon: ClipboardList,
       path: "expense",
       color: "text-orange-600",
       bgHover: "hover:bg-orange-50",
@@ -59,8 +59,8 @@ function Tools() {
       description: "Calculate your monthly living expenses",
       icon: BarChart2,
       path: "/tools/living-expenses",
-      color: "text-orange-600",
-      bgHover: "hover:bg-orange-50",
+      color: "text-pink-600",
+      bgHover: "hover:bg-pink-50",
     },
     {
       title: "Monthly Spending Calculator",
@@ -216,29 +216,26 @@ function Tools() {
   return (
     <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-xl shadow-sm p-6 md:p-8">
+        <div className=" p-6 md:p-8">
           {/* Header */}
           <div className="mb-8">
-            <p className="text-inherit capitalize font-bold text-xl mb-2">
-              {/* <Settings className=" inline mr-2" /> */}
-              Track spending with 100+ financial tools.
+            <h1 className="text-inherit capitalize font-bold text-xl mb-2">
+              Track Spending, Budget Smarter, and Save More with 100+ Financial Tools
+            </h1>
+            <p className="text-gray-500 text-base">
+              Explore our collection of financial tools to help you manage your money better.
             </p>
+            <div className="flex items-center justify-between mt-4">
+              <a
+                href="/checkout"
+                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold"
+              >
+                Explore All Tools
+                <ArrowRight className="ml-2" />
+              </a>
+            </div>
             <div className="mt-6">
-          <a
-            href="https://www.producthunt.com/posts/expense-goose?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-expense&#0045;goose"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=950226&theme=dark&t=1743996217555"
-              alt="Expense&#0032;Goose - Track&#0032;spending&#0032;with&#0032;100&#0043;&#0032;free&#0032;financial&#0032;tools&#0046; | Product Hunt"
-              style={{ width: '250px', height: '54px' }}
-              width="250"
-              height="54"
-            />
-
-            
-          </a>
+        
         </div>
           </div>
 
@@ -255,39 +252,39 @@ function Tools() {
           </div>
 
           {/* Tools Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+          
+  {/* Tools Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
             {filteredTools.map((tool) => {
               const Icon = tool.icon;
               return tool.comingSoon ? (
                 <div
                   key={tool.title}
-                  className={`group block p-3 py-2 rounded-lg border border-gray-200 transition-all duration-200 ${tool.bgHover}`}
+                  className={`group block p-4 rounded-lg bg-gray-100 transition-all duration-200 ${tool.bgHover}`}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`p-2 rounded-lg ${tool.color} bg-opacity-10`}>
-                      <Icon className="w-6 h-6 text-gray-400" />
+                  <div className="flex items-center gap-4">
+                    <div className={`p-2 rounded-full ${tool.color} bg-opacity-10 flex items-center justify-center`}>
+                      <Icon className="w-8 h-8 text-gray-400" />
                     </div>
                     <h2 className="text-base font-semibold text-gray-400">
                       {tool.title}
                     </h2>
                   </div>
-                  <p className="text-gray-400 text-sm italic">Coming Soon</p>
                 </div>
               ) : (
                 <a
                   key={tool.path}
                   href={tool.path}
-                  className={`group block p-3 py-2 rounded-lg border border-gray-200 transition-all duration-200 ${tool.bgHover}`}
+                  className={`group block p-4 rounded-lg bg-gray-100 transition-all duration-200 ${tool.bgHover}`}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`p-2 rounded-lg ${tool.color} bg-opacity-10`}>
-                      <Icon className={`w-6 h-6 ${tool.color}`} />
+                  <div className="flex items-center gap-4">
+                    <div className={`p-2 rounded-full ${tool.color} bg-opacity-10 flex items-center justify-center`}>
+                      <Icon className={`w-8 h-8 ${tool.color}`} />
                     </div>
                     <h2 className="text-base font-semibold text-inherit">
                       {tool.title}
                     </h2>
                   </div>
-                  <p className="text-inherit text-sm">{tool.description}</p>
                 </a>
               );
             })}
@@ -319,6 +316,21 @@ export default function Home() {
       <PricingComponent />
       <Faq />
 
+      <div className="flex items-center justify-center my-8 py-4">
+          <a
+            href="https://www.producthunt.com/posts/expense-goose?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-expense&#0045;goose"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=950226&theme=dark&t=1743996217555"
+              alt="Expense&#0032;Goose - Track&#0032;spending&#0032;with&#0032;100&#0043;&#0032;free&#0032;financial&#0032;tools&#0046; | Product Hunt"
+              style={{ width: '250px', height: '54px' }}
+              width="250"
+              height="54"
+            />
+          </a>
+        </div>
     </>
   );
 }
