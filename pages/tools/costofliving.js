@@ -1,5 +1,4 @@
 import React from "react"
-import { Card, CardContent } from "@/components/ui/card"
 
 const expensesData = [
     { country: "Jamaica", cost: "$490" },
