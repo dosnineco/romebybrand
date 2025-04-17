@@ -39,13 +39,13 @@ const MonthlyCalculator = () => {
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://yourdomain.com/monthly-calculator" />
       </Head>
-      <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <div className="min-h-screen  p-4 sm:p-6">
         <div className="container mx-auto max-w-screen-md">
           <h1 className="text-3xl font-bold mb-6 text-center">Monthly Spending Calculator</h1>
           <p className="text-lg text-gray-700 mb-6 text-center">
             Estimate your monthly expenses, set a budget, and track your savings.
           </p>
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className=" p-6 rounded-lg bg-gray-100">
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Budget</label>
               <input

@@ -152,13 +152,13 @@ const SalesTracker = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="min-h-screen  p-4 sm:p-6">
       <div className="container mx-auto max-w-screen-md">
         <h1 className="text-3xl font-bold mb-6 text-center">Sales Tracker</h1>
         <p className="text-lg text-gray-700 mb-6 text-center">
           Track your sales, analyze trends, and manage your business effectively.
         </p>
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-gray-100 p-6 rounded-lg ">
           <div className="mb-6 flex justify-between items-center">
             <h2 className="text-xl font-semibold">Total Sales: ${totalSales.toFixed(2)}</h2>
             <button

@@ -20,30 +20,47 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const tools = [
+
     {
       title: "Expenses and Savings Pro Tracker",
-      description: "Track your expenses and savings",
-      icon: BarChart2,
+      description: "Track and analyze your spending data",
+      icon: ClipboardList,
       path: "expense",
       color: "text-orange-600",
       bgHover: "hover:bg-orange-50",
+      
     },
     {
-      title: "Budget Calculator",
-      description: "Plan your finances with a custom budget",
+      title: "Cost of Living Calculator",
+      description: " ",
       icon: Calculator,
-      path: "budget-calculator",
-      color: "text-purple-600",
-      bgHover: "hover:bg-purple-50",
+      path: "/tools/cost-of-living",
+      color: "text-green-600",
+      bgHover: "hover:bg-green-50",
     },
     {
-      title: "Monthly Budget Calculator",
-      description: "Get a breakdown of your monthly budget",
-      icon: ClipboardList,
-      path: "monthly-budget-calculator",
+      title: "Sales Tracker",
+      description: " ",
+      icon: Calculator,
+      path: "/tools/sales-tracker",
       color: "text-yellow-600",
       bgHover: "hover:bg-yellow-50",
-      comingSoon: true,
+    },
+    {
+      title: "Living Expenses Calculator",
+      description: "Calculate your monthly living expenses",
+      icon: BarChart2,
+      path: "/tools/living-expenses",
+      color: "text-pink-600",
+      bgHover: "hover:bg-pink-50",
+    },
+    {
+      title: "Monthly Spending Calculator",
+      description: "Estimate your monthly spending based on your income and expenses",
+      icon: Mail,
+      path: "/tools/monthly-calculator",
+      color: "text-blue-600",
+      bgHover: "hover:bg-blue-50",
     },
     {
       title: "Emergency Fund Calculator",
@@ -91,15 +108,6 @@ function App() {
       comingSoon: true,
     },
     {
-      title: "Net Worth Calculator",
-      description: "Calculate your total assets minus liabilities",
-      icon: PieChart,
-      path: "net-worth-calculator",
-      color: "text-lime-600",
-      bgHover: "hover:bg-lime-50",
-      comingSoon: true,
-    },
-    {
       title: "Saving Money Tips",
       description: "Learn how to grow your savings faster",
       icon: Wallet,
@@ -144,15 +152,7 @@ function App() {
       bgHover: "hover:bg-sky-50",
       comingSoon: true,
     },
-    {
-      title: "Cost of Living Comparison (Cities)",
-      description: "Visualize how expenses vary by location",
-      icon: MapPin,
-      path: "cost-of-living-comparison-by-city",
-      color: "text-gray-700",
-      bgHover: "hover:bg-gray-100",
-      comingSoon: true,
-    },
+    
     {
       title: "Saving Money Calculator",
       description: "Project how much you can save over time",
@@ -173,7 +173,7 @@ function App() {
   return (
     <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-xl shadow-sm p-6 md:p-8">
+        <div className="bg-white rounded-xl  p-6 md:p-8">
           {/* Header */}
           <div className="mb-8">
             <p className="text-inherit font-semibold text-xl mb-2">
@@ -194,40 +194,38 @@ function App() {
             />
           </div>
 
-          {/* Tools Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+        {/* Tools Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
             {filteredTools.map((tool) => {
               const Icon = tool.icon;
               return tool.comingSoon ? (
                 <div
                   key={tool.title}
-                  className={`group block p-3 py-2 rounded-lg border border-gray-200 transition-all duration-200 ${tool.bgHover}`}
+                  className={`group block p-4 rounded-lg bg-gray-100 transition-all duration-200 ${tool.bgHover}`}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`p-2 rounded-lg ${tool.color} bg-opacity-10`}>
-                      <Icon className="w-6 h-6 text-gray-400" />
+                  <div className="flex items-center gap-4">
+                    <div className={`p-2 rounded-full ${tool.color} bg-opacity-10 flex items-center justify-center`}>
+                      <Icon className="w-8 h-8 text-gray-400" />
                     </div>
                     <h2 className="text-base font-semibold text-gray-400">
                       {tool.title}
                     </h2>
                   </div>
-                  <p className="text-gray-400 text-sm italic">Coming Soon</p>
                 </div>
               ) : (
                 <a
                   key={tool.path}
                   href={tool.path}
-                  className={`group block p-3 py-2 rounded-lg border border-gray-200 transition-all duration-200 ${tool.bgHover}`}
+                  className={`group block p-4 rounded-lg bg-gray-100 transition-all duration-200 ${tool.bgHover}`}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`p-2 rounded-lg ${tool.color} bg-opacity-10`}>
-                      <Icon className={`w-6 h-6 ${tool.color}`} />
+                  <div className="flex items-center gap-4">
+                    <div className={`p-2 rounded-full ${tool.color} bg-opacity-10 flex items-center justify-center`}>
+                      <Icon className={`w-8 h-8 ${tool.color}`} />
                     </div>
                     <h2 className="text-base font-semibold text-inherit">
                       {tool.title}
                     </h2>
                   </div>
-                  <p className="text-inherit text-sm">{tool.description}</p>
                 </a>
               );
             })}

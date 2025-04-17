@@ -476,17 +476,30 @@ const [customEndDate, setCustomEndDate] = useState('');
     return amount.toLocaleString("en-US", { minimumFractionDigits: 2 });
   };
   return (
-    <div className="min-h-screen  bg-white p-4 sm:p-6">
+    <div className="min-h-screen   p-4 sm:p-6">
         <div className="w-full max-w-screen-md"> {/* Added container with max width */}
         <h1 className="text-3xl font-bold mb-6 text-center">Budget Calculator</h1>
           <p className="text-lg text-gray-700 mb-6 text-center">
           Track your expenses and savings
           </p>
-   
+          
+          <div className="p-2 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg mb-4">
+  <div className="flex flex-col md:flex-row items-center justify-between text-center">
+    <p className="text-sm mb-2 md:mb-0">
+      Go to the settings page to configure your monthly budget and category limits.
+    </p>
+    <button
+      className="bg-yellow-500 text-white p-2 rounded-lg flex items-center  justify-center hover:bg-yellow-600 transition"
+      onClick={() => router.push('/settings')}
+    >
+      <Settings className="w-5 h-5 mr-2 " />
+    </button>
+  </div>
+</div>
 
 {/* non */}
       <div className="w-full mx-auto">
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between mb-4 ">
               {/* Left-aligned button */}
 
               <button
@@ -506,24 +519,49 @@ const [customEndDate, setCustomEndDate] = useState('');
         </div>
 
 
-        <div className="p-6 mt-4 mb-5 bg-gray-50 text-gray-900  flex flex-col items-center text-center">
-          <div className="flex items-center gap-2 mb-2">
-            <label className="text-lg font-semibold tracking-wide">Monthly Spending</label>
-          </div>
-          <input
-            type="text"
-            value={`$${formatMoney(monthlySpending)}`}
-            readOnly
-            className="w-full text-2xl font-bold bg-transparent text-center outline-none tracking-wide"
-          />
-          <p className="mt-2 text-sm text-gray-600">Stay in control of your expenses.</p>
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+  {/* Monthly Spending */}
+  <div className="p-6 bg-gray-100 rounded-lg  text-gray-900 flex flex-col items-center text-center">
+    <div className="flex items-center gap-2 mb-2">
+      <label className="text-lg font-semibold tracking-wide">Monthly Spending</label>
+    </div>
+    <input
+      type="text"
+      value={`$${formatMoney(monthlySpending)}`}
+      readOnly
+      className="w-full text-2xl font-bold bg-transparent text-center outline-none tracking-wide"
+    />
+    <p className="mt-2 text-sm text-gray-600">Stay in control of your expenses.</p>
+  </div>
+
+  {/* Remaining Budget */}
+  <div className="p-6 bg-gray-100 rounded-lg text-gray-900 flex flex-col items-center text-center">
+    <div className="flex items-center gap-2 mb-2">
+      <label className="text-lg font-semibold tracking-wide">Remaining Budget</label>
+    </div>
+    <input
+      type="text"
+      value={`$${formatMoney(weeklyBudget * 4 - monthlySpending)}`}
+      readOnly
+      
+      className="w-full text-2xl font-bold bg-transparent text-center outline-none tracking-wide"
+    />
+    {monthlySpending > weeklyBudget * 4 && (
+      <p className="text-red-600 text-sm mt-2">Warning: You’ve exceeded your budget!</p>
+
+    )}
+  </div>
+</div>
+
     <div className="mt-4 mb-5 grid  sm:grid-cols-1 md:grid-cols-3  gap-4">
 
+
+        
+
          {/* Savings Progress */}
-         <div className="flex items-center justify-center flex-col p-5 bg-white col-span-2  h-48  border border-gray-200">
+         <div className="flex items-center justify-center flex-col p-5 rounded-lg col-span-2  h-48  border border-gray-100">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">Savings Progress</h2>
-              <div className="relative  w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+              <div className="relative  w-full bg-gray-200 rounded-lg h-4 overflow-hidden">
                 <div
                   className="absolute top-0 left-0 h-4 bg-green-500 rounded-full transition-all duration-500"
                   style={{ width: `${savingsProgress}%` }}
@@ -538,18 +576,18 @@ const [customEndDate, setCustomEndDate] = useState('');
         {spendingInsights.map((insight) => (
           <div
             key={insight.category}
-            className={`p-4 flex items-center col-span-1 justify-center flex-col h-48 text-center ${
-              insight.trend === "up" ? "border-red-500 bg-red-50" : "border-green-500 bg-green-50"
-            } shadow-sm`}
+            className={`p-4 flex items-center col-span-1 rounded-lg justify-center flex-col h-48 text-center ${
+              insight.trend === "up" ? "border-orange-900 bg-orange-100" : "border-green-900 bg-green-100"
+            } `}
             onClick={() => handleCategoryClick(insight.category)}
             aria-label={`View transactions for ${insight.category}`}
           >
             <div className="flex justify-between items-center w-full mb-1">
               <h3 className="text-base font-semibold text-center text-gray-900 capitalize">{insight.category}</h3>
               {insight.trend === "up" ? (
-                <AlertTriangle className="h-4 w-4 text-red-500" />
+                <AlertTriangle className="h-4 w-4 text-red-900" />
               ) : (
-                <TrendingUp className="h-4 w-4 text-green-500" />
+                <TrendingUp className="h-4 w-4 text-green-900" />
               )}
             </div>
 
@@ -601,21 +639,7 @@ const [customEndDate, setCustomEndDate] = useState('');
 )}
 
      
-              {/* Remaining Budget */}
-              <div className="p-4  flex items-center justify-center flex-col col-span-2 h-48 border border-gray-200 text-center ">
-                  <label className="text-sm font-medium text-gray-900 mb-1">Remaining Budget</label>
-                  <input
-                    type="text"
-                    value={`$${formatMoney(weeklyBudget * 4 - monthlySpending)}`}
-                    readOnly
-                    className={`w-full rounded-md px-3 py-2 text-center font-semibold ${
-                      monthlySpending > weeklyBudget * 4 ? "bg-red-200 text-red-900" : "bg-white text-gray-900"
-                    }`}
-                  />
-                  {monthlySpending > weeklyBudget * 4 && (
-                    <p className="text-red-600 text-sm mt-2">Warning: You’ve exceeded your budget!</p>
-                  )}
-                </div>
+            
 
 </div>
 
@@ -624,7 +648,7 @@ const [customEndDate, setCustomEndDate] = useState('');
         <div className="mb-6 flex justify-center">
           <button
             onClick={() => setShowAddForm(true)}
-            className="flex items-center justify-center bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition duration-200"
+            className="flex items-center justify-center bg-green-500 text-white px-6 py-3 rounded-lg  hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition duration-200"
             aria-label="Add New Transaction"
           >
             <PlusCircle className="w-6 h-6 mr-2" />
@@ -753,8 +777,8 @@ const [customEndDate, setCustomEndDate] = useState('');
         onClick={() => fetchTransactions()}
         className="bg-blue-500 text-sm text-center items-center justify-center center text-white px-4 py-2 rounded-lg"
       >
-        <TiRefresh className="h-6 w-6 inline mr-2" />
-          Refresh 
+        {/* <TiRefresh className="h-6 w-6 inline mr-2" /> */}
+          Apply changes ...
       </button>
     </div>
   </div>
@@ -814,11 +838,11 @@ const [customEndDate, setCustomEndDate] = useState('');
 </div>
 
         {/* Transactions Table */}
-        <div className="bg-white rounded-lg overflow-hidden">
+        <div className=" rounded-lg overflow-hidden">
           {/* Desktop Table */}
           <div className="hidden sm:block">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 bg-gray-50 p-6 rounded-lg shadow-md">
+              <table className="min-w-full divide-y divide-gray-200  p-6 rounded-lg ">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

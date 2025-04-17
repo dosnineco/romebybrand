@@ -42,7 +42,7 @@ const LivingExpensesCalculator = () => {
           <p className="text-lg text-gray-700 mb-6 text-center">
             Estimate your monthly living expenses and gain insights into your spending habits.
           </p>
-          <div className=" bg-gray-50 p-6 rounded-lg shadow-md">
+          <div className=" bg-gray-100 p-6 rounded-lg ">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Rent</label>
@@ -108,7 +108,7 @@ const LivingExpensesCalculator = () => {
             <div className="mt-6 flex justify-center">
               <button
                 onClick={calculateTotal}
-                className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition duration-200"
+                className="px-6 py-3 bg-blue-500 text-white rounded-lg  hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition duration-200"
               >
                 Calculate Total
               </button>

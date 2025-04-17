@@ -43,7 +43,7 @@ const CostOfLivingCalculator = () => {
           <p className="text-lg text-gray-700 mb-6 text-center">
             Estimate your monthly cost of living and gain insights into your spending habits.
           </p>
-          <div className="bg-gray-50 p-6 rounded-lg shadow-md">
+          <div className="bg-gray-100 p-6 rounded-lg ">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Rent</label>

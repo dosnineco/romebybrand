@@ -55,6 +55,14 @@ function Tools() {
       bgHover: "hover:bg-green-50",
     },
     {
+      title: "Sales Tracker",
+      description: " ",
+      icon: Calculator,
+      path: "/tools/sales-tracker",
+      color: "text-yellow-600",
+      bgHover: "hover:bg-yellow-50",
+    },
+    {
       title: "Living Expenses Calculator",
       description: "Calculate your monthly living expenses",
       icon: BarChart2,
@@ -69,24 +77,6 @@ function Tools() {
       path: "/tools/monthly-calculator",
       color: "text-blue-600",
       bgHover: "hover:bg-blue-50",
-    },
-
-    {
-      title: "Budget Calculator",
-      description: "Plan your finances with a custom budget",
-      icon: Calculator,
-      path: "budget-calculator",
-      color: "text-purple-600",
-      bgHover: "hover:bg-purple-50",
-    },
-    {
-      title: "Monthly Budget Calculator",
-      description: "Get a breakdown of your monthly budget",
-      icon: ClipboardList,
-      path: "monthly-budget-calculator",
-      color: "text-yellow-600",
-      bgHover: "hover:bg-yellow-50",
-      comingSoon: true,
     },
     {
       title: "Emergency Fund Calculator",
@@ -134,15 +124,6 @@ function Tools() {
       comingSoon: true,
     },
     {
-      title: "Net Worth Calculator",
-      description: "Calculate your total assets minus liabilities",
-      icon: PieChart,
-      path: "net-worth-calculator",
-      color: "text-lime-600",
-      bgHover: "hover:bg-lime-50",
-      comingSoon: true,
-    },
-    {
       title: "Saving Money Tips",
       description: "Learn how to grow your savings faster",
       icon: Wallet,
@@ -187,15 +168,7 @@ function Tools() {
       bgHover: "hover:bg-sky-50",
       comingSoon: true,
     },
-    {
-      title: "Cost of Living Comparison (Cities)",
-      description: "Visualize how expenses vary by location",
-      icon: MapPin,
-      path: "cost-of-living-comparison-by-city",
-      color: "text-gray-700",
-      bgHover: "hover:bg-gray-100",
-      comingSoon: true,
-    },
+    
     {
       title: "Saving Money Calculator",
       description: "Project how much you can save over time",
