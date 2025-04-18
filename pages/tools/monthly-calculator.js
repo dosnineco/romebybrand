@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
+import RequireSubscription from '../../components/Misc/RequireSubscription';
 
 const MonthlyCalculator = () => {
   const [expenses, setExpenses] = useState({
@@ -29,7 +30,7 @@ const MonthlyCalculator = () => {
   };
 
   return (
-    <>
+    <RequireSubscription>
       <Head>
         <title>Monthly Spending Calculator</title>
         <meta
@@ -143,7 +144,7 @@ const MonthlyCalculator = () => {
           </div>
         </div>
       </div>
-    </>
+    </RequireSubscription>
   );
 };
 

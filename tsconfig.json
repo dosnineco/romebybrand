@@ -22,7 +22,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "pages/expense.js", "pages/expense.js"  ],
+, "pages/budget-tracker.js", "pages/budget-tracker.js"  ],
   "exclude": [
     "node_modules"
   ]

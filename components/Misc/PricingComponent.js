@@ -1,32 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { supabase } from '../../lib/supabase'; // Ensure you have a Supabase client set up
+import React from 'react';
 
 const PricingComponent = () => {
-  const [spotsLeft, setSpotsLeft] = useState(null); // State to store the number of spots left
   const totalSpots = 2000; // Total number of spots available
-
-  useEffect(() => {
-    const fetchSubscribedUsersCount = async () => {
-      try {
-        // Query Supabase to count subscribed users
-        const { count, error } = await supabase
-          .from('users')
-          .select('id', { count: 'exact' }) // Count the rows
-          .eq('is_subscribed', true); // Only count subscribed users
-
-        if (error) {
-          console.error('Error fetching subscribed users count:', error);
-        } else {
-          // Calculate spots left
-          setSpotsLeft(totalSpots - count);
-        }
-      } catch (err) {
-        console.error('Unexpected error:', err);
-      }
-    };
-
-    fetchSubscribedUsersCount();
-  }, []);
 
   return (
     <div className="w-full py-16">
@@ -42,10 +17,7 @@ const PricingComponent = () => {
               </div>
               {/* Dynamically display spots left */}
               <p className="text-sm text-white mb-8">
-                Save $11 off for the first {totalSpots} customers (
-                {spotsLeft !== null ? `${spotsLeft} left` : 'Loading...'})
-              </p>
-
+              Explore our collection of financial tools              </p>
               <ul className="space-y-4 mb-12">
                 {[
                   'Ai-powered insights',
@@ -85,7 +57,7 @@ const PricingComponent = () => {
               </ul>
 
               <a
-                href="/checkout"
+                href="/dashboard"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-white hover:bg-gray-300 text-black font-bold py-4 px-8 rounded-xl transition-colors duration-200 text-center block"

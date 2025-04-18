@@ -5,35 +5,42 @@ import { useUser } from '@clerk/nextjs';
 import { supabase } from '../lib/supabase';
 
 export default function Payment() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const [hasPaid, setHasPaid] = useState(false); // Track if the user has already paid
   const [loading, setLoading] = useState(true); // Track loading state
 
   useEffect(() => {
-    const checkSubscriptionStatus = async () => {
-      if (user) {
-        try {
-          const { data, error } = await supabase
-            .from('users')
-            .select('is_subscribed')
-            .eq('clerk_id', user.id)
-            .single();
+    if (!isLoaded) return; // Wait until the user data is loaded
 
-          if (error) {
-            console.error('Error fetching subscription status:', error);
-          } else if (data?.is_subscribed) {
-            setHasPaid(true); // User has already paid
-          }
-        } catch (err) {
-          console.error('Unexpected error checking subscription status:', err);
+    if (!user) {
+      // Redirect to login if the user is not authenticated
+      router.push('/dashboard');
+      return;
+    }
+
+    const checkSubscriptionStatus = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('is_subscribed')
+          .eq('clerk_id', user.id)
+          .single();
+
+        if (error) {
+          console.error('Error fetching subscription status:', error);
+        } else if (data?.is_subscribed) {
+          setHasPaid(true); // User has already paid
         }
+      } catch (err) {
+        console.error('Unexpected error checking subscription status:', err);
+      } finally {
+        setLoading(false); // Stop loading once the check is complete
       }
-      setLoading(false); // Stop loading once the check is complete
     };
 
     checkSubscriptionStatus();
-  }, [user]);
+  }, [isLoaded, user, router]);
 
   const handlePaymentSuccess = async () => {
     if (user) {

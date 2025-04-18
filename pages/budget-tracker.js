@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { TiRefresh } from "react-icons/ti";
 import { DollarSign } from "lucide-react";
-
+import RequireSubscription from '../components/Misc/RequireSubscription';  
 
 
 
@@ -476,6 +476,7 @@ const [customEndDate, setCustomEndDate] = useState('');
     return amount.toLocaleString("en-US", { minimumFractionDigits: 2 });
   };
   return (
+    <RequireSubscription>
     <div className="min-h-screen   p-4 sm:p-6">
         <div className="w-full max-w-screen-md"> {/* Added container with max width */}
         <h1 className="text-3xl font-bold mb-6 text-center">Budget Calculator</h1>
@@ -986,6 +987,7 @@ const [customEndDate, setCustomEndDate] = useState('');
       </div>
       </div>
     </div>
+    </RequireSubscription>
   );
 };
 

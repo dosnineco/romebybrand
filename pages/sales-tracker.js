@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Edit2, Trash2, Save, X, PlusCircle } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { useUser } from '@clerk/clerk-react';
 
 const SalesTracker = () => {
   const [sales, setSales] = useState([]);
@@ -14,6 +16,29 @@ const SalesTracker = () => {
     amount: '',
     category: 'product',
   });
+  const [isSubscribed, setIsSubscribed] = useState(null); // Track subscription status
+  const { user, isLoaded } = useUser();
+
+  useEffect(() => {
+    const checkSubscription = async () => {
+      if (!isLoaded || !user) return;
+
+      const { data, error } = await supabase
+        .from('users')
+        .select('is_subscribed')
+        .eq('clerk_id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error checking subscription status:', error);
+        setIsSubscribed(false);
+      } else {
+        setIsSubscribed(data?.is_subscribed);
+      }
+    };
+
+    checkSubscription();
+  }, [isLoaded, user]);
 
   useEffect(() => {
     calculateTotalSales();
@@ -150,6 +175,24 @@ const SalesTracker = () => {
       </tr>
     );
   };
+
+  if (isSubscribed === null) {
+    return <div className="p-8 text-gray-500 text-center">Checking subscription status...</div>;
+  }
+
+  if (!isSubscribed) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-lg text-red-600 mb-4">You must be subscribed to access this tool.</p>
+        <a
+          href="/checkout"
+          className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        >
+          Go to Checkout
+        </a>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen  p-4 sm:p-6">

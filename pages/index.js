@@ -1,16 +1,9 @@
 
-import Hero from '../components/Heros/Hero';
+
 import Faq from '../components/Faqs/Faq';
-import WhatsNew from '../components/Heros/WhatsNew';
-import HowItWorks from '../components/Heros/Howitworks';
+
 import Seo from '../components/Misc/Seo';
-import CountdownTimer from '../components/Misc/CountdownTimer';
-import ContactForm from "../components/ContactForms/ContactForm";
-import WhatsAppChat from '../components/Misc/WhatsAppChat';
-import SocialMedia from '../components/Misc/SocialMedia';
 import PricingComponent from '../components/Misc/PricingComponent';
-import ImagePopup from '../components/Misc/ImagePopup';
-import HeroMinimal from '../components/Heros/HeroMinimal';
 import { ArrowRight, PenTool as Tool, Zap, Users, BookOpen } from "lucide-react";
 
 import { useState } from "react";
@@ -41,7 +34,7 @@ function Tools() {
       title: "Expenses and Savings Pro Tracker",
       description: "Track and analyze your spending data",
       icon: ClipboardList,
-      path: "expense",
+      path: "budget-tracker",
       color: "text-orange-600",
       bgHover: "hover:bg-orange-50",
       
@@ -58,7 +51,7 @@ function Tools() {
       title: "Sales Tracker",
       description: " ",
       icon: Calculator,
-      path: "/tools/sales-tracker",
+      path: "/sales-tracker",
       color: "text-yellow-600",
       bgHover: "hover:bg-yellow-50",
     },
@@ -193,7 +186,7 @@ function Tools() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-inherit capitalize font-bold text-xl mb-2">
-              Track Spending, Budget Smarter, and Save More with 100+ Financial Tools
+             I built a tool with 15+ financial tools to help you save more 
             </h1>
             <p className="text-gray-500 text-base">
               Explore our collection of financial tools to help you manage your money better.
@@ -283,7 +276,6 @@ export default function Home() {
       />
 
 
-      {/* <Hero /> */}
 
       <Tools /> 
       <PricingComponent />

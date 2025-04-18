@@ -57,12 +57,17 @@ const Header = () => {
             <Link href="/dashboard" className="text-inherit text-sm font-bold">
               Dashboard
             </Link>
+            <Link href="/checkout" className="text-inherit text-sm font-bold">
+              Pricing
+            </Link>
             <UserButton />
           </SignedIn>
 
           <SignedOut>
 
-        
+          <Link href="/checkout" className="text-inherit text-sm font-bold">
+              Pricing
+            </Link>
             <Link href="/dashboard" className="text-inherit text-sm font-bold">
               Login
             </Link>

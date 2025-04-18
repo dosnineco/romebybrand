@@ -8,7 +8,7 @@ import PageViewTracker from '../components/Misc/PageViewTracker';
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  const publicRoutes = ['/', '/tools', '/pricing']; // Define public routes
+  const publicRoutes = ['/','/tools/','/refund-policy','/privacy-policy','/about','/terms-of-service',"/checkout"]; // Define public routes
   const isPublicRoute = publicRoutes.some((route) =>
     router.pathname === route || router.pathname.startsWith(`${route}/`)
   );

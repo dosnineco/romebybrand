@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { 
   BarChart2, 
   Calculator, 
@@ -16,8 +15,41 @@ import {
   ClipboardList
 } from "lucide-react";
 
+import { useEffect, useState } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { supabase } from '../lib/supabase';
+
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
+  const { user } = useUser();
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    const checkSubscriptionStatus = async () => {
+      if (user) {
+        try {
+          const { data, error } = await supabase
+            .from('users')
+            .select('is_subscribed')
+            .eq('clerk_id', user.id)
+            .single();
+
+          if (error) {
+            console.error('Error fetching subscription status:', error);
+          } else {
+            setIsSubscribed(data?.is_subscribed || false);
+          }
+        } catch (err) {
+          console.error('Unexpected error checking subscription status:', err);
+        }
+      }
+      setLoading(false);
+    };
+
+    checkSubscriptionStatus();
+  }, [user]);
 
   const tools = [
 
@@ -25,7 +57,7 @@ function App() {
       title: "Expenses and Savings Pro Tracker",
       description: "Track and analyze your spending data",
       icon: ClipboardList,
-      path: "expense",
+      path: "/budget-tracker",
       color: "text-orange-600",
       bgHover: "hover:bg-orange-50",
       
@@ -175,11 +207,50 @@ function App() {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-xl  p-6 md:p-8">
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-8 w-full grid grid-cols-2 items-center justify-center gap-4">
             <p className="text-inherit font-semibold text-xl mb-2">
-              <Settings className=" inline mr-2" />
+              {/* <Settings className=" inline mr-2" /> */}
               Dashboard
             </p>
+              {!loading && (
+          <div className=" flex items-center justify-center">
+            {isSubscribed ? (
+              <div className="flex items-center justify-center  px-4 py-2">
+                <svg
+                  className="h-6 w-6 text-yellow-500 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span className="text-yellow-500 font-bold">Premium</span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center">
+                <svg
+                  className="h-6 w-6 text-gray-500 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span className="text-gray-500 font-bold">Free</span>
+              </div>
+            )}
+          </div>
+        )}
           </div>
 
           {/* Search */}
