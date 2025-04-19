@@ -66,7 +66,7 @@ function App() {
       title: "Saving Money Calculator",
       description: "Project how much you can save over time",
       icon: PiggyBank,
-      path: "saving-money-calculator",
+      path: "/saving-money-calculator",
       color: "text-stone-600",
       bgHover: "hover:bg-stone-50",
     },
@@ -116,7 +116,7 @@ function App() {
       title: "Retirement Spending Calculator",
       description: "Plan how much you'll need in retirement",
       icon: Award,
-      path: "retirement-spending-calculator",
+      path: "/retirement-spending-calculator",
       color: "text-indigo-600",
       bgHover: "hover:bg-indigo-50",
       comingSoon: true,
@@ -125,7 +125,7 @@ function App() {
       title: "Grocery Budget Calculator",
       description: "Set your monthly grocery spending",
       icon: DollarSign,
-      path: "grocery-budget-calculator",
+      path: "/grocery-budget-calculator",
       color: "text-pink-600",
       bgHover: "hover:bg-pink-50",
       comingSoon: true,
@@ -134,7 +134,7 @@ function App() {
       title: "Relocation Calculator",
       description: "Compare expenses when moving to a new city",
       icon: MapPin,
-      path: "relocation-calculator",
+      path: "/relocation-calculator",
       color: "text-teal-600",
       bgHover: "hover:bg-teal-50",
       comingSoon: true,
@@ -143,7 +143,7 @@ function App() {
       title: "Cost of Living Comparison",
       description: "Compare the cost of living across cities",
       icon: Banknote,
-      path: "cost-of-living-comparison",
+      path: "/cost-of-living-comparison",
       color: "text-amber-600",
       bgHover: "hover:bg-amber-50",
       comingSoon: true,
@@ -152,7 +152,7 @@ function App() {
       title: "Saving Money Tips",
       description: "Learn how to grow your savings faster",
       icon: Wallet,
-      path: "saving-money",
+      path: "/saving-money",
       color: "text-rose-600",
       bgHover: "hover:bg-rose-50",
       comingSoon: true,
@@ -161,7 +161,7 @@ function App() {
       title: "Every Dollar Tool",
       description: "Track every dollar you spend or save",
       icon: DollarSign,
-      path: "every-dollar",
+      path: "/every-dollar",
       color: "text-cyan-600",
       bgHover: "hover:bg-cyan-50",
       comingSoon: true,
@@ -170,7 +170,7 @@ function App() {
       title: "You Need a Budget",
       description: "Discover the power of budgeting proactively",
       icon: TrendingUp,
-      path: "you-need-a-budget",
+      path: "/you-need-a-budget",
       color: "text-emerald-600",
       bgHover: "hover:bg-emerald-50",
       comingSoon: true,
@@ -179,7 +179,7 @@ function App() {
       title: "Zero-Based Budgeting",
       description: "Give every dollar a job before the month begins",
       icon: Calculator,
-      path: "zero-based-budgeting",
+      path: "/zero-based-budgeting",
       color: "text-fuchsia-600",
       bgHover: "hover:bg-fuchsia-50",
       comingSoon: true,
@@ -188,7 +188,7 @@ function App() {
       title: "Define Budget",
       description: "Understand what budgeting really means",
       icon: Mail,
-      path: "define-budget",
+      path: "/define-budget",
       color: "text-sky-600",
       bgHover: "hover:bg-sky-50",
       comingSoon: true,
@@ -210,7 +210,6 @@ function App() {
           {/* Header */}
           <div className="mb-8 w-full grid grid-cols-2 items-center justify-center gap-4">
             <p className="text-inherit font-semibold text-xl mb-2">
-              {/* <Settings className=" inline mr-2" /> */}
               Dashboard
             </p>
             
@@ -224,7 +223,6 @@ function App() {
                 </div>
               ) : (
                 <a href="/checkout" className="flex items-center justify-center px-4 py-2">
-                  <Lock className="h-6 w-6 text-gray-500 mr-2" />
                   <span className="text-gray-500 font-bold hover:underline">Free</span>
                 </a>
               )}
