@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Edit2, Trash2, Save, X, PlusCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import RequireSubscription from '../components/Misc/RequireSubscription';
 
 const SalesTracker = () => {
   const [sales, setSales] = useState([]);
@@ -215,6 +216,7 @@ const SalesTracker = () => {
   };
 
   return (
+    <RequireSubscription>
     <div className="min-h-screen p-4 sm:p-6">
       <div className="container mx-auto max-w-screen-md">
         <h1 className="text-3xl font-bold mb-6 text-center">Sales Tracker</h1>
@@ -359,6 +361,7 @@ const SalesTracker = () => {
         </div>
       </div>
     </div>
+     </RequireSubscription>
   );
 };
 

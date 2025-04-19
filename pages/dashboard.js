@@ -74,7 +74,7 @@ function App() {
       title: "Sales Tracker",
       description: " ",
       icon: Calculator,
-      path: "/tools/sales-tracker",
+      path: "/sales-tracker",
       color: "text-yellow-600",
       bgHover: "hover:bg-yellow-50",
     },
