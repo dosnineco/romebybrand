@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }) {
     router.pathname === route || router.pathname.startsWith(`${route}/`)
   );
 
-  const isHomePage = router.pathname === '/'; // Check if the current route is the home page
+  const isHomePage = router.pathname === '/'; 
 
   return (
     <ClerkProvider {...pageProps}>
