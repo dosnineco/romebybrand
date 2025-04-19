@@ -82,7 +82,7 @@ function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
     <>
       {isPublicRoute ? (
         <>
-          {/* <Header /> */}
+          <Header />
           <Layout className="container mx-auto px-4 py-8">
             {!isHomePage && <BreadcrumbsMinimal />}
             <Component {...pageProps} />
