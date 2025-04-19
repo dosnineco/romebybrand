@@ -31,21 +31,21 @@ function Tools() {
   const tools = [
 
     {
-      title: "Expenses and Savings Pro Tracker",
+      title: "Budget Calculator",
       description: "Track and analyze your spending data",
       icon: ClipboardList,
-      path: "budget-tracker",
+      path: "/budget-calculator",
       color: "text-orange-600",
       bgHover: "hover:bg-orange-50",
       
     },
     {
-      title: "Cost of Living Calculator",
-      description: " ",
-      icon: Calculator,
-      path: "/tools/cost-of-living",
-      color: "text-green-600",
-      bgHover: "hover:bg-green-50",
+      title: "Saving Money Calculator",
+      description: "Project how much you can save over time",
+      icon: PiggyBank,
+      path: "saving-money-calculator",
+      color: "text-stone-600",
+      bgHover: "hover:bg-stone-50",
     },
     {
       title: "Sales Tracker",
@@ -55,6 +55,15 @@ function Tools() {
       color: "text-yellow-600",
       bgHover: "hover:bg-yellow-50",
     },
+    {
+      title: "Cost of Living Calculator",
+      description: " ",
+      icon: Calculator,
+      path: "/tools/cost-of-living",
+      color: "text-green-600",
+      bgHover: "hover:bg-green-50",
+    },
+
     {
       title: "Living Expenses Calculator",
       description: "Calculate your monthly living expenses",
@@ -75,10 +84,9 @@ function Tools() {
       title: "Emergency Fund Calculator",
       description: "Estimate the amount to save for emergencies",
       icon: PiggyBank,
-      path: "emergency-fund-calculator",
+      path: "/tools/emergency-fund-calculator",
       color: "text-red-600",
       bgHover: "hover:bg-red-50",
-      comingSoon: true,
     },
     {
       title: "Retirement Spending Calculator",
@@ -162,15 +170,7 @@ function Tools() {
       comingSoon: true,
     },
     
-    {
-      title: "Saving Money Calculator",
-      description: "Project how much you can save over time",
-      icon: PiggyBank,
-      path: "saving-money-calculator",
-      color: "text-stone-600",
-      bgHover: "hover:bg-stone-50",
-      comingSoon: true,
-    },
+
  
   ];
   

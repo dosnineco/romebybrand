@@ -21,8 +21,8 @@ const BreadcrumbsWithIcons = () => {
     }, [router.asPath]);
   
     return (
-      <nav className="text-sm text-gray-600">
-        <ol className="flex items-center space-x-2">
+      <nav className="w-full max-w-screen-md text-base flex  p-4 text-gray-600">
+        <ol className="flex items-start flex-start space-x-2">
           <li>
             <Link href="/" className="hover:text-blue-600 transition-colors">
               <FiHome className="inline-block mr-1" />

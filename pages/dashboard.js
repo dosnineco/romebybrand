@@ -54,21 +54,21 @@ function App() {
   const tools = [
 
     {
-      title: "Expenses and Savings Pro Tracker",
+      title: "Budget Calculator",
       description: "Track and analyze your spending data",
       icon: ClipboardList,
-      path: "/budget-tracker",
+      path: "/budget-calculator",
       color: "text-orange-600",
       bgHover: "hover:bg-orange-50",
       
     },
     {
-      title: "Cost of Living Calculator",
-      description: " ",
-      icon: Calculator,
-      path: "/tools/cost-of-living",
-      color: "text-green-600",
-      bgHover: "hover:bg-green-50",
+      title: "Saving Money Calculator",
+      description: "Project how much you can save over time",
+      icon: PiggyBank,
+      path: "saving-money-calculator",
+      color: "text-stone-600",
+      bgHover: "hover:bg-stone-50",
     },
     {
       title: "Sales Tracker",
@@ -78,6 +78,15 @@ function App() {
       color: "text-yellow-600",
       bgHover: "hover:bg-yellow-50",
     },
+    {
+      title: "Cost of Living Calculator",
+      description: " ",
+      icon: Calculator,
+      path: "/tools/cost-of-living",
+      color: "text-green-600",
+      bgHover: "hover:bg-green-50",
+    },
+
     {
       title: "Living Expenses Calculator",
       description: "Calculate your monthly living expenses",
@@ -98,7 +107,7 @@ function App() {
       title: "Emergency Fund Calculator",
       description: "Estimate the amount to save for emergencies",
       icon: PiggyBank,
-      path: "emergency-fund-calculator",
+      path: "/tools/emergency-fund-calculator",
       color: "text-red-600",
       bgHover: "hover:bg-red-50",
       comingSoon: true,
@@ -185,15 +194,7 @@ function App() {
       comingSoon: true,
     },
     
-    {
-      title: "Saving Money Calculator",
-      description: "Project how much you can save over time",
-      icon: PiggyBank,
-      path: "saving-money-calculator",
-      color: "text-stone-600",
-      bgHover: "hover:bg-stone-50",
-      comingSoon: true,
-    },
+
  
   ];
   
@@ -212,45 +213,23 @@ function App() {
               {/* <Settings className=" inline mr-2" /> */}
               Dashboard
             </p>
-              {!loading && (
-          <div className=" flex items-center justify-center">
-            {isSubscribed ? (
-              <div className="flex items-center justify-center  px-4 py-2">
-                <svg
-                  className="h-6 w-6 text-yellow-500 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span className="text-yellow-500 font-bold">Premium</span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center">
-                <svg
-                  className="h-6 w-6 text-gray-500 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span className="text-gray-500 font-bold">Free</span>
-              </div>
-            )}
-          </div>
-        )}
+            
+
+          {!loading && (
+            <div className="flex items-center justify-center">
+              {isSubscribed ? (
+                <div className="flex items-center justify-center px-4 py-2">
+                  <Award className="h-6 w-6 text-yellow-500 mr-2" />
+                  <span className="text-yellow-500 font-bold">Premium</span>
+                </div>
+              ) : (
+                <a href="/checkout" className="flex items-center justify-center px-4 py-2">
+                  <Lock className="h-6 w-6 text-gray-500 mr-2" />
+                  <span className="text-gray-500 font-bold hover:underline">Free</span>
+                </a>
+              )}
+            </div>
+          )}
           </div>
 
           {/* Search */}

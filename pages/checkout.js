@@ -78,8 +78,10 @@ export default function Payment() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-600 to-indigo-800 text-white">
-        <p className="text-lg">Loading...</p>
+      <div className="flex items-center justify-center min-h-screen text-gray-700">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
+        <p className="text-lg ml-4">Loading...</p>
+    
       </div>
     );
   }
@@ -94,7 +96,7 @@ export default function Payment() {
           </p>
           <button
             onClick={() => router.push('/dashboard')}
-            className="px-6 py-3 text-bold text-white bg-yellow-700 rounded-lg shadow-lg "
+            className="px-6 py-3 text-bold text-white bg-gray-700 rounded-lg shadow-lg "
           >
             Go to Dashboard
           </button>
@@ -104,18 +106,27 @@ export default function Payment() {
   }
 
   return (
-    <div className=" flex flex-col items-center justify-center min-h-screen text-black">
-      <div className="max-w-3xl text-center p-8 bg-white rounded-lg shadow-lg text-gray-900">
-        <h1 className="text-4xl font-extrabold mb-4 text-purple-700">Upgrade to Premium</h1>
-        <p className="text-lg mb-6">
-          Unlock all the premium features and take your experience to the next level. Enjoy exclusive tools, priority support, and much more for just <span className="font-bold">$4.99</span>.
+    <div className=" flex flex-col items-center justify-center  text-black">
+      <div className="max-w-3xl text-center p-8  text-gray-900">
+        <h1 className="text-4xl font-extrabold mb-4 text-gray-700">Upgrade to Premium</h1>
+        <p className="text-lg text-left  mb-6">
+        Enjoy exclusive tools, priority support, and much more for just <span className="font-bold">$14.99 One time Payment</span>.
         </p>
         <ul className="text-left mb-6 space-y-2">
           <li className="flex items-center">
             <span className="text-green-500 mr-2">✔</span> Access to all premium tools
           </li>
           <li className="flex items-center">
-            <span className="text-green-500 mr-2">✔</span> Priority customer support
+            <span className="text-green-500 mr-2">✔</span> Ai-powered insights
+
+          </li>
+          <li className="flex items-center">
+            <span className="text-green-500 mr-2">✔</span> Real-time expense tracking
+
+          </li>
+          <li className="flex items-center">
+            <span className="text-green-500 mr-2">✔</span> Unlimited expense entries
+      
           </li>
           <li className="flex items-center">
             <span className="text-green-500 mr-2">✔</span> Exclusive updates and features
@@ -129,7 +140,7 @@ export default function Payment() {
                 purchase_units: [
                   {
                     amount: {
-                      value: '14.99', // Subscription amount
+                      value: '14.99', 
                     },
                   },
                 ],

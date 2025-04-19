@@ -35,7 +35,7 @@ const CostOfLivingCalculator = () => {
           content="Use our Cost of Living Calculator to estimate your monthly expenses, including rent, utilities, groceries, and more. Plan your budget effectively."
         />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://yourdomain.com/cost-of-living" />
+        <link rel="canonical" href="https://expensegoose.com/cost-of-living" />
       </Head>
       <div className="min-h-screen  p-4 sm:p-6">
         <div className="container mx-auto max-w-screen-md">

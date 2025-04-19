@@ -34,7 +34,7 @@ const LivingExpensesCalculator = () => {
           content="Use our Living Expenses Calculator to estimate your monthly living costs, including rent, utilities, groceries, and more."
         />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://yourdomain.com/living-expenses" />
+        <link rel="canonical" href="https://expensegoose.com/living-expenses" />
       </Head>
       <div className="min-h-screen p-4 sm:p-6">
         <div className="container mx-auto max-w-screen-md">

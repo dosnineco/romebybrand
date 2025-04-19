@@ -5,6 +5,7 @@ import Layout from '../components/Misc/Layout';
 import Header from '../components/Headers/Header';
 import Footer from '../components/Footers/Footer';
 import PageViewTracker from '../components/Misc/PageViewTracker';
+import BreadcrumbsMinimal from '../components/BreadCrumbs/BreadcrumbsWithIcons'; 
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -13,6 +14,8 @@ function MyApp({ Component, pageProps }) {
     router.pathname === route || router.pathname.startsWith(`${route}/`)
   );
 
+  const isHomePage = router.pathname === '/'; // Check if the current route is the home page
+
   return (
     <ClerkProvider {...pageProps}>
       <PageViewTracker />
@@ -20,6 +23,8 @@ function MyApp({ Component, pageProps }) {
         <>
           <Header />
           <Layout className="container mx-auto px-4 py-8">
+            {!isHomePage && 
+              <BreadcrumbsMinimal /> } 
             <Component {...pageProps} />
           </Layout>
           <Footer />
@@ -28,6 +33,7 @@ function MyApp({ Component, pageProps }) {
         <SignedIn>
           <Header />
           <Layout className="container mx-auto px-4 py-8">
+            {!isHomePage && <BreadcrumbsMinimal />} 
             <Component {...pageProps} />
           </Layout>
           <Footer />

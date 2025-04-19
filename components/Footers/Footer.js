@@ -35,7 +35,7 @@ export default function Footer() {
   return (
     <footer className="py-8 mt-12">
       <div className="container mx-auto px-4 text-center">
-        <p className="text-inherit text-sm">
+        <p className="text-inherit font-bold text-sm">
           Copyright © {new Date().getFullYear()} Expense Goose Ltd.
         </p>
         <div className="mt-2">
@@ -55,7 +55,7 @@ export default function Footer() {
             About
           </a>
         </div>
-        {!loading && (
+        {/* {!loading && (
           <div className="mt-4">
             {isSubscribed ? (
               <div className="flex items-center justify-center">
@@ -93,7 +93,7 @@ export default function Footer() {
               </div>
             )}
           </div>
-        )}
+        )} */}
       </div>
     </footer>
   );

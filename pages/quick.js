@@ -201,8 +201,8 @@ export default function QuickExpenses() {
 
   return (
     <div className="p-4 w-full max-w-[600px] mx-auto text-gray-800 rounded-lg">
-      <h2 className="text-lg font-semibold mb-4">Quick Expenses</h2>
-       <button className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/expense')}>
+      <h2 className="text-lg font-semibold mb-4">Quick Expenses Preset</h2>
+       <button className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/budget-calculator')}>
         ← Expenses
       </button>
 

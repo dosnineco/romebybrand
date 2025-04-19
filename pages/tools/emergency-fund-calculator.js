@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
-import RequireSubscription from '../../components/Misc/RequireSubscription';
 
-const MonthlyCalculator = () => {
+const EmergencyFundCalculator = () => {
   const [expenses, setExpenses] = useState({
     rent: '',
     utilities: '',
@@ -12,9 +11,9 @@ const MonthlyCalculator = () => {
     other: '',
   });
 
-  const [budget, setBudget] = useState('');
+  const [months, setMonths] = useState('');
   const [totalExpenses, setTotalExpenses] = useState(0);
-  const [savings, setSavings] = useState(0);
+  const [emergencyFund, setEmergencyFund] = useState(0);
 
   const handleInputChange = (field, value) => {
     setExpenses((prev) => ({
@@ -23,40 +22,30 @@ const MonthlyCalculator = () => {
     }));
   };
 
-  const calculateTotal = () => {
+  const calculateEmergencyFund = () => {
     const total = Object.values(expenses).reduce((acc, curr) => acc + (curr || 0), 0);
     setTotalExpenses(total);
-    setSavings(budget ? parseFloat(budget) - total : 0);
+    setEmergencyFund(total * (months || 0));
   };
 
   return (
     <>
       <Head>
-        <title>Monthly Spending Calculator</title>
+        <title>Emergency Fund Calculator</title>
         <meta
           name="description"
-          content="Use our Monthly Spending Calculator to estimate your monthly expenses, set a budget, and track your savings. Plan your finances effectively."
+          content="Use our Emergency Fund Calculator to estimate how much you need to save for unexpected expenses based on your monthly living costs."
         />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://expensegoose.com/monthly-calculator" />
+        <link rel="canonical" href="https://expensegoose.com/emergency-fund-calculator" />
       </Head>
-      <div className="min-h-screen  p-4 sm:p-6">
+      <div className="min-h-screen p-4 sm:p-6">
         <div className="container mx-auto max-w-screen-md">
-          <h1 className="text-3xl font-bold mb-6 text-center">Monthly Spending Calculator</h1>
+          <h1 className="text-3xl font-bold mb-6 text-center">Emergency Fund Calculator</h1>
           <p className="text-lg text-gray-700 mb-6 text-center">
-            Estimate your monthly expenses, set a budget, and track your savings.
+            Estimate how much you need to save for unexpected expenses based on your monthly living costs.
           </p>
-          <div className=" p-6 rounded-lg bg-gray-100">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Budget</label>
-              <input
-                type="number"
-                placeholder="Enter your monthly budget"
-                value={budget}
-                onChange={(e) => setBudget(e.target.value)}
-                className="w-full border rounded-lg px-3 py-2"
-              />
-            </div>
+          <div className="bg-gray-100 p-6 rounded-lg">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Rent</label>
@@ -119,26 +108,30 @@ const MonthlyCalculator = () => {
                 />
               </div>
             </div>
+            <div className="mt-6">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Months to Cover</label>
+              <input
+                type="number"
+                placeholder="Enter the number of months"
+                value={months}
+                onChange={(e) => setMonths(e.target.value ? parseInt(e.target.value) : '')}
+                className="w-full border rounded-lg px-3 py-2"
+              />
+            </div>
             <div className="mt-6 flex justify-center">
               <button
-                onClick={calculateTotal}
-                className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition duration-200"
+                onClick={calculateEmergencyFund}
+                className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition duration-200"
               >
-                Calculate Total
+                Calculate Emergency Fund
               </button>
             </div>
             {totalExpenses > 0 && (
               <div className="mt-6 text-center">
                 <h2 className="text-2xl font-bold text-gray-900">Total Monthly Expenses</h2>
                 <p className="text-xl text-gray-700 mt-2">${totalExpenses.toFixed(2)}</p>
-                <h2 className="text-2xl font-bold text-gray-900 mt-4">Remaining Savings</h2>
-                <p
-                  className={`text-xl mt-2 ${
-                    savings >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}
-                >
-                  ${savings.toFixed(2)}
-                </p>
+                <h2 className="text-2xl font-bold text-gray-900 mt-4">Recommended Emergency Fund</h2>
+                <p className="text-xl text-green-600 mt-2">${emergencyFund.toFixed(2)}</p>
               </div>
             )}
           </div>
@@ -148,4 +141,4 @@ const MonthlyCalculator = () => {
   );
 };
 
-export default MonthlyCalculator;
+export default EmergencyFundCalculator;

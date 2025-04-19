@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Edit2, Trash2, Save, X, PlusCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { useUser } from '@clerk/clerk-react';
 
 const SalesTracker = () => {
   const [sales, setSales] = useState([]);
@@ -16,56 +15,52 @@ const SalesTracker = () => {
     amount: '',
     category: 'product',
   });
-  const [isSubscribed, setIsSubscribed] = useState(null); // Track subscription status
-  const { user, isLoaded } = useUser();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterPeriod, setFilterPeriod] = useState('all');
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
 
   useEffect(() => {
-    const checkSubscription = async () => {
-      if (!isLoaded || !user) return;
-
-      const { data, error } = await supabase
-        .from('users')
-        .select('is_subscribed')
-        .eq('clerk_id', user.id)
-        .single();
-
-      if (error) {
-        console.error('Error checking subscription status:', error);
-        setIsSubscribed(false);
-      } else {
-        setIsSubscribed(data?.is_subscribed);
-      }
-    };
-
-    checkSubscription();
-  }, [isLoaded, user]);
+    fetchSales();
+  }, []);
 
   useEffect(() => {
     calculateTotalSales();
   }, [sales]);
 
-  const calculateTotalSales = () => {
-    const total = sales.reduce((acc, sale) => acc + parseFloat(sale.amount || 0), 0);
-    setTotalSales(total);
+  const fetchSales = async () => {
+    try {
+      const { data, error } = await supabase.from('sales').select('*').order('date', { ascending: false });
+      if (error) throw error;
+      setSales(data || []);
+    } catch (err) {
+      console.error('Error fetching sales:', err.message);
+    }
   };
 
-  const addSale = () => {
+  const addSale = async () => {
     if (!newSale.description || !newSale.amount) return;
 
     const sale = {
-      id: Date.now(),
       ...newSale,
       amount: parseFloat(newSale.amount),
     };
 
-    setSales((prev) => [sale, ...prev]);
-    setShowAddForm(false);
-    setNewSale({
-      date: format(new Date(), 'yyyy-MM-dd'),
-      description: '',
-      amount: '',
-      category: 'product',
-    });
+    try {
+      const { data, error } = await supabase.from('sales').insert([sale]).select().single();
+      if (error) throw error;
+
+      setSales((prev) => [data, ...prev]);
+      setShowAddForm(false);
+      setNewSale({
+        date: format(new Date(), 'yyyy-MM-dd'),
+        description: '',
+        amount: '',
+        category: 'product',
+      });
+    } catch (err) {
+      console.error('Error adding sale:', err.message);
+    }
   };
 
   const handleEdit = (sale) => {
@@ -73,16 +68,59 @@ const SalesTracker = () => {
     setEditData({ ...sale });
   };
 
-  const handleSave = () => {
-    setSales((prev) =>
-      prev.map((sale) => (sale.id === editingId ? { ...sale, ...editData } : sale))
-    );
-    setEditingId(null);
-    setEditData({});
+  const handleSave = async () => {
+    try {
+      const { error } = await supabase
+        .from('sales')
+        .update(editData)
+        .eq('id', editingId);
+
+      if (error) throw error;
+
+      setSales((prev) =>
+        prev.map((sale) => (sale.id === editingId ? { ...sale, ...editData } : sale))
+      );
+      setEditingId(null);
+      setEditData({});
+    } catch (err) {
+      console.error('Error saving sale:', err.message);
+    }
   };
 
-  const handleDelete = (id) => {
-    setSales((prev) => prev.filter((sale) => sale.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      const { error } = await supabase.from('sales').delete().eq('id', id);
+      if (error) throw error;
+
+      setSales((prev) => prev.filter((sale) => sale.id !== id));
+    } catch (err) {
+      console.error('Error deleting sale:', err.message);
+    }
+  };
+
+  const calculateTotalSales = () => {
+    const total = sales.reduce((acc, sale) => acc + parseFloat(sale.amount || 0), 0);
+    setTotalSales(total);
+  };
+
+  const filterSales = () => {
+    let filteredSales = [...sales];
+
+    if (searchTerm) {
+      filteredSales = filteredSales.filter((sale) =>
+        sale.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (filterPeriod === 'custom' && customStartDate && customEndDate) {
+      filteredSales = filteredSales.filter(
+        (sale) =>
+          new Date(sale.date) >= new Date(customStartDate) &&
+          new Date(sale.date) <= new Date(customEndDate)
+      );
+    }
+
+    return filteredSales;
   };
 
   const renderTableRow = (sale) => {
@@ -176,32 +214,14 @@ const SalesTracker = () => {
     );
   };
 
-  if (isSubscribed === null) {
-    return <div className="p-8 text-gray-500 text-center">Checking subscription status...</div>;
-  }
-
-  if (!isSubscribed) {
-    return (
-      <div className="p-8 text-center">
-        <p className="text-lg text-red-600 mb-4">You must be subscribed to access this tool.</p>
-        <a
-          href="/checkout"
-          className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        >
-          Go to Checkout
-        </a>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen  p-4 sm:p-6">
+    <div className="min-h-screen p-4 sm:p-6">
       <div className="container mx-auto max-w-screen-md">
         <h1 className="text-3xl font-bold mb-6 text-center">Sales Tracker</h1>
         <p className="text-lg text-gray-700 mb-6 text-center">
           Track your sales, analyze trends, and manage your business effectively.
         </p>
-        <div className="bg-gray-100 p-6 rounded-lg ">
+        <div className="bg-gray-100 p-6 rounded-lg">
           <div className="mb-6 flex justify-between items-center">
             <h2 className="text-xl font-semibold">Total Sales: ${totalSales.toFixed(2)}</h2>
             <button
@@ -212,6 +232,45 @@ const SalesTracker = () => {
               <span className="text-sm font-medium">Add Sale</span>
             </button>
           </div>
+          <div className="mb-6 flex gap-4">
+            <input
+              type="text"
+              placeholder="Search by description..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2"
+            />
+            <select
+              value={filterPeriod}
+              onChange={(e) => setFilterPeriod(e.target.value)}
+              className="border rounded-lg px-3 py-2"
+            >
+              <option value="all">All Time</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+          {filterPeriod === 'custom' && (
+            <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <input
+                  type="date"
+                  value={customStartDate}
+                  onChange={(e) => setCustomStartDate(e.target.value)}
+                  className="w-full border rounded-lg px-3 py-2"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <input
+                  type="date"
+                  value={customEndDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                  className="w-full border rounded-lg px-3 py-2"
+                />
+              </div>
+            </div>
+          )}
           {showAddForm && (
             <div className="bg-gray-50 p-4 rounded-lg mb-6">
               <h3 className="text-lg font-semibold mb-4">Add New Sale</h3>
@@ -293,7 +352,7 @@ const SalesTracker = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {sales.map(renderTableRow)}
+                {filterSales().map(renderTableRow)}
               </tbody>
             </table>
           </div>
