@@ -41,13 +41,13 @@ const RequireSubscription = ({ children }) => {
 
   if (!isSubscribed) {
     return (
-      <div className="p-8  text-center">
-        <p className="text-lg text-red-600 mb-4">You must be subscribed to access this content.</p>
+      <div className="p-8   text-center">
+        <p className="text-lg text-red-600 p-4 mb-4">You must be subscribed to access this content.</p>
         <a
           href="/checkout"
-          className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          className="px-6 font-bold py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
         >
-          Go to Checkout
+          Premium Subscription
         </a>
       </div>
     );
