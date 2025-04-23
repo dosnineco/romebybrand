@@ -150,7 +150,7 @@ const Settings = () => {
       <div className="max-w-4xl mx-auto">
         <button 
           className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center"
-          onClick={() => router.push('expense')}
+          onClick={() => router.push('/budget-calculator')}
         >
           ← Back to Transactions
         </button>

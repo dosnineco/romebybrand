@@ -219,7 +219,7 @@ function App() {
               {isSubscribed ? (
                 <div className="flex items-center justify-center px-4 py-2">
                   <Award className="h-6 w-6 text-yellow-500 mr-2" />
-                  <span className="text-yellow-500 font-bold">{user.firstName} are Premium</span>
+                  <span className="text-yellow-500 font-bold"> Premium</span>
                 </div>
               ) : (
                 <a href="/checkout" className="flex items-center justify-center px-4 py-2">
