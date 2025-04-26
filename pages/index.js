@@ -92,10 +92,9 @@ function Tools() {
       title: "Retirement Spending Calculator",
       description: "Plan how much you'll need in retirement",
       icon: Award,
-      path: "/retirement-spending-calculator",
+      path: "/tools/retirement-spending-calculator",
       color: "text-indigo-600",
       bgHover: "hover:bg-indigo-50",
-      comingSoon: true,
     },
     {
       title: "Grocery Budget Calculator",

@@ -1,5 +1,27 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+
+const toolsData = {
+  'cost-of-living': {
+    title: 'Cost of Living Calculator',
+    description:
+      'Use our Cost of Living Calculator to estimate your monthly expenses, including rent, utilities, groceries, and more. Plan your budget effectively.',
+    benefit: 'estimate your monthly cost of living and gain insights into your spending habits',
+    component: 'CostOfLivingCalculator',
+    faq: [
+      {
+        question: 'How do I calculate my cost of living?',
+        answer:
+          'List all your monthly expenses, such as rent, utilities, groceries, and transportation. Use our Cost of Living Calculator to organize and calculate your total expenses.',
+      },
+      {
+        question: 'Is the Cost of Living Calculator free?',
+        answer: 'Yes, our Cost of Living Calculator is completely free to use.',
+      },
+    ],
+  },
+};
 
 const CostOfLivingCalculator = () => {
   const [expenses, setExpenses] = useState({
@@ -26,24 +48,38 @@ const CostOfLivingCalculator = () => {
     setTotalExpenses(total);
   };
 
+  const router = useRouter();
+  const toolSlug = 'cost-of-living'; // Static slug for this page
+  const tool = toolsData[toolSlug];
+
   return (
     <>
       <Head>
-        <title>Cost of Living Calculator</title>
-        <meta
-          name="description"
-          content="Use our Cost of Living Calculator to estimate your monthly expenses, including rent, utilities, groceries, and more. Plan your budget effectively."
+        <title>{tool.title} | Expense Goose</title>
+        <meta name="description" content={tool.description} />
+        <meta name="keywords" content={`${tool.title}, financial tools, expense tracking`} />
+        <link rel="canonical" href={`https://expensegoose.com/tools/${toolSlug}`} />
+        {/* JSON-LD Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": tool.title,
+              "description": tool.description,
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "Web",
+              "url": `https://expensegoose.com/tools/${toolSlug}`,
+            }),
+          }}
         />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://expensegoose.com/cost-of-living" />
       </Head>
-      <div className="min-h-screen  p-4 sm:p-6">
+      <div className="min-h-screen p-4 sm:p-6">
         <div className="container mx-auto max-w-screen-md">
-          <h1 className="text-3xl font-bold mb-6 text-center">Cost of Living Calculator</h1>
-          <p className="text-lg text-gray-700 mb-6 text-center">
-            Estimate your monthly cost of living and gain insights into your spending habits.
-          </p>
-          <div className="bg-gray-100 p-6 rounded-lg ">
+          <h1 className="text-3xl font-bold mb-6 text-center">{tool.title}</h1>
+          <p className="text-lg text-gray-700 mb-6 text-center">{tool.description}</p>
+          <div className="bg-gray-100 p-6 rounded-lg">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Rent</label>
@@ -130,6 +166,15 @@ const CostOfLivingCalculator = () => {
                 <p className="text-xl text-gray-700 mt-2">${totalExpenses.toFixed(2)}</p>
               </div>
             )}
+          </div>
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-4">FAQs</h2>
+            {tool.faq.map((faq, index) => (
+              <div key={index} className="mb-4">
+                <h3 className="font-semibold">{faq.question}</h3>
+                <p className="text-gray-700">{faq.answer}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>

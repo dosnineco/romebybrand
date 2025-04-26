@@ -31,13 +31,30 @@ const EmergencyFundCalculator = () => {
   return (
     <>
       <Head>
-        <title>Emergency Fund Calculator</title>
+        <title>Emergency Fund Calculator | Expense Goose</title>
         <meta
           name="description"
           content="Use our Emergency Fund Calculator to estimate how much you need to save for unexpected expenses based on your monthly living costs."
         />
+        <meta name="keywords" content="Emergency Fund Calculator, financial tools, expense tracking, savings calculator" />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://expensegoose.com/emergency-fund-calculator" />
+        <link rel="canonical" href="https://expensegoose.com/tools/emergency-fund-calculator" />
+        {/* JSON-LD Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Emergency Fund Calculator",
+              "description":
+                "Use our Emergency Fund Calculator to estimate how much you need to save for unexpected expenses based on your monthly living costs.",
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "Web",
+              "url": "https://expensegoose.com/tools/emergency-fund-calculator",
+            }),
+          }}
+        />
       </Head>
       <div className="min-h-screen p-4 sm:p-6">
         <div className="container mx-auto max-w-screen-md">

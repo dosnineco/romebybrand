@@ -2,11 +2,11 @@ import React from 'react';
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-6 py-12">
+    <div className="w-full max-w-screen-md  mx-auto px-4 py-8">
       {/* Header Section */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">About Expense Goose</h1>
-        <p className="text-lg text-gray-600">
+        <h1 className="text-xl font-bold text-gray-800 mb-4">About Expense Goose</h1>
+        <p className="text-base  text-gray-600">
           Simplifying your finances, one step at a time.
         </p>
       </div>

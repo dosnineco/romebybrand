@@ -48,6 +48,8 @@
     "react-swipeable": "^7.0.2",
     "react-toastify": "^11.0.2",
     "react-youtube": "^10.1.0",
+    "rechart": "^0.0.1",
+    "recharts": "^2.15.3",
     "shadcn-ui": "^0.9.5",
     "sweetalert2": "^11.17.2",
     "table": "^6.9.0",

@@ -106,11 +106,11 @@ export default function Payment() {
   }
 
   return (
-    <div className=" flex flex-col items-center justify-center  text-black">
-      <div className="max-w-3xl text-center p-8  text-gray-900">
-        <h1 className="text-4xl font-extrabold mb-4 text-gray-700">Upgrade to Premium</h1>
-        <p className="text-lg text-left  mb-6">
-        Enjoy exclusive tools, priority support, and much more for just <span className="font-bold">$14.99 One time Payment</span>.
+    <div className=" w-full max-w-screen-md mx-auto px-4 py-8">
+      <div className=" text-center p-8  text-gray-900">
+        <h1 className="text-2xl font-extrabold mb-4 text-gray-700">Upgrade to Premium</h1>
+        <p className="text-base   mb-6">
+        Enjoy exclusive tools, priority support, and much more for just <span className="font-bold text-lg text-blue-500">$14.99 One time Payment</span>.
         </p>
         <ul className="text-left mb-6 space-y-2">
           <li className="flex items-center">
