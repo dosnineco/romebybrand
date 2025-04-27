@@ -1,27 +1,28 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { supabase } from "../../../lib/supabase"; // Import Supabase client
 
-export default function AutoLoanCalculator({ loanAmount }: { loanAmount: number }) {
-  const [interestRate, setInterestRate] = useState<number>(5); // Default interest rate
-  const [loanTerm, setLoanTerm] = useState<number>(60); // Default loan term in months
-  const [monthlyPayment, setMonthlyPayment] = useState<number | null>(null);
+export default function AutoLoanCalculator({ loan }: { loan: any }) {
+  const [interestRate, setInterestRate] = useState<number>(loan.interest_rate); // Default interest rate from database
+  const [loanTerm, setLoanTerm] = useState<number>(loan.loan_term); // Default loan term from database
+  const [monthlyPayment, setMonthlyPayment] = useState<number>(loan.monthly_payment); // Default monthly payment
   const [graphData, setGraphData] = useState<any[]>([]);
 
   useEffect(() => {
     calculateMonthlyPayment(); // Pre-calculate on page load
-  }, [loanAmount, interestRate, loanTerm]);
+  }, [loan.loan_amount, interestRate, loanTerm]);
 
   const calculateMonthlyPayment = () => {
     const monthlyRate = interestRate / 100 / 12;
     const payment =
-      (loanAmount * monthlyRate) /
+      (loan.loan_amount * monthlyRate) /
       (1 - Math.pow(1 + monthlyRate, -loanTerm));
     setMonthlyPayment(payment);
 
     // Generate graph data
     const data = [];
-    let remainingBalance = loanAmount;
+    let remainingBalance = loan.loan_amount;
     for (let i = 1; i <= loanTerm; i++) {
       const interest = remainingBalance * monthlyRate;
       const principal = payment - interest;
@@ -37,16 +38,16 @@ export default function AutoLoanCalculator({ loanAmount }: { loanAmount: number 
   return (
     <>
       <Head>
-        <title>Auto Loan Calculator for ${loanAmount.toLocaleString()} | Calculate Your Car Payments</title>
+        <title>Auto Loan Calculator for ${loan.loan_amount.toLocaleString()} | Calculate Your Car Payments</title>
         <meta
           name="description"
-          content={`Use our Auto Loan Calculator to estimate your monthly car payments for a $${loanAmount.toLocaleString()} loan. Plan your car loan with ease and confidence.`}
+          content={`Use our Auto Loan Calculator to estimate your monthly car payments for a $${loan.loan_amount.toLocaleString()} loan. Plan your car loan with ease and confidence.`}
         />
         <meta
           name="keywords"
           content="auto loan calculator, car loan calculator, car payment calculator, car finance calculator, car loan repayment calculator"
         />
-        <link rel="canonical" href={`https://www.expensegoose.com/tools/auto-loan/${loanAmount}`} />
+        <link rel="canonical" href={`https://www.expensegoose.com/tools/auto-loan/${loan.loan_amount}`} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -54,10 +55,10 @@ export default function AutoLoanCalculator({ loanAmount }: { loanAmount: number 
               "@context": "https://schema.org",
               "@type": "SoftwareApplication",
               "name": "Auto Loan Calculator",
-              "description": `Calculate your monthly car payments for a $${loanAmount.toLocaleString()} loan.`,
+              "description": `Calculate your monthly car payments for a $${loan.loan_amount.toLocaleString()} loan.`,
               "applicationCategory": "FinanceApplication",
               "operatingSystem": "Web",
-              "url": `https://www.expensegoose.com/tools/auto-loan/${loanAmount}`,
+              "url": `https://www.expensegoose.com/tools/auto-loan/${loan.loan_amount}`,
             }),
           }}
         />
@@ -65,11 +66,11 @@ export default function AutoLoanCalculator({ loanAmount }: { loanAmount: number 
 
       <main className="max-w-screen-md mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-center mb-6">
-          Auto Loan Calculator for ${loanAmount.toLocaleString()}
+          Auto Loan Calculator for ${loan.loan_amount.toLocaleString()}
         </h1>
 
         <p className="text-base text-gray-700 mb-4">
-          Use our Auto Loan Calculator to estimate your monthly car payments for a ${loanAmount.toLocaleString()} loan. Plan your car loan with ease and confidence.
+          Use our Auto Loan Calculator to estimate your monthly car payments for a ${loan.loan_amount.toLocaleString()} loan. Plan your car loan with ease and confidence.
         </p>
 
         <section className="mb-8">
@@ -149,22 +150,41 @@ export default function AutoLoanCalculator({ loanAmount }: { loanAmount: number 
     </>
   );
 }
+
 export async function getStaticPaths() {
-    const loanAmounts = [15000, 20000, 25000]; // Example loan amounts
-    const paths = loanAmounts.map((amount) => ({
-      params: { slug: `auto-loan-calculator-${amount}` }, // Generate slug dynamically
-    }));
-  
-    return { paths, fallback: false };
+  const { data: loans, error } = await supabase
+    .from("auto_loans")
+    .select("loan_amount");
+
+  if (error) {
+    console.error("Error fetching loan amounts:", error);
+    return { paths: [], fallback: false };
   }
-  
-  export async function getStaticProps({ params }: { params: { slug: string } }) {
-    // Extract loan amount from the slug
-    const loanAmount = parseInt(params.slug.replace("auto-loan-calculator-", ""), 10);
-  
-    return {
-      props: {
-        loanAmount,
-      },
-    };
+
+  const paths = loans.map((loan: { loan_amount: number }) => ({
+    params: { slug: `auto-loan-calculator-${loan.loan_amount.toFixed(0)}` },
+  }));
+
+  return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }: { params: { slug: string } }) {
+  const loanAmount = parseInt(params.slug.replace("auto-loan-calculator-", ""), 10);
+
+  const { data: loan, error } = await supabase
+    .from("auto_loans")
+    .select("*")
+    .eq("loan_amount", loanAmount)
+    .single();
+
+  if (error || !loan) {
+    console.error("Error fetching loan details:", error);
+    return { notFound: true };
   }
+
+  return {
+    props: {
+      loan,
+    },
+  };
+}
