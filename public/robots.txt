@@ -1,12 +1,9 @@
 # *
 User-agent: *
 Allow: /
-Disallow: /admin
 
 # Host
 Host: https://www.expensegoose.com
 
 # Sitemaps
 Sitemap: https://www.expensegoose.com/sitemap.xml
-Sitemap: https://www.expensegoose.com/sitemap-0.xml
-

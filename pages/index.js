@@ -4,7 +4,7 @@ import Faq from '../components/Faqs/Faq';
 
 import Seo from '../components/Misc/Seo';
 import PricingComponent from '../components/Misc/PricingComponent';
-import { ArrowRight, PenTool as Tool, Zap, Users, BookOpen } from "lucide-react";
+import { ArrowRight, PenTool as Tool, Zap, Users, BookOpen, Car } from "lucide-react";
 
 import { useState } from "react";
 
@@ -81,6 +81,14 @@ function Tools() {
       bgHover: "hover:bg-blue-50",
     },
     {
+      title: "Auto Loan Calculator",
+      description: "Calculate your monthly auto loan payments",
+      icon: Car,
+      path: "/tools/auto-loan-calculator",
+      color: "text-blue-600",
+      bgHover: "hover:bg-blue-50",
+    },
+    {
       title: "Emergency Fund Calculator",
       description: "Estimate the amount to save for emergencies",
       icon: PiggyBank,
@@ -103,7 +111,6 @@ function Tools() {
       path: "/grocery-budget-calculator",
       color: "text-pink-600",
       bgHover: "hover:bg-pink-50",
-      comingSoon: true,
     },
     {
       title: "Relocation Calculator",
@@ -112,7 +119,6 @@ function Tools() {
       path: "/relocation-calculator",
       color: "text-teal-600",
       bgHover: "hover:bg-teal-50",
-      comingSoon: true,
     },
     {
       title: "Cost of Living Comparison",
@@ -132,15 +138,7 @@ function Tools() {
       bgHover: "hover:bg-rose-50",
       comingSoon: true,
     },
-    {
-      title: "Every Dollar Tool",
-      description: "Track every dollar you spend or save",
-      icon: DollarSign,
-      path: "/every-dollar",
-      color: "text-cyan-600",
-      bgHover: "hover:bg-cyan-50",
-      comingSoon: true,
-    },
+
     {
       title: "You Need a Budget",
       description: "Discover the power of budgeting proactively",
