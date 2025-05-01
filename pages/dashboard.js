@@ -24,6 +24,7 @@ function App() {
   const { user } = useUser();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(true);
+ 
 
 
   useEffect(() => {
@@ -202,6 +203,7 @@ function App() {
     tool.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tool.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
 
   return (
     <div className="min-h-screen p-4 md:p-8">

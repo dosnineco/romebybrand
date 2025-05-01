@@ -16,6 +16,7 @@ function MyApp({ Component, pageProps }) {
     router.pathname === route || router.pathname.startsWith(`${route}/`)
   );
 
+
   const isHomePage = router.pathname === '/';
 
   return (
