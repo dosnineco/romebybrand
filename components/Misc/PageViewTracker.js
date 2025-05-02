@@ -9,6 +9,17 @@ const PageViewTracker = () => {
   const [lastHourViews, setLastHourViews] = useState(0);
 
   useEffect(() => {
+    const captureReferrer = () => {
+      const referrer = document.referrer;
+
+      if (referrer && !localStorage.getItem("referrer")) {
+        localStorage.setItem("referrer", referrer); // Store referrer in local storage
+      }
+    };
+
+    captureReferrer();
+  }, []);
+  useEffect(() => {
     const handlePageView = async (url) => {
       if (!url) return;
 

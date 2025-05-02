@@ -42,7 +42,7 @@ export default function Payment() {
     checkSubscriptionStatus();
   }, [isLoaded, user, router]);
 
-  const handlePaymentSuccess = async () => {
+  const handlePaymentSuccess = async (paymentid) => {
     if (user) {
       try {
         const { data, error } = await supabase
@@ -54,6 +54,9 @@ export default function Payment() {
               full_name: user.fullName,
               is_subscribed: true,
               subscription_date: new Date().toISOString(),
+              payment_id: paymentid,
+              is_trial_active: false,
+              payment_status: 'Paid',
             },
             { onConflict: 'clerk_id' }
           );
@@ -79,8 +82,7 @@ export default function Payment() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen text-gray-700">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
-        <p className="text-lg ml-4">Loading...</p>
+        <div className="animate-spin rounded-full h-24 w-24 border-b-4 border-blue-500"></div>
     
       </div>
     );
@@ -148,7 +150,7 @@ export default function Payment() {
             }}
             onApprove={(data, actions) => {
               return actions.order.capture().then(() => {
-                handlePaymentSuccess(); // Mark payment as complete and save subscription
+                handlePaymentSuccess(data.orderID); // Mark payment as complete and save subscription
               });
             }}
             onError={(err) => {

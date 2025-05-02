@@ -40,42 +40,42 @@ function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
       if (isSignedIn && user) {
         const { id: clerkId, emailAddresses, fullName } = user;
         const email = emailAddresses[0]?.emailAddress;
+        const referrer = localStorage.getItem("referrer") || null; // Get referrer from local storage
 
         try {
-          // Check if the user already exists in the database
           const { data: existingUser, error: fetchError } = await supabase
             .from('users')
             .select('*')
             .eq('clerk_id', clerkId)
             .single();
-
+  
           if (fetchError && fetchError.code !== 'PGRST116') {
             console.error('Error fetching user:', fetchError.message);
             return;
           }
-
-          // If the user does not exist, insert them into the database
+  
           if (!existingUser) {
             const { error: insertError } = await supabase.from('users').insert([
               {
                 clerk_id: clerkId,
                 email,
                 full_name: fullName,
+                trial_start_date: new Date().toISOString(),
+                is_trial_active: true,
+                referrer,
               },
             ]);
-
+  
             if (insertError) {
-              console.error('Error inserting user:', insertError.message);
-            } else {
-              console.log('User added to the database successfully.');
+              console.error('Error adding user:', insertError.message);
             }
           }
         } catch (err) {
-          console.error('Error adding user to the database:', err.message);
+          console.error('Unexpected error adding user:', err);
         }
       }
     };
-
+  
     addUserToDatabase();
   }, [isSignedIn, user]);
 
