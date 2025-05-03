@@ -234,15 +234,7 @@ export default function PageViewsAdmin() {
           </>
         )}
 
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold mb-4">Tips for Using This Dashboard</h2>
-          <ul className="list-disc list-inside mb-4 text-base">
-            <li>Use the search bar to quickly find specific pages.</li>
-            <li>Click on table headers to sort data by URL, view count, or last viewed date.</li>
-            <li>Analyze the graph to identify the most popular pages.</li>
-            <li>Use pagination to navigate through large datasets efficiently.</li>
-          </ul>
-        </section>
+   
       </main>
     </>
   );

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { useUser } from "@clerk/nextjs";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);

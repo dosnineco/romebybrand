@@ -19,6 +19,7 @@ const PageViewTracker = () => {
 
     captureReferrer();
   }, []);
+
   useEffect(() => {
     const handlePageView = async (url) => {
       if (!url) return;
@@ -27,29 +28,28 @@ const PageViewTracker = () => {
         // Check if the page already exists in the database
         const { data, error } = await supabase
           .from("page_views")
-          .select("view_count")
+          .select("id, view_count")
           .eq("page_url", url)
           .single();
 
-        if (error) {
-          if (error.code === "PGRST116") {
-            // Insert a new record if it doesn't exist
-            const { error: insertError } = await supabase
-              .from("page_views")
-              .insert({ page_url: url, view_count: 1 });
+        if (error && error.code === "PGRST116") {
+          // Insert a new record if it doesn't exist
+          const { error: insertError } = await supabase
+            .from("page_views")
+            .insert({ page_url: url, view_count: 1, last_viewed: new Date().toISOString() });
 
-            if (insertError) {
-              console.error("Error inserting new page view record:", insertError);
-            }
-          } else {
-            console.error("Error fetching page view data:", error);
+          if (insertError) {
+            console.error("Error inserting new page view record:", insertError);
           }
         } else if (data) {
-          // Increment the view count for an existing record
+          // Increment the view count and update the last_viewed timestamp for an existing record
           const { error: updateError } = await supabase
             .from("page_views")
-            .update({ view_count: data.view_count + 1 })
-            .eq("page_url", url);
+            .update({
+              view_count: data.view_count + 1,
+              last_viewed: new Date().toISOString(),
+            })
+            .eq("id", data.id);
 
           if (updateError) {
             console.error("Error updating page view record:", updateError);
@@ -100,12 +100,7 @@ const PageViewTracker = () => {
     };
   }, [router]);
 
-  return (
-    <div className="fixed bottom-4 right-4 bg-blue-500 text-white text-sm font-medium rounded-full px-4 py-2 shadow-md flex items-center justify-center">
-      <span className="mr-2">Active Users:</span>
-      <span className="font-bold">{lastHourViews}</span>
-    </div>
-  );
+
 };
 
 export default PageViewTracker;
