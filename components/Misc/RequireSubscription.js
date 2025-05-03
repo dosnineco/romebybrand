@@ -62,6 +62,7 @@ import React, { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { supabase } from '../../lib/supabase';
 import { differenceInDays } from 'date-fns';
+import PricingComponent from "./PricingComponent";
 
 const RequireSubscription = ({ children }) => {
   const { user, isLoaded } = useUser();
@@ -125,12 +126,12 @@ const RequireSubscription = ({ children }) => {
         <p className="text-lg text-red-600 p-4 mb-4">
           Your free trial has expired. Please subscribe to continue using the service.
         </p>
-        <a
-          href="/checkout"
-          className="px-6 font-bold py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-        >
-          Subscribe Now
-        </a>
+        <PricingComponent/>
+        {trialDaysRemaining > 0 && (
+          <p className="text-sm text-gray-500">
+            You have {trialDaysRemaining} days remaining in your trial.
+          </p>
+        )}
       </div>
     );
   }
