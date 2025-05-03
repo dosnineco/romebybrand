@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import { useUser } from '@clerk/nextjs';
 import { supabase } from '../lib/supabase';
+import PricingComponent from '../components/Misc/PricingComponent';
 
 export default function Payment() {
   const { user, isLoaded } = useUser();
@@ -94,7 +95,7 @@ export default function Payment() {
         <div className="max-w-3xl text-center p-8 bg-gray-100 rounded-lg text-gray-900">
           <h1 className="text-4xl font-extrabold mb-4 text-gray-700">Thank You!</h1>
           <p className="text-lg mb-6">
-            You have already made the one-time payment. Enjoy all the premium features!
+            You Are premium. Enjoy all the premium features! 
           </p>
           <button
             onClick={() => router.push('/dashboard')}
@@ -110,30 +111,13 @@ export default function Payment() {
   return (
     <div className=" w-full max-w-screen-md mx-auto px-4 py-8">
       <div className=" text-center p-8  text-gray-900">
-        <h1 className="text-2xl font-extrabold mb-4 text-gray-700">Upgrade to Premium</h1>
+        <h1 className="text-3xl font-extrabold mb-4 text-gray-700">Upgrade to Premium</h1>
         <p className="text-base   mb-6">
-        Enjoy exclusive tools, priority support, and much more for just <span className="font-bold text-lg text-blue-500">$14.99 One time Payment</span>.
-        </p>
-        <ul className="text-left mb-6 space-y-2">
-          <li className="flex items-center">
-            <span className="text-green-500 mr-2">✔</span> Access to all premium tools
-          </li>
-          <li className="flex items-center">
-            <span className="text-green-500 mr-2">✔</span> Ai-powered insights
-
-          </li>
-          <li className="flex items-center">
-            <span className="text-green-500 mr-2">✔</span> Real-time expense tracking
-
-          </li>
-          <li className="flex items-center">
-            <span className="text-green-500 mr-2">✔</span> Unlimited expense entries
+        
       
-          </li>
-          <li className="flex items-center">
-            <span className="text-green-500 mr-2">✔</span> Exclusive updates and features
-          </li>
-        </ul>
+          <span className="text-sm text-gray-500">No subscription, no hidden fees.</span> 
+        </p>
+     <PricingComponent />
         <PayPalScriptProvider options={{ "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}>
           <PayPalButtons
             style={{ layout: 'vertical', color: 'blue', shape: 'pill', label: 'subscribe' }}
@@ -142,7 +126,7 @@ export default function Payment() {
                 purchase_units: [
                   {
                     amount: {
-                      value: '14.99', 
+                      value: '15', 
                     },
                   },
                 ],
