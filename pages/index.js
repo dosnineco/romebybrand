@@ -24,10 +24,14 @@ import {
   TrendingUp,
   ClipboardList
 } from "lucide-react";
+import { supabase } from '../lib/supabase';
+import { useEffect } from "react";
+
 
 function Tools() {
   const [searchTerm, setSearchTerm] = useState("");
 
+  
   const tools = [
 
     {
@@ -175,6 +179,29 @@ function Tools() {
     tool.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tool.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const [totalSaved, setTotalSaved] = useState(0);
+
+  useEffect(() => {
+    const fetchTotalSaved = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("total_expenses")
+          .select("total_amount")
+          .single();
+  
+        if (error) {
+          console.error("Error fetching total saved:", error);
+        } else {
+          setTotalSaved(data.total_amount || 0);
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching total saved:", err);
+      }
+    };
+  
+    fetchTotalSaved();
+  }, []);
+  
 
   return (
     <div className="min-h-screen p-4 md:p-8">
@@ -201,6 +228,12 @@ function Tools() {
         
         </div>
           </div>
+
+          <div className="w-full mx-auto text-center flex items-center justify-center ">
+          <p className="text-lg  bg-green-100  p-3 round-lg w-full font-semibold text-center text-green-900 ">
+            Users have saved  ${totalSaved.toLocaleString()} with us!
+          </p>
+      </div>
 
           {/* Search */}
           <div className="relative mb-8">
@@ -262,6 +295,8 @@ function Tools() {
 
 export default function Home() {
 
+
+
   return (
     <>
       <Seo 
@@ -274,7 +309,10 @@ export default function Home() {
 
 
 
+
       <Tools /> 
+
+
       <PricingComponent />
       <Faq />
 
