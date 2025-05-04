@@ -1,5 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
-const gtag= 'G-SC64X5RNW0';
+const gtag= 'G-9PZEXD5SEW';
 
 class MyDocument extends Document {
 
@@ -14,7 +14,7 @@ class MyDocument extends Document {
           <meta name="theme-color" content="#ffffff"/>
           <script
             async
-            src={`https://www.googletagmanager.com/gtag/js?id='G-SC64X5RNW0'`}
+            src={`https://www.googletagmanager.com/gtag/js?id='G-9PZEXD5SEW'`}
           />           
           <script
             dangerouslySetInnerHTML={{
@@ -22,28 +22,14 @@ class MyDocument extends Document {
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', 'G-SC64X5RNW0', {
+                gtag('config', 'G-9PZEXD5SEW', {
                   page_path: window.location.pathname,
                 });
             `,
             }}
           />
-          <script
-            async
-            src={`https://www.googletagmanager.com/gtag/js?id='AW-11063925737'`}
-          />           
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', 'AW-11063925737', {
-                  page_path: window.location.pathname,
-                });
-            `,
-            }}
-          />
+               
+   
     
         </Head>     
         <body className="snap-y snap-mandatory h-screen overflow-y-scroll Default ">
