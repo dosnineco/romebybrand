@@ -546,7 +546,7 @@ const csvHeaders = [
               </button>
         </div>
 
-         {/* Graph Section */}
+         {/* Graph Section
          <div className="bg-white rounded-lg p-4 mb-6 shadow">
             <h2 className="text-xl font-semibold mb-4 text-center">Spending Overview</h2>
             <ResponsiveContainer width="100%" height={300}>
@@ -558,7 +558,7 @@ const csvHeaders = [
                 <Line type="monotone" dataKey="spending" stroke="#8884d8" activeDot={{ r: 8 }} />
               </LineChart>
             </ResponsiveContainer>
-          </div>
+          </div> */}
 
           {/* Download Button */}
           <div className="flex justify-end mb-6">
