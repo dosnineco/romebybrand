@@ -9,7 +9,8 @@ import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { TiRefresh } from "react-icons/ti";
 import { DollarSign } from "lucide-react";
 import RequireSubscription from '../components/Misc/RequireSubscription';  
-
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { CSVLink } from 'react-csv'; 
 
 
 const App = () => {
@@ -70,7 +71,33 @@ const [customEndDate, setCustomEndDate] = useState('');
     fetchBudgetAndCategoryLimits().then(() => fetchTransactions());
   }, [user]);
   
-  
+  // Prepare data for the graph based on the selected filter
+const graphData = useMemo(() => {
+  const groupedData = {};
+
+  transactions.forEach((transaction) => {
+    const dateKey = format(new Date(transaction.transaction_date), filterPeriod === 'day' ? 'yyyy-MM-dd' :
+      filterPeriod === 'week' ? 'yyyy-ww' : 'yyyy-MM');
+    if (!groupedData[dateKey]) {
+      groupedData[dateKey] = 0;
+    }
+    groupedData[dateKey] += Math.abs(transaction.amount);
+  });
+
+  return Object.entries(groupedData).map(([key, value]) => ({
+    date: key,
+    spending: value,
+  }));
+}, [transactions, filterPeriod]);
+
+// CSV headers for download
+const csvHeaders = [
+  { label: 'Date', key: 'transaction_date' },
+  { label: 'Description', key: 'description' },
+  { label: 'Category', key: 'category' },
+  { label: 'Amount', key: 'amount' },
+];
+
   // Memoized filter function
   const filterTransactions = useCallback((data) => {
     return data.filter((t) => {
@@ -485,18 +512,18 @@ const [customEndDate, setCustomEndDate] = useState('');
           </p>
           
           <div className="p-2 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg mb-4">
-  <div className="flex flex-col md:flex-row items-center justify-between text-center">
-    <p className="text-sm mb-2 md:mb-0">
-      Go to the settings page to configure your monthly budget and category limits.
-    </p>
-    <button
-      className="bg-yellow-500 text-white p-2 rounded-lg flex items-center  justify-center hover:bg-yellow-600 transition"
-      onClick={() => router.push('/settings')}
-    >
-      <Settings className="w-5 h-5 mr-2 " />
-    </button>
-  </div>
-</div>
+            <div className="flex flex-col md:flex-row items-center justify-between text-center">
+              <p className="text-sm mb-2 md:mb-0">
+                Go to the settings page to configure your monthly budget and category limits.
+              </p>
+              <button
+                className="bg-yellow-500 text-white p-2 rounded-lg flex items-center  justify-center hover:bg-yellow-600 transition"
+                onClick={() => router.push('/settings')}
+              >
+                <Settings className="w-5 h-5 mr-2 " />
+              </button>
+            </div>
+          </div>
 
 {/* non */}
       <div className="w-full mx-auto">
@@ -519,6 +546,121 @@ const [customEndDate, setCustomEndDate] = useState('');
               </button>
         </div>
 
+         {/* Graph Section */}
+         <div className="bg-white rounded-lg p-4 mb-6 shadow">
+            <h2 className="text-xl font-semibold mb-4 text-center">Spending Overview</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={graphData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="spending" stroke="#8884d8" activeDot={{ r: 8 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Download Button */}
+          <div className="flex justify-end mb-6">
+            <CSVLink
+              data={transactions}
+              headers={csvHeaders}
+              filename={`transactions-${filterPeriod}.csv`}
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+            >
+              Download Transactions
+            </CSVLink>
+          </div>
+
+
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+  <div className="flex flex-col sm:flex-row gap-4">
+    <div className="flex-1 relative">
+      <input
+        type="text"
+        placeholder="Search transactions..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full pl-10 pr-4 py-2 border rounded-lg"
+      />
+      <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+    </div>
+    <div className="flex gap-2">
+      <select
+        value={filterPeriod}
+        onChange={(e) => setFilterPeriod(e.target.value)}
+        className="border rounded-lg px-4 py-2 flex-1"
+      >
+        <option value="all">All Time</option>
+        <option value="day">Last 24 Hours</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+        <option value="year">This Year</option>
+        <option value="custom range">Custom Range</option>
+      </select>
+      <button
+        onClick={() => fetchTransactions()}
+        className="bg-blue-500 text-sm text-center items-center justify-center center text-white px-4 py-2 rounded-lg"
+      >
+        {/* <TiRefresh className="h-6 w-6 inline mr-2" /> */}
+          Apply changes ...
+      </button>
+    </div>
+  </div>
+
+  {/* Conditional Form for Custom Range or Year */}
+  {(filterPeriod === 'custom range' || filterPeriod === 'year') && (
+    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {filterPeriod === 'custom range' && (
+        <>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Start Date
+            </label>
+            <input
+              type="date"
+              value={customStartDate}
+              onChange={(e) => setCustomStartDate(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              End Date
+            </label>
+            <input
+              type="date"
+              value={customEndDate}
+              onChange={(e) => setCustomEndDate(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2"
+            />
+          </div>
+        </>
+      )}
+      {filterPeriod === 'year' && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Select Year
+          </label>
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2"
+          >
+            {Array.from({ length: 10 }, (_, i) => {
+              const year = new Date().getFullYear() - i;
+              return (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+      )}
+    </div>
+  )}
+</div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
   {/* Monthly Spending */}
@@ -749,94 +891,6 @@ const [customEndDate, setCustomEndDate] = useState('');
 
 
 
-<div className="bg-gray-50 rounded-lg p-4 mb-6">
-  <div className="flex flex-col sm:flex-row gap-4">
-    <div className="flex-1 relative">
-      <input
-        type="text"
-        placeholder="Search transactions..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full pl-10 pr-4 py-2 border rounded-lg"
-      />
-      <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-    </div>
-    <div className="flex gap-2">
-      <select
-        value={filterPeriod}
-        onChange={(e) => setFilterPeriod(e.target.value)}
-        className="border rounded-lg px-4 py-2 flex-1"
-      >
-        <option value="all">All Time</option>
-        <option value="day">Last 24 Hours</option>
-        <option value="week">This Week</option>
-        <option value="month">This Month</option>
-        <option value="year">This Year</option>
-        <option value="custom range">Custom Range</option>
-      </select>
-      <button
-        onClick={() => fetchTransactions()}
-        className="bg-blue-500 text-sm text-center items-center justify-center center text-white px-4 py-2 rounded-lg"
-      >
-        {/* <TiRefresh className="h-6 w-6 inline mr-2" /> */}
-          Apply changes ...
-      </button>
-    </div>
-  </div>
-
-  {/* Conditional Form for Custom Range or Year */}
-  {(filterPeriod === 'custom range' || filterPeriod === 'year') && (
-    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {filterPeriod === 'custom range' && (
-        <>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Start Date
-            </label>
-            <input
-              type="date"
-              value={customStartDate}
-              onChange={(e) => setCustomStartDate(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              End Date
-            </label>
-            <input
-              type="date"
-              value={customEndDate}
-              onChange={(e) => setCustomEndDate(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2"
-            />
-          </div>
-        </>
-      )}
-      {filterPeriod === 'year' && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Select Year
-          </label>
-          <select
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-            className="w-full border rounded-lg px-3 py-2"
-          >
-            {Array.from({ length: 10 }, (_, i) => {
-              const year = new Date().getFullYear() - i;
-              return (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              );
-            })}
-          </select>
-        </div>
-      )}
-    </div>
-  )}
-</div>
 
         {/* Transactions Table */}
         <div className=" rounded-lg overflow-hidden">
