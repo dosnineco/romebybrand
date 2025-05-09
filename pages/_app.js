@@ -11,11 +11,10 @@ import { supabase } from '../lib/supabase'; // Ensure this is correctly configur
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  const publicRoutes = ['/', '/tools/','/tools/*', '/refund-policy', '/privacy-policy', '/about', '/terms-of-service', '/checkout']; // Define public routes
+  const publicRoutes = ['/', '/tools', '/refund-policy', '/privacy-policy', '/about', '/terms-of-service', '/checkout']; // Define public routes
   const isPublicRoute = publicRoutes.some((route) =>
     router.pathname === route || router.pathname.startsWith(`${route}/`)
   );
-
 
   const isHomePage = router.pathname === '/';
 
@@ -82,6 +81,7 @@ function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
   return (
     <>
       {isPublicRoute ? (
+        // Public routes: No authentication logic
         <>
           <Header />
           <Layout className="container mx-auto px-4 py-8">
@@ -91,6 +91,7 @@ function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
           <Footer />
         </>
       ) : (
+        // Protected routes: Require authentication
         <SignedIn>
           <Header />
           <Layout className="container mx-auto px-4 py-8">

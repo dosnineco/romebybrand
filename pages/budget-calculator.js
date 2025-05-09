@@ -56,11 +56,12 @@ const [customEndDate, setCustomEndDate] = useState('');
     category: 'other',
   });
 
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [monthlySpending, setMonthlySpending] = useState(0);
   const [weeklyBudget, setWeeklyBudget] = useState(() => JSON.parse(localStorage.getItem('weeklyBudget')) || 10000);
   const [categoryLimits, setCategoryLimits] = useState(() => JSON.parse(localStorage.getItem('categoryLimits')) || []);
   const [spendingInsights, setSpendingInsights] = useState([]);
-
+const [showSettingsNotification, setShowSettingsNotification] = useState(true);
   const [savingsProgress, setSavingsProgress] = useState(0);
   const [savingsGoal, setSavingsGoal] = useState(0); // Savings goal from category limits
   const [savingsTotal, setSavingsTotal] = useState(0); // Total savings so far
@@ -511,184 +512,268 @@ const csvHeaders = [
           Track your expenses and savings
           </p>
           
-          <div className="p-2 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg mb-4">
-            <div className="flex flex-col md:flex-row items-center justify-between text-center">
-              <p className="text-sm mb-2 md:mb-0">
-                Go to the settings page to configure your monthly budget and category limits.
-              </p>
-              <button
-                className="bg-yellow-500 text-white p-2 rounded-lg flex items-center  justify-center hover:bg-yellow-600 transition"
-                onClick={() => router.push('/settings')}
-              >
-                <Settings className="w-5 h-5 mr-2 " />
-              </button>
-            </div>
-          </div>
+       {showSettingsNotification && (
+  <div className="p-2 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg mb-4">
+    <div className="flex flex-col md:flex-row items-center justify-between text-center">
+      <p className="text-sm mb-2 md:mb-0">
+        Go to the settings page to configure your monthly budget and category limits.
+      </p>
+      <div className="flex items-center gap-2">
+        <button
+          className="bg-yellow-500 text-white p-2 rounded-lg flex items-center justify-center hover:bg-yellow-600 transition"
+          onClick={() => router.push('/settings')}
+        >
+          <span>Go to Settings</span>
+        </button>
+        <button
+          className="text-yellow-700 hover:text-yellow-900"
+          onClick={() => setShowSettingsNotification(false)}
+          aria-label="Close Notification"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
 {/* non */}
       <div className="w-full mx-auto">
-        <div className="flex justify-between mb-4 ">
-              {/* Left-aligned button */}
 
-              <button
-                className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
-                onClick={() => router.push('/quick')}
-              >
-              Quick Expenses
-              </button>
+{/* filepath: /workspaces/romebybrand/pages/budget-calculator.js */}
+<div className="w-full mx-auto mb-6">
+  {/* Action Row */}
+  <div className="flex flex-wrap justify-between items-center bg-gray-100 p-4 rounded-lg shadow gap-4">
+    {/* Quick Expenses */}
+    <button
+      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+      onClick={() => router.push('/quick')}
+    >
+      <PlusCircle className="w-6 h-6 text-blue-500" />
+      <span className="text-sm font-medium">Quick Expenses</span>
+    </button>
 
-              {/* Right-aligned button */}
-              <button
-                className="bg-gray-500 text-white p-2 rounded-lg flex items-center"
-                onClick={() => router.push('/settings')}
-              >
-                <Settings className="w-6 h-6" />
-              </button>
-        </div>
+    {/* Settings */}
+    <button
+      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+      onClick={() => router.push('/settings')}
+    >
+      <Settings className="w-6 h-6 text-green-500" />
+      <span className="text-sm font-medium">Settings</span>
+    </button>
 
-         {/* Graph Section
-         <div className="bg-white rounded-lg p-4 mb-6 shadow">
-            <h2 className="text-xl font-semibold mb-4 text-center">Spending Overview</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={graphData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="spending" stroke="#8884d8" activeDot={{ r: 8 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div> */}
+    {/* Download Transactions */}
+    <CSVLink
+      data={transactions}
+      headers={csvHeaders}
+      filename={`transactions-${filterPeriod}.csv`}
+      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+    >
+      <FilePlus className="w-6 h-6 text-purple-500" />
+      <span className="text-sm font-medium">Download</span>
+    </CSVLink>
 
-          {/* Download Button */}
-          <div className="flex justify-end mb-6">
-            <CSVLink
-              data={transactions}
-              headers={csvHeaders}
-              filename={`transactions-${filterPeriod}.csv`}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-            >
-              Download Transactions
-            </CSVLink>
-          </div>
-
-
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
-  <div className="flex flex-col sm:flex-row gap-4">
-    <div className="flex-1 relative">
-      <input
-        type="text"
-        placeholder="Search transactions..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full pl-10 pr-4 py-2 border rounded-lg"
-      />
-      <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-    </div>
-    <div className="flex gap-2">
-      <select
-        value={filterPeriod}
-        onChange={(e) => setFilterPeriod(e.target.value)}
-        className="border rounded-lg px-4 py-2 flex-1"
-      >
-        <option value="all">All Time</option>
-        <option value="day">Last 24 Hours</option>
-        <option value="week">This Week</option>
-        <option value="month">This Month</option>
-        <option value="year">This Year</option>
-        <option value="custom range">Custom Range</option>
-      </select>
-      <button
-        onClick={() => fetchTransactions()}
-        className="bg-blue-500 text-sm text-center items-center justify-center center text-white px-4 py-2 rounded-lg"
-      >
-        {/* <TiRefresh className="h-6 w-6 inline mr-2" /> */}
-          Apply changes ...
-      </button>
-    </div>
-  </div>
-
-  {/* Conditional Form for Custom Range or Year */}
-  {(filterPeriod === 'custom range' || filterPeriod === 'year') && (
-    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {filterPeriod === 'custom range' && (
-        <>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Start Date
-            </label>
-            <input
-              type="date"
-              value={customStartDate}
-              onChange={(e) => setCustomStartDate(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              End Date
-            </label>
-            <input
-              type="date"
-              value={customEndDate}
-              onChange={(e) => setCustomEndDate(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2"
-            />
-          </div>
-        </>
-      )}
-      {filterPeriod === 'year' && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Select Year
-          </label>
-          <select
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-            className="w-full border rounded-lg px-3 py-2"
+   {/* Filter Dropdown */}
+<div className="relative">
+  <button
+    className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+    onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+  >
+    <Filter className="w-6 h-6 text-orange-500" />
+    <span className="text-sm font-medium">Filter</span>
+  </button>
+  {showFilterDropdown && (
+    <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+      <ul className="py-2">
+        <li>
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setFilterPeriod('all');
+              setShowFilterDropdown(false); // Hide dropdown
+              fetchTransactions(); // Update transactions
+            }}
           >
-            {Array.from({ length: 10 }, (_, i) => {
-              const year = new Date().getFullYear() - i;
-              return (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              );
-            })}
-          </select>
-        </div>
-      )}
+            All Time
+          </button>
+        </li>
+        <li>
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setFilterPeriod('day');
+              setShowFilterDropdown(false); // Hide dropdown
+              fetchTransactions(); // Update transactions
+            }}
+          >
+            Last 24 Hours
+          </button>
+        </li>
+        <li>
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setFilterPeriod('week');
+              setShowFilterDropdown(false); // Hide dropdown
+              fetchTransactions(); // Update transactions
+            }}
+          >
+            This Week
+          </button>
+        </li>
+        <li>
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setFilterPeriod('month');
+              setShowFilterDropdown(false); // Hide dropdown
+              fetchTransactions(); // Update transactions
+            }}
+          >
+            This Month
+          </button>
+        </li>
+        <li>
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setFilterPeriod('year');
+              setShowFilterDropdown(false); // Hide dropdown
+              fetchTransactions(); // Update transactions
+            }}
+          >
+            This Year
+          </button>
+        </li>
+        <li>
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setFilterPeriod('custom range');
+              setShowFilterDropdown(false); // Hide dropdown
+              fetchTransactions(); // Update transactions
+            }}
+          >
+            Custom Range
+          </button>
+        </li>
+      </ul>
     </div>
   )}
 </div>
+    {/* Apply Changes */}
+    <button
+      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+      onClick={() => fetchTransactions()}
+    >
+      <TiRefresh className="w-6 h-6 text-orange-500" />
+      <span className="text-sm font-medium">Apply Changes</span>
+    </button>
+  </div>
+
+  {/* search Section */}
+  <div className="bg-gray-50 rounded-lg p-4 mt-4">
+    <div className="flex flex-col sm:flex-row gap-4">
+      {/* Search Input */}
+      <div className="flex-1 relative">
+        <input
+          type="text"
+          placeholder="Search transactions..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-10 pr-4 py-2 border rounded-lg"
+        />
+        <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+      </div>
+
+      {/* Filter Period */}
+    
+    </div>
+
+    {/* Conditional Form for Custom Range or Year */}
+    {(filterPeriod === 'custom range' || filterPeriod === 'year') && (
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {filterPeriod === 'custom range' && (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Start Date
+              </label>
+              <input
+                type="date"
+                value={customStartDate}
+                onChange={(e) => setCustomStartDate(e.target.value)}
+                className="w-full border rounded-lg px-3 py-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                End Date
+              </label>
+              <input
+                type="date"
+                value={customEndDate}
+                onChange={(e) => setCustomEndDate(e.target.value)}
+                className="w-full border rounded-lg px-3 py-2"
+              />
+            </div>
+          </>
+        )}
+        {filterPeriod === 'year' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Select Year
+            </label>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2"
+            >
+              {Array.from({ length: 10 }, (_, i) => {
+                const year = new Date().getFullYear() - i;
+                return (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+</div>
+
+
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
   {/* Monthly Spending */}
-  <div className="p-6 bg-gray-100 rounded-lg  text-gray-900 flex flex-col items-center text-center">
-    <div className="flex items-center gap-2 mb-2">
-      <label className="text-lg font-semibold tracking-wide">Monthly Spending</label>
-    </div>
-    <input
-      type="text"
-      value={`$${formatMoney(monthlySpending)}`}
-      readOnly
-      className="w-full text-2xl font-bold bg-transparent text-center outline-none tracking-wide"
-    />
-    <p className="mt-2 text-sm text-gray-600">Stay in control of your expenses.</p>
-  </div>
+        <div className="p-6 bg-gray-100 rounded-lg  text-gray-900 flex flex-col items-center text-center">
+          <div className="flex items-center gap-2 mb-2">
+            <label className="text-lg font-semibold tracking-wide">Monthly Spending</label>
+          </div>
+          <input
+            type="text"
+            value={`$${formatMoney(monthlySpending)}`}
+            readOnly
+            className="w-full text-2xl font-bold bg-transparent text-center outline-none tracking-wide"
+          />
+          <p className="mt-2 text-sm text-gray-600">Stay in control of your expenses.</p>
+        </div>
 
   {/* Remaining Budget */}
-  <div className="p-6 bg-gray-100 rounded-lg text-gray-900 flex flex-col items-center text-center">
-    <div className="flex items-center gap-2 mb-2">
-      <label className="text-lg font-semibold tracking-wide">Remaining Budget</label>
-    </div>
-    <input
-      type="text"
-      value={`$${formatMoney(weeklyBudget * 4 - monthlySpending)}`}
-      readOnly
-      
-      className="w-full text-2xl font-bold bg-transparent text-center outline-none tracking-wide"
-    />
+    <div className="p-6 bg-gray-100 rounded-lg text-gray-900 flex flex-col items-center text-center">
+      <div className="flex items-center gap-2 mb-2">
+        <label className="text-lg font-semibold tracking-wide">Remaining Budget</label>
+      </div>
+      <input
+        type="text"
+        value={`$${formatMoney(weeklyBudget * 4 - monthlySpending)}`}
+        readOnly
+        
+        className="w-full text-2xl font-bold bg-transparent text-center outline-none tracking-wide"
+      />
     {monthlySpending > weeklyBudget * 4 && (
       <p className="text-red-600 text-sm mt-2">Warning: You’ve exceeded your budget!</p>
 
