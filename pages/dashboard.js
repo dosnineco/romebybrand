@@ -58,10 +58,10 @@ function App() {
   const tools = [
 
     {
-      title: "Budget Calculator",
+      title: "Expense Tracker",
       description: "Track and analyze your spending data",
       icon: ClipboardList,
-      path: "/budget-calculator",
+      path: "/expense-tracker",
       color: "text-orange-600",
       bgHover: "hover:bg-orange-50",
       

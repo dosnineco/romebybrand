@@ -11,7 +11,52 @@ import { DollarSign } from "lucide-react";
 import RequireSubscription from '../components/Misc/RequireSubscription';  
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { CSVLink } from 'react-csv'; 
+import { FaInfoCircle } from 'react-icons/fa';
 
+const HowToUseModal = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="relative bg-white w-full max-w-lg h-full overflow-y-auto p-6 rounded-lg shadow-lg">
+        {/* Close Button */}
+        <button
+          className="fixed top-4 right-4 bg-gray-200 text-gray-600 hover:text-gray-900 rounded-full p-2 shadow-md z-50"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          ✕
+        </button>
+
+        {/* Modal Content */}
+        <h2 className="text-2xl font-semibold mb-6 text-center">How to Use the Expense Tracker</h2>
+        <ul className="list-disc list-inside text-gray-700 text-base space-y-4">
+          <li>Go to the <strong>Settings</strong> page to configure your monthly budget and category limits.</li>
+          <li>Use the <strong>Add Transaction</strong> button to log new expenses or income.</li>
+          <li>View your transactions in the table below, which includes date, description, category, and amount.</li>
+          <li>Click on the <strong>Presets</strong> button to quickly add common expenses.</li>
+          <li>Use the <strong>Search</strong> bar to find specific transactions by description.</li>
+          <li>Click on the <strong>Filter</strong> button to filter transactions by time period (e.g., day, week, month).</li>
+          <li>Click on a <strong>category card</strong> to view transactions for that category.</li>
+          <li>Use the <strong>Filter</strong> dropdown to filter transactions by time period (e.g., day, week, month).</li>
+          <li>Search for specific transactions using the <strong>Search</strong> bar.</li>
+          <li>Click the <strong>Edit</strong> icon to modify a transaction or the <strong>Delete</strong> icon to remove it.</li>
+          <li>Download your transactions as a CSV file using the <strong>Download</strong> button.</li>
+          <li>Track your <strong>Monthly Spending</strong> and <strong>Remaining Budget</strong> at the top of the page.</li>
+          <li>Analyze your spending insights to see which categories are over budget.</li>
+        </ul>
+        <div className="flex justify-center mt-8">
+          <button
+            className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600"
+            onClick={onClose}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const App = () => {
   const router = useRouter();
@@ -20,6 +65,7 @@ const App = () => {
   const [summary, setSummary] = useState({ totalCredits: 0, totalDebits: 0, netBalance: 0 });
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [isHowToUseOpen, setIsHowToUseOpen] = useState(false);
 
   // Function to handle category click
   const handleCategoryClick = (category) => {
@@ -62,9 +108,7 @@ const [customEndDate, setCustomEndDate] = useState('');
   const [categoryLimits, setCategoryLimits] = useState(() => JSON.parse(localStorage.getItem('categoryLimits')) || []);
   const [spendingInsights, setSpendingInsights] = useState([]);
 const [showSettingsNotification, setShowSettingsNotification] = useState(true);
-  const [savingsProgress, setSavingsProgress] = useState(0);
-  const [savingsGoal, setSavingsGoal] = useState(0); // Savings goal from category limits
-  const [savingsTotal, setSavingsTotal] = useState(0); // Total savings so far
+ 
 
 
   useEffect(() => {
@@ -154,22 +198,9 @@ const csvHeaders = [
     if (!Array.isArray(data) || data.length === 0) return [];
   
     const categoryTotals = new Map();
-    let savingsTotal = 0;
+   
   
-    for (const { category, amount } of data) {
-      if (category === 'savings') {
-        savingsTotal += Math.abs(amount); // Track savings separately
-      } else {
-        categoryTotals.set(category, (categoryTotals.get(category) || 0) + Math.abs(amount));
-      }
-    }
-  
-    // Calculate savings progress
-    const savingsLimit = categoryLimits.find((limit) => limit.category === 'savings')?.limit_amount || 0;
-    setSavingsGoal(savingsLimit);
-    setSavingsTotal(savingsTotal);
-    setSavingsProgress((savingsTotal / savingsLimit) * 100);
-  
+   
     const categoryLimitMap = new Map(categoryLimits.map(({ category, limit_amount }) => [category, limit_amount]));
   
     const insights = Array.from(categoryTotals.entries()).map(([category, total]) => {
@@ -225,32 +256,27 @@ const csvHeaders = [
       const filteredData = filterTransactions(data || []);
       setTransactions(filteredData);
   
-      // Exclude savings from summary and monthly spending calculations
-      const nonSavingsTransactions = filteredData.filter(
-        (transaction) => transaction.category !== 'savings'
-      );
-  
-      const summary = nonSavingsTransactions.reduce(
-        (acc, curr) => {
-          if (curr.amount >= 0) {
-            acc.totalCredits += curr.amount;
-          } else {
-            acc.totalDebits += Math.abs(curr.amount);
-          }
-          return acc;
-        },
-        { totalCredits: 0, totalDebits: 0, netBalance: 0 }
-      );
-  
-      summary.netBalance = summary.totalCredits - summary.totalDebits;
-      setSummary(summary);
-  
-      const monthlyTotal = nonSavingsTransactions.reduce(
-        (acc, curr) => acc + Math.abs(curr.amount),
-        0
-      );
-      setMonthlySpending(monthlyTotal);
-  
+   
+   const summary = filteredData.reduce(
+  (acc, curr) => {
+    if (curr.amount >= 0) {
+      acc.totalCredits += curr.amount;
+    } else {
+      acc.totalDebits += Math.abs(curr.amount);
+    }
+    return acc;
+  },
+  { totalCredits: 0, totalDebits: 0, netBalance: 0 }
+);
+
+summary.netBalance = summary.totalCredits - summary.totalDebits;
+setSummary(summary);
+
+const monthlyTotal = filteredData.reduce(
+  (acc, curr) => acc + Math.abs(curr.amount),
+  0
+);
+setMonthlySpending(monthlyTotal);
       const insights = analyzeSpending(filteredData);
       setSpendingInsights(insights);
     } catch (err) {
@@ -372,8 +398,7 @@ const csvHeaders = [
         return <FaGamepad className="text-yellow-500" />;
       case 'investments':
         return <TrendingUp className="text-indigo-500" />;
-      case 'savings':
-        return <DollarSign className="text-teal-500" />;
+      
       case 'other':
         return <AlertTriangle className="text-gray-500" />;
       default:
@@ -427,7 +452,6 @@ const csvHeaders = [
             <option value="housing">Housing</option>
             <option value="entertainment">Entertainment</option>
             <option value="investments">Investments</option>
-          <option value="savings">Savings</option>
             <option value="other">Other</option>
             </select>
 
@@ -507,278 +531,29 @@ const csvHeaders = [
     <RequireSubscription>
     <div className="min-h-screen   p-4 sm:p-6">
         <div className="w-full max-w-screen-md"> {/* Added container with max width */}
-        <h1 className="text-3xl font-bold mb-6 text-center">Budget Calculator</h1>
-          <p className="text-lg text-gray-700 mb-6 text-center">
-          Track your expenses and savings
-          </p>
-          
-       {showSettingsNotification && (
-  <div className="p-2 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg mb-4">
-    <div className="flex flex-col md:flex-row items-center justify-between text-center">
-      <p className="text-sm mb-2 md:mb-0">
-        Go to the settings page to configure your monthly budget and category limits.
-      </p>
-      <div className="flex items-center gap-2">
-        <button
-          className="bg-yellow-500 text-white p-2 rounded-lg flex items-center justify-center hover:bg-yellow-600 transition"
-          onClick={() => router.push('/settings')}
-        >
-          <span>Go to Settings</span>
-        </button>
-        <button
-          className="text-yellow-700 hover:text-yellow-900"
-          onClick={() => setShowSettingsNotification(false)}
-          aria-label="Close Notification"
-        >
-          ✕
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+          <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Expense Tracker</h1>
+          <button
+            className="text-blue-600 hover:text-blue-800 flex items-center"
+            onClick={() => setIsHowToUseOpen(true)}
+          >
+            <FaInfoCircle className="mr-2" />
+            How to Use
+          </button>
+        </div>
+
+        {/* How to Use Modal */}
+        <HowToUseModal
+          isOpen={isHowToUseOpen}
+          onClose={() => setIsHowToUseOpen(false)}
+        />
+
 
 {/* non */}
       <div className="w-full mx-auto">
 
-{/* filepath: /workspaces/romebybrand/pages/budget-calculator.js */}
 <div className="w-full mx-auto mb-6">
   {/* Action Row */}
-  <div className="flex flex-wrap justify-between items-center bg-gray-100 p-4 rounded-lg shadow gap-4">
-
-
-        {/* Add Transaction Button */}
-        <div className="flex justify-center">
-          <button
-            onClick={() => setShowAddForm(true)}
-                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-
-            aria-label="Add New Transaction"
-          >
-            <PlusCircle className="w-6 h-6 mr-2" />
-            <span className="text-sm font-medium">Add Transaction</span>
-          </button>
-        </div>
-
-        {/* Add Transaction Form */}
-        {showAddForm && (
-          <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200">
-            <h2 className="text-lg font-semibold mb-4">Add New Transaction</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input
-                type="date"
-                value={newTransaction.transaction_date}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    transaction_date: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              />
-              <input
-                type="date"
-                value={newTransaction.post_date}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    post_date: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              />
-              <input
-                type="text"
-                placeholder="Description"
-                value={newTransaction.description}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              />
-              <input
-                type="number"
-                placeholder="Amount"
-                value={newTransaction.amount}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    amount: parseFloat(e.target.value),
-                  }))
-                }
-                step="0.01"
-                className="border rounded-lg px-3 py-2"
-              />
-             <select
-                value={newTransaction.category}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    category: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              >
-             <option value="food">Food</option>
-            <option value="shopping">Shopping</option>
-            <option value="transport">Transport</option>
-            <option value="housing">Housing</option>
-            <option value="entertainment">Entertainment</option>
-            <option value="investments">Investments</option>
-            <option value="savings">Savings</option>
-            <option value="other">Other</option>
-            </select>
-
-            </div>
-            <div className="mt-4 flex flex-col sm:flex-row gap-2">
-              <button
-                onClick={() => setShowAddForm(false)}
-                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex-1"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={addTransaction}
-                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        )}
-
-
-    {/* Quick Expenses */}
-    <button
-      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-      onClick={() => router.push('/quick')}
-    >
-      <PlusCircle className="w-6 h-6 text-blue-500" />
-      <span className="text-sm font-medium">Expenses Presets</span>
-    </button>
-
-    
-
-    {/* Settings */}
-    <button
-      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-      onClick={() => router.push('/settings')}
-    >
-      <Settings className="w-6 h-6 text-green-500" />
-      <span className="text-sm font-medium">Settings</span>
-    </button>
-
-    {/* Download Transactions */}
-    <CSVLink
-      data={transactions}
-      headers={csvHeaders}
-      filename={`transactions-${filterPeriod}.csv`}
-      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-    >
-      <FilePlus className="w-6 h-6 text-purple-500" />
-      <span className="text-sm font-medium">Download</span>
-    </CSVLink>
-
-   {/* Filter Dropdown */}
-<div className="relative">
-  <button
-    className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-    onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-  >
-    <Filter className="w-6 h-6 text-orange-500" />
-    <span className="text-sm font-medium">Filter</span>
-  </button>
-  {showFilterDropdown && (
-    <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-      <ul className="py-2">
-        <li>
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              setFilterPeriod('all');
-              setShowFilterDropdown(false); // Hide dropdown
-              fetchTransactions(); // Update transactions
-            }}
-          >
-            All Time
-          </button>
-        </li>
-        <li>
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              setFilterPeriod('day');
-              setShowFilterDropdown(false); // Hide dropdown
-              fetchTransactions(); // Update transactions
-            }}
-          >
-            Last 24 Hours
-          </button>
-        </li>
-        <li>
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              setFilterPeriod('week');
-              setShowFilterDropdown(false); // Hide dropdown
-              fetchTransactions(); // Update transactions
-            }}
-          >
-            This Week
-          </button>
-        </li>
-        <li>
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              setFilterPeriod('month');
-              setShowFilterDropdown(false); // Hide dropdown
-              fetchTransactions(); // Update transactions
-            }}
-          >
-            This Month
-          </button>
-        </li>
-        <li>
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              setFilterPeriod('year');
-              setShowFilterDropdown(false); // Hide dropdown
-              fetchTransactions(); // Update transactions
-            }}
-          >
-            This Year
-          </button>
-        </li>
-        <li>
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              setFilterPeriod('custom range');
-              setShowFilterDropdown(false); // Hide dropdown
-              fetchTransactions(); // Update transactions
-            }}
-          >
-            Custom Range
-          </button>
-        </li>
-      </ul>
-    </div>
-  )}
-</div>
-    {/* Apply Changes */}
-    <button
-      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-      onClick={() => fetchTransactions()}
-    >
-      <TiRefresh className="w-6 h-6 text-orange-500" />
-      <span className="text-sm font-medium">Apply Changes</span>
-    </button>
-  </div>
-
   {/* search Section */}
   <div className="bg-gray-50 rounded-lg p-4 mt-4">
     <div className="flex flex-col sm:flex-row gap-4">
@@ -851,6 +626,243 @@ const csvHeaders = [
       </div>
     )}
   </div>
+
+        <div className="flex flex-wrap justify-between items-center bg-gray-100 p-4 rounded-lg shadow gap-4">
+
+
+              {/* Add Transaction Button */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setShowAddForm(true)}
+                        className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+
+                  aria-label="Add New Transaction"
+                >
+                  <PlusCircle className="w-6 h-6 mr-2" />
+                  <span className="text-sm font-medium">Add Transaction</span>
+                </button>
+              </div>
+
+              {/* Add Transaction Form */}
+              {showAddForm && (
+                <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200">
+                  <h2 className="text-lg font-semibold mb-4">Add New Transaction</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input
+                      type="date"
+                      value={newTransaction.transaction_date}
+                      onChange={(e) =>
+                        setNewTransaction((prev) => ({
+                          ...prev,
+                          transaction_date: e.target.value,
+                        }))
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                    <input
+                      type="date"
+                      value={newTransaction.post_date}
+                      onChange={(e) =>
+                        setNewTransaction((prev) => ({
+                          ...prev,
+                          post_date: e.target.value,
+                        }))
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Description"
+                      value={newTransaction.description}
+                      onChange={(e) =>
+                        setNewTransaction((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Amount"
+                      value={newTransaction.amount}
+                      onChange={(e) =>
+                        setNewTransaction((prev) => ({
+                          ...prev,
+                          amount: parseFloat(e.target.value),
+                        }))
+                      }
+                      step="0.01"
+                      className="border rounded-lg px-3 py-2"
+                    />
+                  <select
+                      value={newTransaction.category}
+                      onChange={(e) =>
+                        setNewTransaction((prev) => ({
+                          ...prev,
+                          category: e.target.value,
+                        }))
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    >
+                  <option value="food">Food</option>
+                  <option value="shopping">Shopping</option>
+                  <option value="transport">Transport</option>
+                  <option value="housing">Housing</option>
+                  <option value="entertainment">Entertainment</option>
+                  <option value="investments">Investments</option>
+                  <option value="other">Other</option>
+                  </select>
+
+                  </div>
+                  <div className="mt-4 flex flex-col sm:flex-row gap-2">
+                    <button
+                      onClick={() => setShowAddForm(false)}
+                      className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex-1"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={addTransaction}
+                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              )}
+
+
+          {/* Quick Expenses */}
+          <button
+            className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+            onClick={() => router.push('/quick')}
+          >
+            <PlusCircle className="w-6 h-6 text-blue-500" />
+            <span className="text-sm font-medium">Presets</span>
+          </button>
+
+          
+
+          {/* Settings */}
+          <button
+            className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+            onClick={() => router.push('/settings')}
+          >
+            <Settings className="w-6 h-6 text-green-500" />
+            <span className="text-sm font-medium">Settings</span>
+          </button>
+
+          {/* Download Transactions */}
+          <CSVLink
+            data={transactions}
+            headers={csvHeaders}
+            filename={`transactions-${filterPeriod}.csv`}
+            className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+          >
+            <FilePlus className="w-6 h-6 text-purple-500" />
+            <span className="text-sm font-medium">Download</span>
+          </CSVLink>
+
+        {/* Filter Dropdown */}
+      <div className="relative">
+        <button
+          className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+          onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+        >
+          <Filter className="w-6 h-6 text-orange-500" />
+          <span className="text-sm font-medium">Filter</span>
+        </button>
+        {showFilterDropdown && (
+          <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+            <ul className="py-2">
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => {
+                    setFilterPeriod('all');
+                    setShowFilterDropdown(false); // Hide dropdown
+                    fetchTransactions(); // Update transactions
+                  }}
+                >
+                  All Time
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => {
+                    setFilterPeriod('day');
+                    setShowFilterDropdown(false); // Hide dropdown
+                    fetchTransactions(); // Update transactions
+                  }}
+                >
+                  Last 24 Hours
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => {
+                    setFilterPeriod('week');
+                    setShowFilterDropdown(false); // Hide dropdown
+                    fetchTransactions(); // Update transactions
+                  }}
+                >
+                  This Week
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => {
+                    setFilterPeriod('month');
+                    setShowFilterDropdown(false); // Hide dropdown
+                    fetchTransactions(); // Update transactions
+                  }}
+                >
+                  This Month
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => {
+                    setFilterPeriod('year');
+                    setShowFilterDropdown(false); // Hide dropdown
+                    fetchTransactions(); // Update transactions
+                  }}
+                >
+                  This Year
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => {
+                    setFilterPeriod('custom range');
+                    setShowFilterDropdown(false); // Hide dropdown
+                    fetchTransactions(); // Update transactions
+                  }}
+                >
+                  Custom Range
+                </button>
+              </li>
+            </ul>
+          </div>
+        )}
+      </div>
+          {/* Apply Changes */}
+          <button
+            className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+            onClick={() => fetchTransactions()}
+          >
+            <TiRefresh className="w-6 h-6 text-orange-500" />
+            <span className="text-sm font-medium">Apply Changes</span>
+          </button>
+        </div>
+
+
 </div>
 
 
@@ -894,19 +906,7 @@ const csvHeaders = [
 
         
 
-         {/* Savings Progress */}
-         <div className="flex items-center justify-center flex-col p-5 rounded-lg col-span-2  h-48  border border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">Savings Progress</h2>
-              <div className="relative  w-full bg-gray-200 rounded-lg h-4 overflow-hidden">
-                <div
-                  className="absolute top-0 left-0 h-4 bg-green-500 rounded-full transition-all duration-500"
-                  style={{ width: `${savingsProgress}%` }}
-                ></div>
-              </div>
-              <p className="mt-2 text-sm text-gray-700">
-                You have saved <strong>${formatMoney(savingsTotal)}</strong> out of your goal of <strong>${formatMoney(savingsGoal)}</strong>.
-              </p>
-            </div>
+  
 
 
         {spendingInsights.map((insight) => (
@@ -1051,7 +1051,6 @@ const csvHeaders = [
                         <option value="housing">Housing</option>
                         <option value="entertainment">Entertainment</option>
                         <option value="investments">Investments</option>
-                        <option value="savings">Savings</option>
                         <option value="other">Other</option>
                       </select>
                     </div>

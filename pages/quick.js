@@ -5,12 +5,15 @@ import { useUser } from "@clerk/clerk-react";
 import { Dialog } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { FaPlusCircle } from 'react-icons/fa';
+import { FaInfoCircle } from 'react-icons/fa';
 
 
 export default function QuickExpenses() {
   const { user } = useUser();
   const router = useRouter();
   const userId = user ? user.id : null;
+    const [isInfoOpen, setIsInfoOpen] = useState(false);
+
 
   const [expenses, setExpenses] = useState([]);
   const [presets, setPresets] = useState([]);
@@ -201,10 +204,49 @@ export default function QuickExpenses() {
 
   return (
     <div className="p-4 w-full max-w-[600px] mx-auto text-gray-800 rounded-lg">
-      <h2 className="text-lg font-semibold mb-4">Quick Expenses Preset</h2>
-       <button className="bg-gray-500 text-white p-2 rounded-lg mb-4 flex items-center" onClick={() => router.push('/budget-calculator')}>
-        ← Expenses
-      </button>
+ 
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Quick Expenses Preset</h2>
+        <button
+          className="text-blue-600 hover:text-blue-800 flex items-center"
+          onClick={() => setIsInfoOpen(true)}
+        >
+          <FaInfoCircle className="mr-2" />
+          How to Use
+        </button>
+      </div>
+
+      {/* Info Modal */}
+      {isInfoOpen && (
+        <Dialog
+          open={isInfoOpen}
+          onClose={() => setIsInfoOpen(false)}
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+        >
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80 relative">
+            <h2 className="text-lg font-semibold mb-4">How to Use</h2>
+            <ul className="list-disc list-inside text-gray-700 text-base space-y-2">
+              <li>Quickly log your expenses using presets.</li>
+              <li>Click on a preset to log an expense.</li>
+              <li>Drag left to delete a preset.</li>
+              <li>Drag left to delete an expense.</li>
+              <li>Click the plus icon to add a new preset.</li>
+              <li>Click the preset to log an expense.</li>
+            </ul>
+            <div className="flex justify-end mt-4">
+              <button
+                className="bg-gray-500 text-white px-4 py-2 rounded"
+                onClick={() => setIsInfoOpen(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </Dialog>
+      )}
+
+     
+
 
       {/* Presents */}
       <div className="  flex flex-col gap-2 mb-4">
@@ -249,7 +291,6 @@ export default function QuickExpenses() {
             <option value="housing">Housing</option>
             <option value="entertainment">Entertainment</option>
             <option value="investments">Investments</option>
-            <option value="savings">Savings</option>
             <option value="other">Other</option>
           </select>
           <div className="flex justify-end gap-2">
