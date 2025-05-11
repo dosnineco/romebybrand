@@ -544,14 +544,122 @@ const csvHeaders = [
 <div className="w-full mx-auto mb-6">
   {/* Action Row */}
   <div className="flex flex-wrap justify-between items-center bg-gray-100 p-4 rounded-lg shadow gap-4">
+
+
+        {/* Add Transaction Button */}
+        <div className="flex justify-center">
+          <button
+            onClick={() => setShowAddForm(true)}
+                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+
+            aria-label="Add New Transaction"
+          >
+            <PlusCircle className="w-6 h-6 mr-2" />
+            <span className="text-sm font-medium">Add Transaction</span>
+          </button>
+        </div>
+
+        {/* Add Transaction Form */}
+        {showAddForm && (
+          <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200">
+            <h2 className="text-lg font-semibold mb-4">Add New Transaction</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input
+                type="date"
+                value={newTransaction.transaction_date}
+                onChange={(e) =>
+                  setNewTransaction((prev) => ({
+                    ...prev,
+                    transaction_date: e.target.value,
+                  }))
+                }
+                className="border rounded-lg px-3 py-2"
+              />
+              <input
+                type="date"
+                value={newTransaction.post_date}
+                onChange={(e) =>
+                  setNewTransaction((prev) => ({
+                    ...prev,
+                    post_date: e.target.value,
+                  }))
+                }
+                className="border rounded-lg px-3 py-2"
+              />
+              <input
+                type="text"
+                placeholder="Description"
+                value={newTransaction.description}
+                onChange={(e) =>
+                  setNewTransaction((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+                className="border rounded-lg px-3 py-2"
+              />
+              <input
+                type="number"
+                placeholder="Amount"
+                value={newTransaction.amount}
+                onChange={(e) =>
+                  setNewTransaction((prev) => ({
+                    ...prev,
+                    amount: parseFloat(e.target.value),
+                  }))
+                }
+                step="0.01"
+                className="border rounded-lg px-3 py-2"
+              />
+             <select
+                value={newTransaction.category}
+                onChange={(e) =>
+                  setNewTransaction((prev) => ({
+                    ...prev,
+                    category: e.target.value,
+                  }))
+                }
+                className="border rounded-lg px-3 py-2"
+              >
+             <option value="food">Food</option>
+            <option value="shopping">Shopping</option>
+            <option value="transport">Transport</option>
+            <option value="housing">Housing</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="investments">Investments</option>
+            <option value="savings">Savings</option>
+            <option value="other">Other</option>
+            </select>
+
+            </div>
+            <div className="mt-4 flex flex-col sm:flex-row gap-2">
+              <button
+                onClick={() => setShowAddForm(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex-1"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={addTransaction}
+                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        )}
+
+
     {/* Quick Expenses */}
     <button
       className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
       onClick={() => router.push('/quick')}
     >
       <PlusCircle className="w-6 h-6 text-blue-500" />
-      <span className="text-sm font-medium">Quick Expenses</span>
+      <span className="text-sm font-medium">Expenses Presets</span>
     </button>
+
+    
 
     {/* Settings */}
     <button
@@ -870,109 +978,6 @@ const csvHeaders = [
             
 
 </div>
-
-
-        {/* Add Transaction Button */}
-        <div className="mb-6 flex justify-center">
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="flex items-center justify-center bg-green-500 text-white px-6 py-3 rounded-lg  hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition duration-200"
-            aria-label="Add New Transaction"
-          >
-            <PlusCircle className="w-6 h-6 mr-2" />
-            <span className="text-sm font-medium">Add Transaction</span>
-          </button>
-        </div>
-
-        {/* Add Transaction Form */}
-        {showAddForm && (
-          <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200">
-            <h2 className="text-lg font-semibold mb-4">Add New Transaction</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input
-                type="date"
-                value={newTransaction.transaction_date}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    transaction_date: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              />
-              <input
-                type="date"
-                value={newTransaction.post_date}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    post_date: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              />
-              <input
-                type="text"
-                placeholder="Description"
-                value={newTransaction.description}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              />
-              <input
-                type="number"
-                placeholder="Amount"
-                value={newTransaction.amount}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    amount: parseFloat(e.target.value),
-                  }))
-                }
-                step="0.01"
-                className="border rounded-lg px-3 py-2"
-              />
-             <select
-                value={newTransaction.category}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    category: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              >
-             <option value="food">Food</option>
-            <option value="shopping">Shopping</option>
-            <option value="transport">Transport</option>
-            <option value="housing">Housing</option>
-            <option value="entertainment">Entertainment</option>
-            <option value="investments">Investments</option>
-            <option value="savings">Savings</option>
-            <option value="other">Other</option>
-            </select>
-
-            </div>
-            <div className="mt-4 flex flex-col sm:flex-row gap-2">
-              <button
-                onClick={() => setShowAddForm(false)}
-                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex-1"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={addTransaction}
-                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        )}
 
 
 

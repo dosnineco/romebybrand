@@ -2,6 +2,11 @@ import React from "react";
 
 const PricingComponent = () => {
   return (
+
+    <>
+    
+          <h2 className="text-4xl pt-6 font-bold capitalize text-inherit text-center mb-4">Become the best version of yourself!</h2>
+
   
         <div className="  w-full max-w-screen-md mx-auto px-4 py-8 text-white grid grid-cols-1 md:grid-cols-2 gap-3 justify-center  items-center">
 
@@ -57,6 +62,8 @@ const PricingComponent = () => {
             </a>
           </div>
         </div>
+            </>
+
      
   );
 };

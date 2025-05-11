@@ -24,7 +24,7 @@ export default function AutoLoanCalculator() {
       // Fetch loan amounts from the database
       const fetchLoanAmounts = async () => {
         const { data: loans, error } = await supabase
-          .from("auto_loans")
+          .from("ahttps://www.expensegoose.com/tools/auto-loan-calculatoruto_loans")
           .select("loan_amount");
   
         if (error) {

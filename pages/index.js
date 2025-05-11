@@ -5,7 +5,7 @@ import Faq from '../components/Faqs/Faq';
 import Seo from '../components/Misc/Seo';
 import PricingComponent from '../components/Misc/PricingComponent';
 import { ArrowRight, PenTool as Tool, Zap, Users, BookOpen, Car } from "lucide-react";
-
+import SignupPopup from '../components/Misc/SignupPopup';
 import { useState } from "react";
 
 import { 
@@ -204,9 +204,9 @@ function Tools() {
   
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
+    <div className="min-h-screen p-1 md:p-8">
       <div className="max-w-4xl mx-auto">
-        <div className=" p-6 md:p-8">
+        <div className=" p-4 md:p-8">
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-inherit capitalize font-bold text-xl mb-2">
@@ -311,8 +311,6 @@ export default function Home() {
 
 
       <Tools /> 
-
-
       <PricingComponent />
       <Faq />
 
