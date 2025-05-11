@@ -108,7 +108,9 @@ const [customEndDate, setCustomEndDate] = useState('');
   const [categoryLimits, setCategoryLimits] = useState(() => JSON.parse(localStorage.getItem('categoryLimits')) || []);
   const [spendingInsights, setSpendingInsights] = useState([]);
 const [showSettingsNotification, setShowSettingsNotification] = useState(true);
- 
+  const [savingsProgress, setSavingsProgress] = useState(0);
+  const [savingsGoal, setSavingsGoal] = useState(0); // Savings goal from category limits
+  const [savingsTotal, setSavingsTotal] = useState(0); // Total savings so far
 
 
   useEffect(() => {
@@ -198,9 +200,22 @@ const csvHeaders = [
     if (!Array.isArray(data) || data.length === 0) return [];
   
     const categoryTotals = new Map();
-   
+    let savingsTotal = 0;
   
-   
+    for (const { category, amount } of data) {
+      if (category === 'savings') {
+        savingsTotal += Math.abs(amount); // Track savings separately
+      } else {
+        categoryTotals.set(category, (categoryTotals.get(category) || 0) + Math.abs(amount));
+      }
+    }
+  
+    // Calculate savings progress
+    const savingsLimit = categoryLimits.find((limit) => limit.category === 'savings')?.limit_amount || 0;
+    setSavingsGoal(savingsLimit);
+    setSavingsTotal(savingsTotal);
+    setSavingsProgress((savingsTotal / savingsLimit) * 100);
+  
     const categoryLimitMap = new Map(categoryLimits.map(({ category, limit_amount }) => [category, limit_amount]));
   
     const insights = Array.from(categoryTotals.entries()).map(([category, total]) => {
@@ -256,27 +271,32 @@ const csvHeaders = [
       const filteredData = filterTransactions(data || []);
       setTransactions(filteredData);
   
-   
-   const summary = filteredData.reduce(
-  (acc, curr) => {
-    if (curr.amount >= 0) {
-      acc.totalCredits += curr.amount;
-    } else {
-      acc.totalDebits += Math.abs(curr.amount);
-    }
-    return acc;
-  },
-  { totalCredits: 0, totalDebits: 0, netBalance: 0 }
-);
-
-summary.netBalance = summary.totalCredits - summary.totalDebits;
-setSummary(summary);
-
-const monthlyTotal = filteredData.reduce(
-  (acc, curr) => acc + Math.abs(curr.amount),
-  0
-);
-setMonthlySpending(monthlyTotal);
+      // Exclude savings from summary and monthly spending calculations
+      const nonSavingsTransactions = filteredData.filter(
+        (transaction) => transaction.category !== 'savings'
+      );
+  
+      const summary = nonSavingsTransactions.reduce(
+        (acc, curr) => {
+          if (curr.amount >= 0) {
+            acc.totalCredits += curr.amount;
+          } else {
+            acc.totalDebits += Math.abs(curr.amount);
+          }
+          return acc;
+        },
+        { totalCredits: 0, totalDebits: 0, netBalance: 0 }
+      );
+  
+      summary.netBalance = summary.totalCredits - summary.totalDebits;
+      setSummary(summary);
+  
+      const monthlyTotal = nonSavingsTransactions.reduce(
+        (acc, curr) => acc + Math.abs(curr.amount),
+        0
+      );
+      setMonthlySpending(monthlyTotal);
+  
       const insights = analyzeSpending(filteredData);
       setSpendingInsights(insights);
     } catch (err) {
@@ -552,8 +572,244 @@ setMonthlySpending(monthlyTotal);
 {/* non */}
       <div className="w-full mx-auto">
 
+{/* filepath: /workspaces/romebybrand/pages/budget-calculator.js */}
 <div className="w-full mx-auto mb-6">
   {/* Action Row */}
+  <div className="flex flex-wrap justify-between items-center bg-gray-100 p-4 rounded-lg shadow gap-4">
+
+
+        {/* Add Transaction Button */}
+        <div className="flex justify-center">
+          <button
+            onClick={() => setShowAddForm(true)}
+                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+
+            aria-label="Add New Transaction"
+          >
+            <PlusCircle className="w-6 h-6 mr-2" />
+            <span className="text-sm font-medium">Add Transaction</span>
+          </button>
+        </div>
+
+        {/* Add Transaction Form */}
+        {showAddForm && (
+          <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200">
+            <h2 className="text-lg font-semibold mb-4">Add New Transaction</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input
+                type="date"
+                value={newTransaction.transaction_date}
+                onChange={(e) =>
+                  setNewTransaction((prev) => ({
+                    ...prev,
+                    transaction_date: e.target.value,
+                  }))
+                }
+                className="border rounded-lg px-3 py-2"
+              />
+              <input
+                type="date"
+                value={newTransaction.post_date}
+                onChange={(e) =>
+                  setNewTransaction((prev) => ({
+                    ...prev,
+                    post_date: e.target.value,
+                  }))
+                }
+                className="border rounded-lg px-3 py-2"
+              />
+              <input
+                type="text"
+                placeholder="Description"
+                value={newTransaction.description}
+                onChange={(e) =>
+                  setNewTransaction((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+                className="border rounded-lg px-3 py-2"
+              />
+              <input
+                type="number"
+                placeholder="Amount"
+                value={newTransaction.amount}
+                onChange={(e) =>
+                  setNewTransaction((prev) => ({
+                    ...prev,
+                    amount: parseFloat(e.target.value),
+                  }))
+                }
+                step="0.01"
+                className="border rounded-lg px-3 py-2"
+              />
+             <select
+                value={newTransaction.category}
+                onChange={(e) =>
+                  setNewTransaction((prev) => ({
+                    ...prev,
+                    category: e.target.value,
+                  }))
+                }
+                className="border rounded-lg px-3 py-2"
+              >
+             <option value="food">Food</option>
+            <option value="shopping">Shopping</option>
+            <option value="transport">Transport</option>
+            <option value="housing">Housing</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="investments">Investments</option>
+            <option value="other">Other</option>
+            </select>
+
+            </div>
+            <div className="mt-4 flex flex-col sm:flex-row gap-2">
+              <button
+                onClick={() => setShowAddForm(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex-1"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={addTransaction}
+                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        )}
+
+
+    {/* Quick Expenses */}
+    <button
+      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+      onClick={() => router.push('/quick')}
+    >
+      <PlusCircle className="w-6 h-6 text-blue-500" />
+      <span className="text-sm font-medium">Presets</span>
+    </button>
+
+    
+
+    {/* Settings */}
+    <button
+      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+      onClick={() => router.push('/settings')}
+    >
+      <Settings className="w-6 h-6 text-green-500" />
+      <span className="text-sm font-medium">Settings</span>
+    </button>
+
+    {/* Download Transactions */}
+    <CSVLink
+      data={transactions}
+      headers={csvHeaders}
+      filename={`transactions-${filterPeriod}.csv`}
+      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+    >
+      <FilePlus className="w-6 h-6 text-purple-500" />
+      <span className="text-sm font-medium">Download</span>
+    </CSVLink>
+
+   {/* Filter Dropdown */}
+<div className="relative">
+  <button
+    className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+    onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+  >
+    <Filter className="w-6 h-6 text-orange-500" />
+    <span className="text-sm font-medium">Filter</span>
+  </button>
+  {showFilterDropdown && (
+    <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+      <ul className="py-2">
+        <li>
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setFilterPeriod('all');
+              setShowFilterDropdown(false); // Hide dropdown
+              fetchTransactions(); // Update transactions
+            }}
+          >
+            All Time
+          </button>
+        </li>
+        <li>
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setFilterPeriod('day');
+              setShowFilterDropdown(false); // Hide dropdown
+              fetchTransactions(); // Update transactions
+            }}
+          >
+            Last 24 Hours
+          </button>
+        </li>
+        <li>
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setFilterPeriod('week');
+              setShowFilterDropdown(false); // Hide dropdown
+              fetchTransactions(); // Update transactions
+            }}
+          >
+            This Week
+          </button>
+        </li>
+        <li>
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setFilterPeriod('month');
+              setShowFilterDropdown(false); // Hide dropdown
+              fetchTransactions(); // Update transactions
+            }}
+          >
+            This Month
+          </button>
+        </li>
+        <li>
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setFilterPeriod('year');
+              setShowFilterDropdown(false); // Hide dropdown
+              fetchTransactions(); // Update transactions
+            }}
+          >
+            This Year
+          </button>
+        </li>
+        <li>
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setFilterPeriod('custom range');
+              setShowFilterDropdown(false); // Hide dropdown
+              fetchTransactions(); // Update transactions
+            }}
+          >
+            Custom Range
+          </button>
+        </li>
+      </ul>
+    </div>
+  )}
+</div>
+    {/* Apply Changes */}
+    <button
+      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+      onClick={() => fetchTransactions()}
+    >
+      <TiRefresh className="w-6 h-6 text-orange-500" />
+      <span className="text-sm font-medium">Apply Changes</span>
+    </button>
+  </div>
+
   {/* search Section */}
   <div className="bg-gray-50 rounded-lg p-4 mt-4">
     <div className="flex flex-col sm:flex-row gap-4">
@@ -626,243 +882,6 @@ setMonthlySpending(monthlyTotal);
       </div>
     )}
   </div>
-
-        <div className="flex flex-wrap justify-between items-center bg-gray-100 p-4 rounded-lg shadow gap-4">
-
-
-              {/* Add Transaction Button */}
-              <div className="flex justify-center">
-                <button
-                  onClick={() => setShowAddForm(true)}
-                        className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-
-                  aria-label="Add New Transaction"
-                >
-                  <PlusCircle className="w-6 h-6 mr-2" />
-                  <span className="text-sm font-medium">Add Transaction</span>
-                </button>
-              </div>
-
-              {/* Add Transaction Form */}
-              {showAddForm && (
-                <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200">
-                  <h2 className="text-lg font-semibold mb-4">Add New Transaction</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input
-                      type="date"
-                      value={newTransaction.transaction_date}
-                      onChange={(e) =>
-                        setNewTransaction((prev) => ({
-                          ...prev,
-                          transaction_date: e.target.value,
-                        }))
-                      }
-                      className="border rounded-lg px-3 py-2"
-                    />
-                    <input
-                      type="date"
-                      value={newTransaction.post_date}
-                      onChange={(e) =>
-                        setNewTransaction((prev) => ({
-                          ...prev,
-                          post_date: e.target.value,
-                        }))
-                      }
-                      className="border rounded-lg px-3 py-2"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Description"
-                      value={newTransaction.description}
-                      onChange={(e) =>
-                        setNewTransaction((prev) => ({
-                          ...prev,
-                          description: e.target.value,
-                        }))
-                      }
-                      className="border rounded-lg px-3 py-2"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Amount"
-                      value={newTransaction.amount}
-                      onChange={(e) =>
-                        setNewTransaction((prev) => ({
-                          ...prev,
-                          amount: parseFloat(e.target.value),
-                        }))
-                      }
-                      step="0.01"
-                      className="border rounded-lg px-3 py-2"
-                    />
-                  <select
-                      value={newTransaction.category}
-                      onChange={(e) =>
-                        setNewTransaction((prev) => ({
-                          ...prev,
-                          category: e.target.value,
-                        }))
-                      }
-                      className="border rounded-lg px-3 py-2"
-                    >
-                  <option value="food">Food</option>
-                  <option value="shopping">Shopping</option>
-                  <option value="transport">Transport</option>
-                  <option value="housing">Housing</option>
-                  <option value="entertainment">Entertainment</option>
-                  <option value="investments">Investments</option>
-                  <option value="other">Other</option>
-                  </select>
-
-                  </div>
-                  <div className="mt-4 flex flex-col sm:flex-row gap-2">
-                    <button
-                      onClick={() => setShowAddForm(false)}
-                      className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex-1"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={addTransaction}
-                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
-                    >
-                      Save
-                    </button>
-                  </div>
-                </div>
-              )}
-
-
-          {/* Quick Expenses */}
-          <button
-            className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-            onClick={() => router.push('/quick')}
-          >
-            <PlusCircle className="w-6 h-6 text-blue-500" />
-            <span className="text-sm font-medium">Presets</span>
-          </button>
-
-          
-
-          {/* Settings */}
-          <button
-            className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-            onClick={() => router.push('/settings')}
-          >
-            <Settings className="w-6 h-6 text-green-500" />
-            <span className="text-sm font-medium">Settings</span>
-          </button>
-
-          {/* Download Transactions */}
-          <CSVLink
-            data={transactions}
-            headers={csvHeaders}
-            filename={`transactions-${filterPeriod}.csv`}
-            className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-          >
-            <FilePlus className="w-6 h-6 text-purple-500" />
-            <span className="text-sm font-medium">Download</span>
-          </CSVLink>
-
-        {/* Filter Dropdown */}
-      <div className="relative">
-        <button
-          className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-          onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-        >
-          <Filter className="w-6 h-6 text-orange-500" />
-          <span className="text-sm font-medium">Filter</span>
-        </button>
-        {showFilterDropdown && (
-          <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-            <ul className="py-2">
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => {
-                    setFilterPeriod('all');
-                    setShowFilterDropdown(false); // Hide dropdown
-                    fetchTransactions(); // Update transactions
-                  }}
-                >
-                  All Time
-                </button>
-              </li>
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => {
-                    setFilterPeriod('day');
-                    setShowFilterDropdown(false); // Hide dropdown
-                    fetchTransactions(); // Update transactions
-                  }}
-                >
-                  Last 24 Hours
-                </button>
-              </li>
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => {
-                    setFilterPeriod('week');
-                    setShowFilterDropdown(false); // Hide dropdown
-                    fetchTransactions(); // Update transactions
-                  }}
-                >
-                  This Week
-                </button>
-              </li>
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => {
-                    setFilterPeriod('month');
-                    setShowFilterDropdown(false); // Hide dropdown
-                    fetchTransactions(); // Update transactions
-                  }}
-                >
-                  This Month
-                </button>
-              </li>
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => {
-                    setFilterPeriod('year');
-                    setShowFilterDropdown(false); // Hide dropdown
-                    fetchTransactions(); // Update transactions
-                  }}
-                >
-                  This Year
-                </button>
-              </li>
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => {
-                    setFilterPeriod('custom range');
-                    setShowFilterDropdown(false); // Hide dropdown
-                    fetchTransactions(); // Update transactions
-                  }}
-                >
-                  Custom Range
-                </button>
-              </li>
-            </ul>
-          </div>
-        )}
-      </div>
-          {/* Apply Changes */}
-          <button
-            className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-            onClick={() => fetchTransactions()}
-          >
-            <TiRefresh className="w-6 h-6 text-orange-500" />
-            <span className="text-sm font-medium">Apply Changes</span>
-          </button>
-        </div>
-
-
 </div>
 
 
