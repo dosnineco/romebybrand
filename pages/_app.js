@@ -8,6 +8,8 @@ import PageViewTracker from '../components/Misc/PageViewTracker';
 import BreadcrumbsMinimal from '../components/BreadCrumbs/BreadcrumbsWithIcons';
 import { useEffect } from 'react';
 import { supabase } from '../lib/supabase'; // Ensure this is correctly configured
+import QuickExpense from '../components/Misc/QuickExpense';
+
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -98,6 +100,7 @@ function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
             {!isHomePage && <BreadcrumbsMinimal />}
             <Component {...pageProps} />
           </Layout>
+          <QuickExpense />
           <Footer />
         </SignedIn>
       )}
