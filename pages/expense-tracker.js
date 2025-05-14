@@ -107,10 +107,6 @@ const [customEndDate, setCustomEndDate] = useState('');
   const [weeklyBudget, setWeeklyBudget] = useState(() => JSON.parse(localStorage.getItem('weeklyBudget')) || 10000);
   const [categoryLimits, setCategoryLimits] = useState(() => JSON.parse(localStorage.getItem('categoryLimits')) || []);
   const [spendingInsights, setSpendingInsights] = useState([]);
-const [showSettingsNotification, setShowSettingsNotification] = useState(true);
-  const [savingsProgress, setSavingsProgress] = useState(0);
-  const [savingsGoal, setSavingsGoal] = useState(0); // Savings goal from category limits
-  const [savingsTotal, setSavingsTotal] = useState(0); // Total savings so far
 
 
   useEffect(() => {
@@ -505,43 +501,44 @@ const csvHeaders = [
       );
     }
 
-    return (
-      <tr key={transaction.id}>
-        <td className="px-4 text-gray-600 text-base py-4 whitespace-nowrap">
-          {format(new Date(transaction.transaction_date), "MMM d, yyyy")}
-        </td>
-        <td className="px-4 text-gray-600 py-4 text-base ">{transaction.description}</td>
-        <td className="px-4 py-4 whitespace-nowrap">
-          {getCategoryIcon(transaction.category)}
-        </td>
-        
-
-        <td
-          className={`px-4 py-4 whitespace-nowrap ${
-            transaction.amount >= 0 ? "text-gray-600" : "text-red-400"
-          }`}
+return (
+  <tr key={transaction.id}>
+    <td className="px-4 text-gray-600 text-base py-4 whitespace-nowrap">
+      {new Date(new Date(transaction.transaction_date).getTime() + 12 * 60 * 60 * 1000).toLocaleDateString("en-ca", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })}
+    </td>
+    <td className="px-4 text-gray-600 py-4 text-base ">{transaction.description}</td>
+    <td className="px-4 py-4 whitespace-nowrap">
+      {getCategoryIcon(transaction.category)}
+    </td>
+    <td
+      className={`px-4 py-4 whitespace-nowrap ${
+        transaction.amount >= 0 ? "text-gray-600" : "text-red-400"
+      }`}
+    >
+      ${formatMoney(Math.abs(transaction.amount))}
+    </td>
+    <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={() => handleEdit(transaction)}
+          className="text-blue-600 hover:text-blue-900"
         >
-          ${formatMoney(Math.abs(transaction.amount))}
-        </td>
-
-        <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <div className="flex justify-end gap-2">
-            <button
-              onClick={() => handleEdit(transaction)}
-              className="text-blue-600 hover:text-blue-900"
-            >
-              <Edit2 className="h-5 w-5" />
-            </button>
-            <button
-              onClick={() => handleDelete(transaction.id)}
-              className="text-red-600 hover:text-red-900"
-            >
-              <Trash2 className="h-5 w-5" />
-            </button>
-          </div>
-        </td>
-      </tr>
-    );
+          <Edit2 className="h-5 w-5" />
+        </button>
+        <button
+          onClick={() => handleDelete(transaction.id)}
+          className="text-red-600 hover:text-red-900"
+        >
+          <Trash2 className="h-5 w-5" />
+        </button>
+      </div>
+    </td>
+  </tr>
+);
   };
 
   const formatMoney = (amount) => {

@@ -22,8 +22,7 @@ export default function QuickExpenses() {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const now = new Date();
-  const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().split("T")[0];
-
+const localDate = new Date().toLocaleDateString("en-CA"); // Outputs in YYYY-MM-DD format
   useEffect(() => {
     if (userId) {
       fetchPresets();

@@ -7,17 +7,18 @@ import { supabase } from "../../lib/supabase";
 
 export default function QuickExpenses() {
   const { user } = useUser();
-  const userId = user ? user.id : null;
+const userId = user ? user.id : null;
 
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [presets, setPresets] = useState([]);
-  const [expenses, setExpenses] = useState([]);
+const [isPopupOpen, setIsPopupOpen] = useState(false);
+const [presets, setPresets] = useState([]);
+const [expenses, setExpenses] = useState([]);
+const localDate = new Date().toLocaleDateString("en-CA"); // Outputs in YYYY-MM-DD format
 
-  useEffect(() => {
-    if (userId) {
-      fetchPresets();
-    }
-  }, [userId]);
+useEffect(() => {
+  if (userId) {
+    fetchPresets();
+  }
+}, [userId]);
 
   const fetchPresets = async () => {
     const { data, error } = await supabase
@@ -28,7 +29,7 @@ export default function QuickExpenses() {
     else setPresets(data);
   };
 
-  const addExpense = async (label, amount, category) => {
+  const addExpense = async (label, amount,category) => {
     if (!userId) {
       console.error("User not logged in");
       return;
@@ -36,15 +37,16 @@ export default function QuickExpenses() {
 
     const newExpense = { label, amount, category, date: new Date().toLocaleString() };
     setExpenses([...expenses, newExpense]);
-
+    
     const { error } = await supabase.from("transactions").insert([
       {
         user_id: userId,
-        transaction_date: new Date().toISOString().split("T")[0],
+        transaction_date: localDate,
+        post_date: localDate,
         description: label,
-        amount,
-        category,
-      },
+        amount: amount,
+        category: category  // Use category from preset or default to "other"
+      }
     ]);
     if (error) console.error("Error saving expense:", error);
   };
@@ -93,7 +95,7 @@ export default function QuickExpenses() {
       {/* Other page content */}
       <div className="fixed bottom-4 right-4 z-1000">
         <button
-          className="bg-blue-500 text-white p-4 rounded-full shadow-lg"
+          className="bg-green-500 text-white p-4 rounded-full shadow-lg"
           onClick={() => setIsPopupOpen(true)}
         >
           <FaPlusCircle size={24} />
