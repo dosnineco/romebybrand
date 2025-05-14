@@ -1,31 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabase";
 import Head from "next/head";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function RelocationCalculator() {
-  const [currentCityCost, setCurrentCityCost] = useState<number>(3000); // Default cost in current city
-  const [newCityCost, setNewCityCost] = useState<number>(3500); // Default cost in new city
-  const [monthlyDifference, setMonthlyDifference] = useState<number | null>(null);
-  const [graphData, setGraphData] = useState<any[]>([]);
+  const [cities, setCities] = useState([]);
+  const [currentCity, setCurrentCity] = useState(null);
+  const [newCity, setNewCity] = useState(null);
+  const [currentCost, setCurrentCost] = useState(3000);
+  const [adjustedCost, setAdjustedCost] = useState<number | null>(null);
 
-  const calculateDifference = () => {
-    const difference = newCityCost - currentCityCost;
-    setMonthlyDifference(difference);
+  useEffect(() => {
+    // Fetch cities from Supabase
+    const fetchCities = async () => {
+      const { data, error } = await supabase.from("cities").select("*").order("country", { ascending: true });
+      if (error) {
+        console.error("Error fetching cities:", error);
+      } else {
+        setCities(data);
+        setCurrentCity(data[0]);
+        setNewCity(data[1]);
+      }
+    };
 
-    // Generate graph data
-    const data = [];
-    for (let i = 1; i <= 12; i++) {
-      data.push({
-        month: `Month ${i}`,
-        difference: difference * i,
-      });
+    fetchCities();
+  }, []);
+
+  const calculateAdjustedCost = () => {
+    if (currentCity && newCity) {
+      const adjusted =
+        (currentCost * newCity.cost_of_living_index) / currentCity.cost_of_living_index;
+      setAdjustedCost(adjusted);
     }
-    setGraphData(data);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    calculateDifference();
   };
 
   return (
@@ -40,18 +45,21 @@ export default function RelocationCalculator() {
           name="keywords"
           content="relocation calculator, moving expenses, cost of living comparison, city comparison"
         />
-        <link rel="canonical" href="https://www.expensegoose.com/tools/relocation-calculator" />
+        <link
+          rel="canonical"
+          href="https://www.expensegoose.com/tools/relocation-calculator"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "SoftwareApplication",
-              "name": "Relocation Calculator",
-              "description": "Compare expenses when moving to a new city.",
-              "applicationCategory": "FinanceApplication",
-              "operatingSystem": "Web",
-              "url": "https://www.expensegoose.com/tools/relocation-calculator",
+              name: "Relocation Calculator",
+              description: "Compare expenses when moving to a new city.",
+              applicationCategory: "FinanceApplication",
+              operatingSystem: "Web",
+              url: "https://www.expensegoose.com/tools/relocation-calculator",
             }),
           }}
         />
@@ -65,72 +73,89 @@ export default function RelocationCalculator() {
         </p>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Compare Your Living Costs</h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <h2 className="text-2xl font-semibold mb-4">Select Your Cities</h2>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              calculateAdjustedCost();
+            }}
+            className="space-y-6"
+          >
             <div>
-              <label htmlFor="currentCityCost" className="block text-base text-gray-700 mb-2">
-                Monthly Cost in Current City ($)
+              <label htmlFor="currentCity" className="block text-base text-gray-700 mb-2">
+                Current City
               </label>
-              <input
-                id="currentCityCost"
-                name="currentCityCost"
-                type="number"
-                value={currentCityCost}
-                onChange={(e) => setCurrentCityCost(Number(e.target.value))}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                required
-              />
+              <select
+                id="currentCity"
+                value={currentCity?.id || ""}
+                onChange={(e) => {
+                  const selectedCity = cities.find((city) => city.id === parseInt(e.target.value));
+                  if (selectedCity) setCurrentCity(selectedCity);
+                }}
+                className="w-full p-3 border border-gray-300 rounded-lg"
+              >
+                {cities.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.country}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
-              <label htmlFor="newCityCost" className="block text-base text-gray-700 mb-2">
-                Monthly Cost in New City ($)
+              <label htmlFor="newCity" className="block text-base text-gray-700 mb-2">
+                New City
+              </label>
+              <select
+                id="newCity"
+                value={newCity?.id || ""}
+                onChange={(e) => {
+                  const selectedCity = cities.find((city) => city.id === parseInt(e.target.value));
+                  if (selectedCity) setNewCity(selectedCity);
+                }}
+                className="w-full p-3 border border-gray-300 rounded-lg"
+              >
+                {cities.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.country}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="currentCost" className="block text-base text-gray-700 mb-2">
+                Current Monthly Cost ($)
               </label>
               <input
-                id="newCityCost"
-                name="newCityCost"
+                id="currentCost"
                 type="number"
-                value={newCityCost}
-                onChange={(e) => setNewCityCost(Number(e.target.value))}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                value={currentCost}
+                onChange={(e) => setCurrentCost(Number(e.target.value))}
+                className="w-full p-3 border border-gray-300 rounded-lg"
                 required
               />
             </div>
 
             <button
               type="submit"
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500"
+              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
             >
               Calculate
             </button>
           </form>
         </section>
 
-        {monthlyDifference !== null && (
-          <>
-            <section className="mb-8">
-              <div className="p-4 bg-gray-100 rounded-lg">
-                <h2 className="text-2xl font-semibold mb-4">Results</h2>
-                <p className="text-base text-gray-700 mb-4">
-                  The monthly difference in living costs is:{" "}
-                  <span className="font-bold text-blue-600">${monthlyDifference.toFixed(2)}</span>
-                </p>
-              </div>
-            </section>
-
-            <section className="mb-8">
-              <h3 className="text-xl font-semibold mb-4">Cumulative Cost Difference Over Time</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={graphData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" label={{ value: "Month", position: "insideBottomRight", offset: 0 }} />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="difference" stroke="#3B82F6" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
-            </section>
-          </>
+        {adjustedCost !== null && (
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">Results</h2>
+            <div className="p-4 bg-gray-100 rounded-lg">
+              <p className="text-base text-gray-700">
+                Adjusted Monthly Cost in {newCity?.country}:{" "}
+                <span className="font-bold text-blue-600">${adjustedCost.toFixed(2)}</span>
+              </p>
+            </div>
+          </section>
         )}
 
         <section className="mb-8">
