@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link"; // Import Link for navigation
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { supabase } from "../../../lib/supabase";
+import SignUpBanner from "../../../components/Misc/SignUpBanner";
 
 export default function AutoLoanCalculator() {
   const [loanAmount, setLoanAmount] = useState<number>(25000); // Default loan amount
@@ -85,6 +86,8 @@ export default function AutoLoanCalculator() {
         <p className="text-base text-gray-700 mb-4">
           Use our Auto Loan Calculator to estimate your monthly car payments. Plan your car loan with ease and confidence.
         </p>
+
+        <SignUpBanner/>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Calculate Your Car Loan</h2>

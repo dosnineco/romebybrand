@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Head from "next/head";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import SignUpBanner from "../../components/Misc/SignUpBanner";
 
 export default function GroceryBudgetCalculator() {
   const [monthlyIncome, setMonthlyIncome] = useState<number>(5000); // Default income
@@ -63,7 +64,7 @@ export default function GroceryBudgetCalculator() {
         <p className="text-base text-gray-700 mb-4">
           Use our Grocery Budget Calculator to set your monthly grocery spending based on your income. Plan your budget with ease and confidence.
         </p>
-
+        <SignUpBanner/>
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Calculate Your Grocery Budget</h2>
           <form onSubmit={handleSubmit} className="space-y-6">

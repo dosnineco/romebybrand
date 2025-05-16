@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { supabase } from "../../../lib/supabase"; // Import Supabase client
+import SignUpBanner from "../../../components/Misc/SignUpBanner";
 
 export default function AutoLoanCalculator({ loan }: { loan: any }) {
   const [interestRate, setInterestRate] = useState<number>(loan.interest_rate); // Default interest rate from database
@@ -72,6 +73,8 @@ export default function AutoLoanCalculator({ loan }: { loan: any }) {
         <p className="text-base text-gray-700 mb-4">
           Use our Auto Loan Calculator to estimate your monthly car payments for a ${loan.loan_amount.toLocaleString()} loan. Plan your car loan with ease and confidence.
         </p>
+
+        <SignUpBanner/>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Calculate Your Car Loan</h2>

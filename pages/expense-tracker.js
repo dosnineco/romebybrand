@@ -9,54 +9,17 @@ import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { TiRefresh } from "react-icons/ti";
 import { DollarSign } from "lucide-react";
 import RequireSubscription from '../components/Misc/RequireSubscription';  
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
 import { CSVLink } from 'react-csv'; 
 import { FaInfoCircle } from 'react-icons/fa';
 
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+
 const HowToUseModal = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative bg-white w-full max-w-lg h-full overflow-y-auto p-6 rounded-lg shadow-lg">
-        {/* Close Button */}
-        <button
-          className="fixed top-4 right-4 bg-gray-200 text-gray-600 hover:text-gray-900 rounded-full p-2 shadow-md z-50"
-          onClick={onClose}
-          aria-label="Close"
-        >
-          ✕
-        </button>
-
-        {/* Modal Content */}
-        <h2 className="text-2xl font-semibold mb-6 text-center">How to Use the Expense Tracker</h2>
-        <ul className="list-disc list-inside text-gray-700 text-base space-y-4">
-          <li>Go to the <strong>Settings</strong> page to configure your monthly budget and category limits.</li>
-          <li>Use the <strong>Add Transaction</strong> button to log new expenses or income.</li>
-          <li>View your transactions in the table below, which includes date, description, category, and amount.</li>
-          <li>Click on the <strong>Presets</strong> button to quickly add common expenses.</li>
-          <li>Use the <strong>Search</strong> bar to find specific transactions by description.</li>
-          <li>Click on the <strong>Filter</strong> button to filter transactions by time period (e.g., day, week, month).</li>
-          <li>Click on a <strong>category card</strong> to view transactions for that category.</li>
-          <li>Use the <strong>Filter</strong> dropdown to filter transactions by time period (e.g., day, week, month).</li>
-          <li>Search for specific transactions using the <strong>Search</strong> bar.</li>
-          <li>Click the <strong>Edit</strong> icon to modify a transaction or the <strong>Delete</strong> icon to remove it.</li>
-          <li>Download your transactions as a CSV file using the <strong>Download</strong> button.</li>
-          <li>Track your <strong>Monthly Spending</strong> and <strong>Remaining Budget</strong> at the top of the page.</li>
-          <li>Analyze your spending insights to see which categories are over budget.</li>
-        </ul>
-        <div className="flex justify-center mt-8">
-          <button
-            className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600"
-            onClick={onClose}
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 };
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const App = () => {
   const router = useRouter();
@@ -66,6 +29,122 @@ const App = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [isHowToUseOpen, setIsHowToUseOpen] = useState(false);
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+const [monthlySpendingData, setMonthlySpendingData] = useState([]);
+
+  useEffect(() => {
+    if (user) {
+      fetchMonthlySpendingData();
+    }
+  }, [user]);
+
+const fetchMonthlySpendingData = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('transaction_date, amount')
+      .eq('user_id', user.id);
+
+    if (error) {
+      console.error('Error fetching transactions:', error);
+      return;
+    }
+
+    if (data && data.length > 0) {
+      // Aggregate spending by month
+      const spendingByMonth = data.reduce((acc, transaction) => {
+        const month = new Date(transaction.transaction_date).toISOString().slice(0, 7); // Format: YYYY-MM
+        acc[month] = (acc[month] || 0) + parseFloat(transaction.amount);
+        return acc;
+      }, {});
+
+      // Format data for the graph
+      const formattedData = Object.entries(spendingByMonth).map(([month, total]) => ({
+        month,
+        total,
+      }));
+
+      // Sort by month
+      formattedData.sort((a, b) => new Date(a.month) - new Date(b.month));
+
+      setMonthlySpendingData(formattedData);
+    } else {
+      setMonthlySpendingData([]); // Set an empty array if no data is returned
+    }
+  } catch (err) {
+    console.error('Failed to fetch monthly spending data:', err);
+  }
+};
+
+const graphDataload = {
+  labels: monthlySpendingData.map((item) => item.month),
+  datasets: [
+    {
+      label: 'Monthly Spending',
+      data: monthlySpendingData.map((item) => item.total),
+      borderColor: '#FBBF24', // Gold-like color for the line
+      backgroundColor: 'rgba(251, 191, 36, 0.2)', // Transparent gold fill
+      pointBackgroundColor: '#FBBF24', // Gold color for points
+      pointBorderColor: '#FBBF24',
+      pointHoverBackgroundColor: '#FBBF24',
+      pointHoverBorderColor: '#FBBF24',
+      pointRadius: 5, // Size of the points
+      pointHoverRadius: 7, // Size of the points on hover
+      tension: 0.4, // Smooth curve
+    },
+  ],
+};
+
+const graphOptions = {
+  responsive: true,
+  maintainAspectRatio: true, // Allow the graph to resize dynamically
+  plugins: {
+    legend: {
+      display: true, // Hide the legend
+    },
+    tooltip: {
+      backgroundColor: '#1F2937', // Dark background for the tooltip
+      titleColor: '#FFFFFF', // White title text
+      bodyColor: '#FFFFFF', // White body text
+      borderColor: '#FBBF24', // Gold border
+      borderWidth: 1,
+      cornerRadius: 4,
+      callbacks: {
+        title: (tooltipItems) => {
+          const month = tooltipItems[0].label;
+          return `${month}`; // Display the month
+        },
+        label: (context) => `$${context.raw.toFixed(2)}`, // Display the amount
+      },
+    },
+  },
+  scales: {
+    x: {
+      grid: {
+        display: true, // Hide gridlines on the x-axis
+      },
+      ticks: {
+        color: '#6B7280', // Gray color for x-axis labels
+        font: {
+          size: 12,
+        },
+      },
+    },
+    y: {
+      grid: {
+        color: '#E5E7EB', // Light gray gridlines
+        drawBorder: false, // Hide the border
+      },
+      ticks: {
+        color: '#6B7280', // Gray color for y-axis labels
+        font: {
+          size: 12,
+        },
+        callback: (value) => `$${value}`, // Add a dollar sign to y-axis labels
+      },
+    },
+  },
+};
 
   // Function to handle category click
   const handleCategoryClick = (category) => {
@@ -102,11 +181,14 @@ const [customEndDate, setCustomEndDate] = useState('');
     category: 'other',
   });
 
-  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [monthlySpending, setMonthlySpending] = useState(0);
   const [weeklyBudget, setWeeklyBudget] = useState(() => JSON.parse(localStorage.getItem('weeklyBudget')) || 10000);
   const [categoryLimits, setCategoryLimits] = useState(() => JSON.parse(localStorage.getItem('categoryLimits')) || []);
   const [spendingInsights, setSpendingInsights] = useState([]);
+
+  const [savingsProgress, setSavingsProgress] = useState(0);
+  const [savingsGoal, setSavingsGoal] = useState(0); // Savings goal from category limits
+  const [savingsTotal, setSavingsTotal] = useState(0); // Total savings so far
 
 
   useEffect(() => {
@@ -414,7 +496,8 @@ const csvHeaders = [
         return <FaGamepad className="text-yellow-500" />;
       case 'investments':
         return <TrendingUp className="text-indigo-500" />;
-      
+      case 'savings':
+        return <DollarSign className="text-teal-500" />;
       case 'other':
         return <AlertTriangle className="text-gray-500" />;
       default:
@@ -468,6 +551,7 @@ const csvHeaders = [
             <option value="housing">Housing</option>
             <option value="entertainment">Entertainment</option>
             <option value="investments">Investments</option>
+          <option value="savings">Savings</option>
             <option value="other">Other</option>
             </select>
 
@@ -501,50 +585,49 @@ const csvHeaders = [
       );
     }
 
-return (
-  <tr key={transaction.id}>
-    <td className="px-4 text-gray-600 text-base py-4 whitespace-nowrap">
-      {new Date(new Date(transaction.transaction_date).getTime() + 12 * 60 * 60 * 1000).toLocaleDateString("en-ca", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      })}
-    </td>
-    <td className="px-4 text-gray-600 py-4 text-base ">{transaction.description}</td>
-    <td className="px-4 py-4 whitespace-nowrap">
-      {getCategoryIcon(transaction.category)}
-    </td>
-    <td
-      className={`px-4 py-4 whitespace-nowrap ${
-        transaction.amount >= 0 ? "text-gray-600" : "text-red-400"
-      }`}
-    >
-      ${formatMoney(Math.abs(transaction.amount))}
-    </td>
-    <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-      <div className="flex justify-end gap-2">
-        <button
-          onClick={() => handleEdit(transaction)}
-          className="text-blue-600 hover:text-blue-900"
+    return (
+      <tr key={transaction.id}>
+        <td className="px-4 text-gray-600 text-base py-4 whitespace-nowrap">
+          {format(new Date(transaction.transaction_date), "MMM d, yyyy")}
+        </td>
+        <td className="px-4 text-gray-600 py-4 text-base ">{transaction.description}</td>
+        <td className="px-4 py-4 whitespace-nowrap">
+          {getCategoryIcon(transaction.category)}
+        </td>
+        
+
+        <td
+          className={`px-4 py-4 whitespace-nowrap ${
+            transaction.amount >= 0 ? "text-gray-600" : "text-red-400"
+          }`}
         >
-          <Edit2 className="h-5 w-5" />
-        </button>
-        <button
-          onClick={() => handleDelete(transaction.id)}
-          className="text-red-600 hover:text-red-900"
-        >
-          <Trash2 className="h-5 w-5" />
-        </button>
-      </div>
-    </td>
-  </tr>
-);
+          ${formatMoney(Math.abs(transaction.amount))}
+        </td>
+
+        <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => handleEdit(transaction)}
+              className="text-blue-600 hover:text-blue-900"
+            >
+              <Edit2 className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => handleDelete(transaction.id)}
+              className="text-red-600 hover:text-red-900"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+          </div>
+        </td>
+      </tr>
+    );
   };
 
   const formatMoney = (amount) => {
     return amount.toLocaleString("en-US", { minimumFractionDigits: 2 });
   };
-  return (
+return (
     <RequireSubscription>
     <div className="min-h-screen   p-4 sm:p-6">
         <div className="w-full max-w-screen-md"> {/* Added container with max width */}
@@ -881,6 +964,18 @@ return (
   </div>
 </div>
 
+      <div className="mt-8">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4">Spending Over Time</h2>
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+          {monthlySpendingData.length > 0 ? (
+            <div className="h-64 sm:h-80">
+              <Line data={graphDataload} options={graphOptions} />
+            </div>
+          ) : (
+            <p className="text-gray-600">No spending data available.</p>
+          )}
+        </div>
+      </div>
 
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">

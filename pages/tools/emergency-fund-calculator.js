@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
+import SignUpBanner from "../../components/Misc/SignUpBanner";
+
 
 const EmergencyFundCalculator = () => {
   const [expenses, setExpenses] = useState({
@@ -62,6 +64,8 @@ const EmergencyFundCalculator = () => {
           <p className="text-lg text-gray-700 mb-6 text-center">
             Estimate how much you need to save for unexpected expenses based on your monthly living costs.
           </p>
+
+          <SignUpBanner/>
           <div className="bg-gray-100 p-6 rounded-lg">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>

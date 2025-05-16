@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
-import RequireSubscription from '../../components/Misc/RequireSubscription';
+import SignUpBanner from "../../components/Misc/SignUpBanner";
 
 const MonthlyCalculator = () => {
   const [expenses, setExpenses] = useState({
@@ -46,6 +46,8 @@ const MonthlyCalculator = () => {
           <p className="text-lg text-gray-700 mb-6 text-center">
             Estimate your monthly expenses, set a budget, and track your savings.
           </p>
+
+          <SignUpBanner/>
           <div className=" p-6 rounded-lg bg-gray-100">
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Budget</label>

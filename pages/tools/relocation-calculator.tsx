@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import Head from "next/head";
-
+import SignUpBanner from "../../components/Misc/SignUpBanner";
 export default function RelocationCalculator() {
   const [cities, setCities] = useState([]);
   const [currentCity, setCurrentCity] = useState(null);
@@ -72,6 +72,7 @@ export default function RelocationCalculator() {
           Use our Relocation Calculator to compare expenses between your current city and a new city. Plan your move with confidence.
         </p>
 
+<SignUpBanner/>
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Select Your Cities</h2>
           <form

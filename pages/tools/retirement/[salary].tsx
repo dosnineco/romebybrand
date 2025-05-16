@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { supabase } from "../../../lib/supabase";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import SignUpBanner from "../../../components/Misc/SignUpBanner";
 
 export default function RetirementCalculator({ salary }: { salary: number }) {
   const [currentSavings, setCurrentSavings] = useState<number>(0);
@@ -56,6 +57,8 @@ export default function RetirementCalculator({ salary }: { salary: number }) {
         <p className="text-base text-gray-700 mb-4">
           Plan your retirement confidently! Estimate how much you'll need after considering inflation and investment growth.
         </p>
+
+        <SignUpBanner/>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Calculate Your Retirement Needs</h2>

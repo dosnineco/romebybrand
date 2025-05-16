@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import SignUpBanner from "../../components/Misc/SignUpBanner";
 
 const toolsData = {
   'cost-of-living': {
@@ -79,6 +80,8 @@ const CostOfLivingCalculator = () => {
         <div className="container mx-auto max-w-screen-md">
           <h1 className="text-3xl font-bold mb-6 text-center">{tool.title}</h1>
           <p className="text-lg text-gray-700 mb-6 text-center">{tool.description}</p>
+          <SignUpBanner/>
+
           <div className="bg-gray-100 p-6 rounded-lg">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>

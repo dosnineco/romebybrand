@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
+import SignUpBanner from "../../components/Misc/SignUpBanner";
+
 
 const LivingExpensesCalculator = () => {
   const [expenses, setExpenses] = useState({
@@ -42,6 +44,8 @@ const LivingExpensesCalculator = () => {
           <p className="text-lg text-gray-700 mb-6 text-center">
             Estimate your monthly living expenses and gain insights into your spending habits.
           </p>
+
+          <SignUpBanner/>
           <div className=" bg-gray-100 p-6 rounded-lg ">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>

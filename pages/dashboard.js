@@ -362,19 +362,7 @@ const graphOptions = {
             />
           </div>
 
-             <div className="mt-8">
-                  <h2 className="text-lg font-semibold mb-4">Spending Over Time</h2>
-                  <div className="bg-white p-4 ">
-                    {monthlySpendingData.length > 0 ? (
-                      <div className="h-64 sm:h-80">
-                        <Line data={graphData} options={graphOptions} />
-                      </div>
-                    ) : (
-                      <p className=" text-base text-gray-600">No spending data available.</p>
-                    )}
-                  </div>
-                </div>
-          
+
 
         {/* Tools Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
