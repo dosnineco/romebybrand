@@ -968,7 +968,7 @@ return (
         <h2 className="text-xl sm:text-2xl font-semibold mb-4">Spending Over Time</h2>
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
           {monthlySpendingData.length > 0 ? (
-            <div className="h-64 sm:h-80">
+            <div className="h-full">
               <Line data={graphDataload} options={graphOptions} />
             </div>
           ) : (
