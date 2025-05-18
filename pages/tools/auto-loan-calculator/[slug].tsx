@@ -48,7 +48,7 @@ export default function AutoLoanCalculator({ loan }: { loan: any }) {
           name="keywords"
           content="auto loan calculator, car loan calculator, car payment calculator, car finance calculator, car loan repayment calculator"
         />
-        <link rel="canonical" href={`https://www.expensegoose.com/tools/auto-loan/${loan.loan_amount}`} />
+        <link rel="canonical" href="https://www.expensegoose.com/tools/auto-loan-calculator" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

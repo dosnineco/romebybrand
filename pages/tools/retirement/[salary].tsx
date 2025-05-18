@@ -46,7 +46,7 @@ export default function RetirementCalculator({ salary }: { salary: number }) {
           content={`Find out how much money you need to retire comfortably with a yearly income of $${salary.toLocaleString()}. Use our retirement calculator to plan your future.`}
         />
         <meta name="keywords" content={`retirement calculator, retire with $${salary}, financial planning`} />
-        <link rel="canonical" href={`https://www.expensegoose.com/tools/retirement/${salary}`} />
+        <link rel="canonical" href="https://www.expensegoose.com/tools/retirement-spending-calculator" />
       </Head>
 
       <main className="max-w-screen-md mx-auto px-4 py-8">

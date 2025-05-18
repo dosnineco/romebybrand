@@ -75,7 +75,6 @@ export default function AutoLoanCalculator() {
           name="keywords"
           content="auto loan calculator, car loan calculator, car payment calculator, car finance calculator, car loan repayment calculator"
         />
-        <link rel="canonical" href="https://www.expensegoose.com/tools/auto-loan-calculator" />
       </Head>
 
       <main className="max-w-screen-md mx-auto px-4 py-8">
