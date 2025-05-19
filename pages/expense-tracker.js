@@ -77,6 +77,7 @@ const fetchMonthlySpendingData = async () => {
   }
 };
 
+
 const graphDataload = {
   labels: monthlySpendingData.map((item) => item.month),
   datasets: [
@@ -190,6 +191,32 @@ const [customEndDate, setCustomEndDate] = useState('');
   const [savingsProgress, setSavingsProgress] = useState(0);
   const [savingsGoal, setSavingsGoal] = useState(0); // Savings goal from category limits
   const [savingsTotal, setSavingsTotal] = useState(0); // Total savings so far
+const getPeriodBudget = () => {
+  // Default to month if not recognized
+  switch (filterPeriod) {
+    case 'day':
+      return weeklyBudget / 7;
+    case 'week':
+      return weeklyBudget;
+    case 'month':
+      return weeklyBudget * 4;
+    case 'year':
+      return weeklyBudget * 52;
+    case 'custom range':
+      if (customStartDate && customEndDate) {
+        const start = new Date(customStartDate);
+        const end = new Date(customEndDate);
+        const days = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1);
+        return (weeklyBudget / 7) * days;
+      }
+      return 0;
+    default:
+      return weeklyBudget * 4;
+  }
+};
+
+const periodBudget = getPeriodBudget();
+const remainingBudget = periodBudget - monthlySpending;
 
 
   useEffect(() => {
@@ -675,6 +702,101 @@ return (
         <PlusCircle className="w-6 h-6 mr-2" />
         <span className="hidden sm:inline text-sm font-medium">Add Transaction</span>
       </button>
+{showAddForm && (
+  <div className="fixed inset-0  z-50 flex items-center justify-center backdrop-blur-sm bg-black/40">
+    <div className="bg-white rounded-2xl shadow-2xl w-11/12 max-w-lg p-6 relative">
+      <button
+        onClick={() => setShowAddForm(false)}
+        className="absolute top-2 right-2 p-2 rounded bg-gray-200 text-gray-400 hover:text-gray-700 text-xl"
+        aria-label="Close"
+      >
+        ✕
+      </button>
+      <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800">Add New Transaction</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input
+          type="date"
+          value={newTransaction.transaction_date}
+          onChange={(e) =>
+            setNewTransaction((prev) => ({
+              ...prev,
+              transaction_date: e.target.value,
+            }))
+          }
+          className="border rounded-lg px-3 py-2"
+        />
+        <input
+          type="date"
+          value={newTransaction.post_date}
+          onChange={(e) =>
+            setNewTransaction((prev) => ({
+              ...prev,
+              post_date: e.target.value,
+            }))
+          }
+          className="border rounded-lg px-3 py-2"
+        />
+        <input
+          type="text"
+          placeholder="Description"
+          value={newTransaction.description}
+          onChange={(e) =>
+            setNewTransaction((prev) => ({
+              ...prev,
+              description: e.target.value,
+            }))
+          }
+          className="border rounded-lg px-3 py-2"
+        />
+        <input
+          type="number"
+          placeholder="Amount"
+          value={newTransaction.amount}
+          onChange={(e) =>
+            setNewTransaction((prev) => ({
+              ...prev,
+              amount: e.target.value,
+            }))
+          }
+          step="0.01"
+          className="border rounded-lg px-3 py-2"
+        />
+        <select
+          value={newTransaction.category}
+          onChange={(e) =>
+            setNewTransaction((prev) => ({
+              ...prev,
+              category: e.target.value,
+            }))
+          }
+          className="border rounded-lg px-3 py-2"
+        >
+          <option value="food">Food</option>
+          <option value="shopping">Shopping</option>
+          <option value="transport">Transport</option>
+          <option value="housing">Housing</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="investments">Investments</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div className="mt-4 flex flex-col sm:flex-row gap-2">
+        <button
+          onClick={() => setShowAddForm(false)}
+          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex-1"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={addTransaction}
+          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
 
     {/* Quick Expenses */}
@@ -903,22 +1025,20 @@ return (
         </div>
 
   {/* Remaining Budget */}
-    <div className="p-6 bg-gray-100 rounded-lg text-gray-900 flex flex-col items-center text-center">
-      <div className="flex items-center gap-2 mb-2">
-        <label className="text-lg font-semibold tracking-wide">Remaining Budget</label>
-      </div>
-      <input
-        type="text"
-        value={`$${formatMoney(weeklyBudget * 4 - monthlySpending)}`}
-        readOnly
-        
-        className="w-full text-2xl font-bold bg-transparent text-center outline-none tracking-wide"
-      />
-    {monthlySpending > weeklyBudget * 4 && (
-      <p className="text-red-600 text-sm mt-2">Warning: You’ve exceeded your budget!</p>
-
-    )}
+  <div className="p-6 bg-gray-100 rounded-lg text-gray-900 flex flex-col items-center text-center">
+  <div className="flex items-center gap-2 mb-2">
+    <label className="text-lg font-semibold tracking-wide">Remaining Budget</label>
   </div>
+  <input
+    type="text"
+    value={`$${formatMoney(remainingBudget)}`}
+    readOnly
+    className="w-full text-2xl font-bold bg-transparent text-center outline-none tracking-wide"
+  />
+  {monthlySpending > periodBudget && (
+    <p className="text-red-600 text-sm mt-2">You’ve exceeded your budget!</p>
+  )}
+</div>
 </div>
 
     <div className="mt-4 mb-5 grid  sm:grid-cols-1 md:grid-cols-3  gap-4">
@@ -932,18 +1052,18 @@ return (
         {spendingInsights.map((insight) => (
           <div
             key={insight.category}
-            className={`p-4 flex items-center col-span-1 rounded-lg justify-center flex-col h-24 sm:h-full text-center ${
+            className={`p-4 flex items-center col-span-1 rounded-lg justify-center flex-col h-24  text-center ${
               insight.trend === "up" ? "border-orange-900 bg-orange-200" : "border-green-900 bg-green-200"
             } `}
             onClick={() => handleCategoryClick(insight.category)}
             aria-label={`View transactions for ${insight.category}`}
           >
             <div className="flex justify-between items-center  w-full mb-1">
-              <h3 className="text-base font-semibold text-center text-gray-900 capitalize">{insight.category}</h3>
+              <h3 className="text-sm mt-1 font-semibold text-center text-gray-900 capitalize">{insight.category}</h3>
               {insight.trend === "up" ? (
-                <AlertTriangle className="h-4 w-4 text-red-900" />
+                <AlertTriangle className=" text-sm mt-1 h-4 w-4 text-red-900" />
               ) : (
-                <TrendingUp className="h-4 w-4 text-green-900" />
+                <TrendingUp className="text-sm mt-1 text-sm mt-1 h-4 w-4 text-green-900" />
               )}
             </div>
 
