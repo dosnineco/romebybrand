@@ -9,6 +9,7 @@ import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { TiRefresh } from "react-icons/ti";
 import { DollarSign } from "lucide-react";
 import RequireSubscription from '../components/Misc/RequireSubscription';  
+import { MdTune,MdFileDownload } from "react-icons/md";
 
 import { CSVLink } from 'react-csv'; 
 import { FaInfoCircle } from 'react-icons/fa';
@@ -301,7 +302,7 @@ const csvHeaders = [
       const isOverBudget = total > categoryLimit;
   
       let recommendation = isOverBudget
-        ? `You've exceeded your budget for ${category}. Consider reducing expenses.`
+        ? 'You\'ve exceeded your budget'
         : 'You are within budget.';
   
       return {
@@ -480,6 +481,12 @@ const csvHeaders = [
   };
 
 
+useEffect(() => {
+  if (user) {
+    fetchTransactions();
+  }
+  // eslint-disable-next-line
+}, [filterPeriod, selectedYear, customStartDate, customEndDate, user]);
 
 
   const getCategoryIcon = (category) => {
@@ -633,14 +640,15 @@ return (
         <div className="w-full max-w-screen-md"> {/* Added container with max width */}
           <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Expense Tracker</h1>
+        
+        </div>
           <button
-            className="text-blue-600 hover:text-blue-800 flex items-center"
+            className="text-blue-600 hover:text-blue-800 py-4 flex items-center"
             onClick={() => setIsHowToUseOpen(true)}
           >
-            <FaInfoCircle className="mr-2" />
+            <FaInfoCircle className="mr-2 " />
             How to Use
           </button>
-        </div>
 
         {/* How to Use Modal */}
         <HowToUseModal
@@ -655,122 +663,28 @@ return (
 {/* filepath: /workspaces/romebybrand/pages/budget-calculator.js */}
 <div className="w-full mx-auto mb-6">
   {/* Action Row */}
-  <div className="flex flex-wrap justify-between items-center bg-gray-100 p-4 rounded-lg shadow gap-4">
+<div className="flex flex-wrap justify-between items-center bg-gray-100 p-4 rounded-lg shadow gap-4">
 
-
-        {/* Add Transaction Button */}
-        <div className="flex justify-center">
-          <button
-            onClick={() => setShowAddForm(true)}
-                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-
-            aria-label="Add New Transaction"
-          >
-            <PlusCircle className="w-6 h-6 mr-2" />
-            <span className="text-sm font-medium">Add Transaction</span>
-          </button>
-        </div>
-
-        {/* Add Transaction Form */}
-        {showAddForm && (
-          <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200">
-            <h2 className="text-lg font-semibold mb-4">Add New Transaction</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input
-                type="date"
-                value={newTransaction.transaction_date}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    transaction_date: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              />
-              <input
-                type="date"
-                value={newTransaction.post_date}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    post_date: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              />
-              <input
-                type="text"
-                placeholder="Description"
-                value={newTransaction.description}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              />
-              <input
-                type="number"
-                placeholder="Amount"
-                value={newTransaction.amount}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    amount: parseFloat(e.target.value),
-                  }))
-                }
-                step="0.01"
-                className="border rounded-lg px-3 py-2"
-              />
-             <select
-                value={newTransaction.category}
-                onChange={(e) =>
-                  setNewTransaction((prev) => ({
-                    ...prev,
-                    category: e.target.value,
-                  }))
-                }
-                className="border rounded-lg px-3 py-2"
-              >
-             <option value="food">Food</option>
-            <option value="shopping">Shopping</option>
-            <option value="transport">Transport</option>
-            <option value="housing">Housing</option>
-            <option value="entertainment">Entertainment</option>
-            <option value="investments">Investments</option>
-            <option value="other">Other</option>
-            </select>
-
-            </div>
-            <div className="mt-4 flex flex-col sm:flex-row gap-2">
-              <button
-                onClick={() => setShowAddForm(false)}
-                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex-1"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={addTransaction}
-                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        )}
-
+    {/* Add Transaction Button */}
+    <div className="flex justify-center">
+      <button
+        onClick={() => setShowAddForm(true)}
+        className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+        aria-label="Add New Transaction"
+      >
+        <PlusCircle className="w-6 h-6 mr-2" />
+        <span className="hidden sm:inline text-sm font-medium">Add Transaction</span>
+      </button>
+    </div>
 
     {/* Quick Expenses */}
     <button
       className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
       onClick={() => router.push('/quick')}
     >
-      <PlusCircle className="w-6 h-6 text-blue-500" />
-      <span className="text-sm font-medium">Presets</span>
+      <MdTune className="w-6 h-6 text-blue-500" />
+      <span className="hidden sm:inline text-sm font-medium">Presets</span>
     </button>
-
-    
 
     {/* Settings */}
     <button
@@ -778,7 +692,7 @@ return (
       onClick={() => router.push('/settings')}
     >
       <Settings className="w-6 h-6 text-green-500" />
-      <span className="text-sm font-medium">Settings</span>
+      <span className="hidden sm:inline text-sm font-medium">Settings</span>
     </button>
 
     {/* Download Transactions */}
@@ -788,105 +702,100 @@ return (
       filename={`transactions-${filterPeriod}.csv`}
       className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
     >
-      <FilePlus className="w-6 h-6 text-purple-500" />
-      <span className="text-sm font-medium">Download</span>
+      <MdFileDownload className="w-6 h-6 text-purple-500"/>
+      <span className="hidden sm:inline text-sm font-medium">Download</span>
     </CSVLink>
 
-   {/* Filter Dropdown */}
-<div className="relative">
-  <button
-    className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-    onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-  >
-    <Filter className="w-6 h-6 text-orange-500" />
-    <span className="text-sm font-medium">Filter</span>
-  </button>
-  {showFilterDropdown && (
-    <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-      <ul className="py-2">
-        <li>
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              setFilterPeriod('all');
-              setShowFilterDropdown(false); // Hide dropdown
-              fetchTransactions(); // Update transactions
-            }}
-          >
-            All Time
-          </button>
-        </li>
-        <li>
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              setFilterPeriod('day');
-              setShowFilterDropdown(false); // Hide dropdown
-              fetchTransactions(); // Update transactions
-            }}
-          >
-            Last 24 Hours
-          </button>
-        </li>
-        <li>
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              setFilterPeriod('week');
-              setShowFilterDropdown(false); // Hide dropdown
-              fetchTransactions(); // Update transactions
-            }}
-          >
-            This Week
-          </button>
-        </li>
-        <li>
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              setFilterPeriod('month');
-              setShowFilterDropdown(false); // Hide dropdown
-              fetchTransactions(); // Update transactions
-            }}
-          >
-            This Month
-          </button>
-        </li>
-        <li>
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              setFilterPeriod('year');
-              setShowFilterDropdown(false); // Hide dropdown
-              fetchTransactions(); // Update transactions
-            }}
-          >
-            This Year
-          </button>
-        </li>
-        <li>
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              setFilterPeriod('custom range');
-              setShowFilterDropdown(false); // Hide dropdown
-              fetchTransactions(); // Update transactions
-            }}
-          >
-            Custom Range
-          </button>
-        </li>
-      </ul>
+    {/* Filter Dropdown */}
+    <div className="relative">
+      <button
+        className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+        onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+      >
+        <Filter className="w-6 h-6 text-orange-500" />
+        <span className="hidden sm:inline text-sm font-medium">Filter</span>
+      </button>
+      {showFilterDropdown && (
+        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+          <ul className="py-2">
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  setFilterPeriod('all');
+                  setShowFilterDropdown(false);
+                }}
+              >
+                All Time
+              </button>
+            </li>
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  setFilterPeriod('day');
+                  setShowFilterDropdown(false);
+                }}
+              >
+                Last 24 Hours
+              </button>
+            </li>
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  setFilterPeriod('week');
+                  setShowFilterDropdown(false);
+                }}
+              >
+                This Week
+              </button>
+            </li>
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  setFilterPeriod('month');
+                  setShowFilterDropdown(false);
+                }}
+              >
+                This Month
+              </button>
+            </li>
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  setFilterPeriod('year');
+                  setShowFilterDropdown(false);
+                }}
+              >
+                This Year
+              </button>
+            </li>
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  setFilterPeriod('custom range');
+                  setShowFilterDropdown(false);
+                }}
+              >
+                Custom Range
+              </button>
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
-  )}
-</div>
+
     {/* Apply Changes */}
     <button
       className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
       onClick={() => fetchTransactions()}
     >
       <TiRefresh className="w-6 h-6 text-orange-500" />
-      <span className="text-sm font-medium">Apply Changes</span>
+      <span className="hidden sm:inline text-sm font-medium">Apply Changes</span>
     </button>
   </div>
 
@@ -1023,13 +932,13 @@ return (
         {spendingInsights.map((insight) => (
           <div
             key={insight.category}
-            className={`p-4 flex items-center col-span-1 rounded-lg justify-center flex-col h-48 text-center ${
-              insight.trend === "up" ? "border-orange-900 bg-orange-100" : "border-green-900 bg-green-100"
+            className={`p-4 flex items-center col-span-1 rounded-lg justify-center flex-col h-24 sm:h-full text-center ${
+              insight.trend === "up" ? "border-orange-900 bg-orange-200" : "border-green-900 bg-green-200"
             } `}
             onClick={() => handleCategoryClick(insight.category)}
             aria-label={`View transactions for ${insight.category}`}
           >
-            <div className="flex justify-between items-center w-full mb-1">
+            <div className="flex justify-between items-center  w-full mb-1">
               <h3 className="text-base font-semibold text-center text-gray-900 capitalize">{insight.category}</h3>
               {insight.trend === "up" ? (
                 <AlertTriangle className="h-4 w-4 text-red-900" />
@@ -1038,7 +947,7 @@ return (
               )}
             </div>
 
-            <p className="text-lg flex items-center justify-center font-bold text-center text-gray-900">${formatMoney(insight.total)}</p>
+            <p className="text-lg p-0 m-0  flex items-center justify-center font-bold text-center text-gray-900">${formatMoney(insight.total)}</p>
           <p className="text-xs text-gray-700">{insight.recommendation}</p>
           </div>
         ))}
