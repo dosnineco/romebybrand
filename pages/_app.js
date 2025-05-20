@@ -36,49 +36,61 @@ function MyApp({ Component, pageProps }) {
 function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
   const { isSignedIn, user } = useUser(); // Now inside the ClerkProvider context
 
-  useEffect(() => {
-    const addUserToDatabase = async () => {
-      if (isSignedIn && user) {
-        const { id: clerkId, emailAddresses, fullName } = user;
-        const email = emailAddresses[0]?.emailAddress;
-        const referrer = localStorage.getItem("referrer") || null; // Get referrer from local storage
+ useEffect(() => {
+  const addUserToDatabase = async () => {
+    if (!isSignedIn || !user) {
+      console.log("User not signed in or user object not ready");
+      return;
+    }
+    const { id: clerkId, emailAddresses, fullName } = user;
+    const email = emailAddresses?.[0]?.emailAddress;
+    const referrer = typeof window !== "undefined" ? localStorage.getItem("referrer") || null : null;
 
-        try {
-          const { data: existingUser, error: fetchError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('clerk_id', clerkId)
-            .single();
-  
-          if (fetchError && fetchError.code !== 'PGRST116') {
-            console.error('Error fetching user:', fetchError.message);
-            return;
-          }
-  
-          if (!existingUser) {
-            const { error: insertError } = await supabase.from('users').insert([
-              {
-                clerk_id: clerkId,
-                email,
-                full_name: fullName,
-                trial_start_date: new Date().toISOString(),
-                is_trial_active: true,
-                referrer,
-              },
-            ]);
-  
-            if (insertError) {
-              console.error('Error adding user:', insertError.message);
-            }
-          }
-        } catch (err) {
-          console.error('Unexpected error adding user:', err);
-        }
+    if (!clerkId || !email) {
+      console.log("Missing clerkId or email", { clerkId, email });
+      return;
+    }
+
+    try {
+      const { data: existingUser, error: fetchError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('clerk_id', clerkId)
+        .single();
+
+      console.log("Supabase fetch result", { existingUser, fetchError });
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        console.error('Error fetching user:', fetchError.message);
+        return;
       }
-    };
-  
-    addUserToDatabase();
-  }, [isSignedIn, user]);
+
+      if (!existingUser) {
+        const { error: insertError } = await supabase.from('users').insert([
+          {
+            clerk_id: clerkId,
+            email,
+            full_name: fullName,
+            trial_start_date: new Date().toISOString(),
+            is_trial_active: true,
+            referrer,
+          },
+        ]);
+        if (insertError) {
+          console.error('Error adding user:', insertError.message);
+        } else {
+          console.log('User added to database');
+        }
+      } else {
+        console.log('User already exists in database');
+      }
+    } catch (err) {
+      console.error('Unexpected error adding user:', err);
+    }
+  };
+
+  addUserToDatabase();
+}, [isSignedIn, user]);
 
   return (
     <>
