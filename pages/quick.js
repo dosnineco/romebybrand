@@ -205,6 +205,12 @@ const localDate = new Date().toLocaleDateString("en-CA"); // Outputs in YYYY-MM-
     <div className="p-4 w-full max-w-[600px] mx-auto text-gray-800 rounded-lg">
  
       <div className="flex justify-between items-center mb-4">
+         <button
+        className="bg-gray-500 text-white p-2 rounded-lg mb-6 flex items-center"
+        onClick={() => router.push('/expense-tracker')} 
+      >
+        ← Back
+      </button>
         <h2 className="text-lg font-semibold">Quick Expenses Preset</h2>
         <button
           className="text-blue-600 hover:text-blue-800 flex items-center"

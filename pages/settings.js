@@ -304,7 +304,7 @@ return (
       >
         ← Back
       </button>
-
+{/* 
       <div className="mt-8">
         <h2 className="text-xl sm:text-2xl font-semibold mb-4">Spending Over Time</h2>
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
@@ -316,7 +316,7 @@ return (
             <p className="text-gray-600">No spending data available.</p>
           )}
         </div>
-      </div>
+      </div> */}
 
       <div className="bg-white p-4 sm:p-6 mt-8 rounded-lg shadow">
         <h2 className="text-xl sm:text-2xl font-semibold mb-4">Monthly Budget</h2>

@@ -78,11 +78,15 @@ const fetchMonthlySpendingData = async () => {
 };
 
 
+ const formatMoney = (amount) => {
+    return amount.toLocaleString("en-US", { minimumFractionDigits: 2 });
+  };
+
 const graphDataload = {
   labels: monthlySpendingData.map((item) => item.month),
   datasets: [
     {
-      label: 'Monthly Spending',
+      label: 'Spending',
       data: monthlySpendingData.map((item) => item.total),
       borderColor: '#FBBF24', // Gold-like color for the line
       backgroundColor: 'rgba(251, 191, 36, 0.2)', // Transparent gold fill
@@ -90,8 +94,8 @@ const graphDataload = {
       pointBorderColor: '#FBBF24',
       pointHoverBackgroundColor: '#FBBF24',
       pointHoverBorderColor: '#FBBF24',
-      pointRadius: 5, // Size of the points
-      pointHoverRadius: 7, // Size of the points on hover
+      pointRadius: 12, // Size of the points
+      pointHoverRadius: 16, // Size of the points on hover
       tension: 0.4, // Smooth curve
     },
   ],
@@ -103,6 +107,7 @@ const graphOptions = {
   plugins: {
     legend: {
       display: true, // Hide the legend
+      
     },
     tooltip: {
       backgroundColor: '#1F2937', // Dark background for the tooltip
@@ -117,6 +122,7 @@ const graphOptions = {
           return `${month}`; // Display the month
         },
         label: (context) => `$${context.raw.toFixed(2)}`, // Display the amount
+     
       },
     },
   },
@@ -124,9 +130,11 @@ const graphOptions = {
     x: {
       grid: {
         display: true, // Hide gridlines on the x-axis
+
       },
       ticks: {
         color: '#6B7280', // Gray color for x-axis labels
+
         font: {
           size: 12,
         },
@@ -142,7 +150,7 @@ const graphOptions = {
         font: {
           size: 12,
         },
-        callback: (value) => `$${value}`, // Add a dollar sign to y-axis labels
+        callback: (value) => `$${formatMoney(value)}`, // Add a dollar sign to y-axis labels
       },
     },
   },
@@ -658,9 +666,7 @@ useEffect(() => {
     );
   };
 
-  const formatMoney = (amount) => {
-    return amount.toLocaleString("en-US", { minimumFractionDigits: 2 });
-  };
+ 
 return (
     <RequireSubscription>
     <div className="min-h-screen   p-4 sm:p-6">
