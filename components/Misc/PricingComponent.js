@@ -5,7 +5,7 @@ const PricingComponent = () => {
 
     <>
     
-          <h2 className="text-4xl pt-6 font-bold capitalize text-inherit text-center mb-4">Become the best version of yourself!</h2>
+          {/* <h2 className="text-4xl pt-6 font-bold capitalize text-inherit text-center mb-4">Become the best version of yourself!</h2> */}
 
   
         <div className="  w-full max-w-screen-md mx-auto px-4 py-8 text-white grid grid-cols-1 md:grid-cols-2 gap-3 justify-center  items-center">
@@ -18,9 +18,8 @@ const PricingComponent = () => {
               {[
                 "Unlimited access to all features",
                 "No hidden fees or charges",
-                "Customizable settings and preferences",
                 "Early access to new features",
-                "Advanced security features",
+                "anonymous data collection",
               ].map((feature, index) => (
                 <li key={index} className="flex items-center">
                   <svg

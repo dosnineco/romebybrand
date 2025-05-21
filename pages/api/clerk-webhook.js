@@ -5,10 +5,15 @@ export default async function handler(req, res) {
     const { id, email_addresses } = req.body;
 
     try {
-      const { data, error } = await supabase.from('users').insert({
-        id,
-        email: email_addresses[0].email,
-      });
+      const { data, error } = await supabase
+        .from('users')
+        .upsert(
+          {
+            clerk_id: id, // Use clerk_id instead of id
+            email: email_addresses[0].email,
+          },
+          { onConflict: 'clerk_id' }
+        );
 
       if (error) throw error;
 

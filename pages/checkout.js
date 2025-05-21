@@ -8,14 +8,12 @@ import PricingComponent from '../components/Misc/PricingComponent';
 export default function Payment() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
-  const [hasPaid, setHasPaid] = useState(false); // Track if the user has already paid
-  const [loading, setLoading] = useState(true); // Track loading state
+  const [hasPaid, setHasPaid] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoaded) return; // Wait until the user data is loaded
-
+    if (!isLoaded) return;
     if (!user) {
-      // Redirect to login if the user is not authenticated
       router.push('/dashboard');
       return;
     }
@@ -26,17 +24,17 @@ export default function Payment() {
           .from('users')
           .select('is_subscribed')
           .eq('clerk_id', user.id)
-          .single();
+          .maybeSingle(); // Use maybeSingle instead of single
 
         if (error) {
           console.error('Error fetching subscription status:', error);
         } else if (data?.is_subscribed) {
-          setHasPaid(true); // User has already paid
+          setHasPaid(true);
         }
       } catch (err) {
         console.error('Unexpected error checking subscription status:', err);
       } finally {
-        setLoading(false); // Stop loading once the check is complete
+        setLoading(false);
       }
     };
 
@@ -67,8 +65,8 @@ export default function Payment() {
           alert('There was an issue updating your subscription. Please contact support.');
         } else {
           console.log('Subscription saved:', data);
-          setHasPaid(true); // Mark the user as having paid
-          router.push('/dashboard'); // Redirect to the dashboard
+          setHasPaid(true);
+          router.push('/dashboard');
         }
       } catch (err) {
         console.error('Unexpected error saving subscription:', err);
@@ -84,7 +82,6 @@ export default function Payment() {
     return (
       <div className="flex items-center justify-center min-h-screen text-gray-700">
         <div className="animate-spin rounded-full h-24 w-24 border-b-4 border-blue-500"></div>
-    
       </div>
     );
   }
@@ -95,7 +92,7 @@ export default function Payment() {
         <div className="max-w-3xl text-center p-8 bg-gray-100 rounded-lg text-gray-900">
           <h1 className="text-4xl font-extrabold mb-4 text-gray-700">Thank You!</h1>
           <p className="text-lg mb-6">
-            You Are premium. Enjoy all the premium features! 
+            You Are premium. Enjoy all the premium features!
           </p>
           <button
             onClick={() => router.push('/dashboard')}
@@ -113,11 +110,9 @@ export default function Payment() {
       <div className=" text-center p-8  text-gray-900">
         <h1 className="text-3xl font-extrabold mb-4 text-gray-700">Upgrade to Premium</h1>
         <p className="text-base   mb-6">
-        
-      
-          <span className="text-sm text-gray-500">No subscription, no hidden fees.</span> 
+          <span className="text-sm text-gray-500">No subscription, no hidden fees.</span>
         </p>
-     <PricingComponent />
+        <PricingComponent />
         <PayPalScriptProvider options={{ "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}>
           <PayPalButtons
             style={{ layout: 'vertical', color: 'blue', shape: 'pill', label: 'subscribe' }}
@@ -126,7 +121,7 @@ export default function Payment() {
                 purchase_units: [
                   {
                     amount: {
-                      value: '15', 
+                      value: '15',
                     },
                   },
                 ],
@@ -134,7 +129,7 @@ export default function Payment() {
             }}
             onApprove={(data, actions) => {
               return actions.order.capture().then(() => {
-                handlePaymentSuccess(data.orderID); // Mark payment as complete and save subscription
+                handlePaymentSuccess(data.orderID);
               });
             }}
             onError={(err) => {

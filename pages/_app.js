@@ -10,14 +10,12 @@ import { useEffect } from 'react';
 import { supabase } from '../lib/supabase'; // Ensure this is correctly configured
 import QuickExpense from '../components/Misc/QuickExpense';
 
-
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  const publicRoutes = ['/', '/tools', '/refund-policy', '/privacy-policy', '/about', '/terms-of-service', '/checkout']; // Define public routes
+  const publicRoutes = ['/', '/tools', '/refund-policy', '/privacy-policy', '/about', '/terms-of-service', '/checkout'];
   const isPublicRoute = publicRoutes.some((route) =>
     router.pathname === route || router.pathname.startsWith(`${route}/`)
   );
-
   const isHomePage = router.pathname === '/';
 
   return (
@@ -34,68 +32,55 @@ function MyApp({ Component, pageProps }) {
 }
 
 function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
-  const { isSignedIn, user } = useUser(); // Now inside the ClerkProvider context
+  const { isSignedIn, user } = useUser();
 
- useEffect(() => {
-  const addUserToDatabase = async () => {
-    if (!isSignedIn || !user) {
-      console.log("User not signed in or user object not ready");
-      return;
-    }
-    const { id: clerkId, emailAddresses, fullName } = user;
-    const email = emailAddresses?.[0]?.emailAddress;
-    const referrer = typeof window !== "undefined" ? localStorage.getItem("referrer") || null : null;
+  useEffect(() => {
+    const addUserToDatabase = async () => {
+      if (!isSignedIn || !user) {
+        console.log("User not signed in or user object not ready");
+        return;
+      }
+      console.log("Clerk user object:", user);
 
-    if (!clerkId || !email) {
-      console.log("Missing clerkId or email", { clerkId, email });
-      return;
-    }
+      const { emailAddresses, fullName } = user;
+      const email = emailAddresses?.[0]?.emailAddress;
 
-    try {
-      const { data: existingUser, error: fetchError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('clerk_id', clerkId)
-        .single();
-
-      console.log("Supabase fetch result", { existingUser, fetchError });
-
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        console.error('Error fetching user:', fetchError.message);
+      if (!user.id || !email) {
+        console.log("Missing clerkId or email", { email, emailAddresses });
         return;
       }
 
-      if (!existingUser) {
-        const { error: insertError } = await supabase.from('users').insert([
-          {
-            clerk_id: clerkId,
-            email,
-            full_name: fullName,
-            trial_start_date: new Date().toISOString(),
-            is_trial_active: true,
-            referrer,
-          },
-        ]);
-        if (insertError) {
-          console.error('Error adding user:', insertError.message);
-        } else {
-          console.log('User added to database');
-        }
-      } else {
-        console.log('User already exists in database');
-      }
-    } catch (err) {
-      console.error('Unexpected error adding user:', err);
-    }
-  };
+      try {
+        // Remove referrer field, only upsert columns that exist in your table
+        const { error: upsertError } = await supabase
+          .from('users')
+          .upsert(
+            {
+              clerk_id: user.id,
+              email,
+              full_name: fullName,
+              trial_start_date: new Date().toISOString(),
+              is_trial_active: true,
+            },
+            { onConflict: 'clerk_id' }
+          );
 
-  addUserToDatabase();
-}, [isSignedIn, user]);
+        if (upsertError) {
+          console.error('Error upserting user:', upsertError);
+        } else {
+          console.log('User upserted to database');
+        }
+      } catch (err) {
+        console.error('Unexpected error adding user:', err);
+      }
+    };
+
+    addUserToDatabase();
+  }, [isSignedIn, user]);
 
   return (
     <>
       {isPublicRoute ? (
-        // Public routes: No authentication logic
         <>
           <Header />
           <Layout className="container mx-auto px-4 py-8">
@@ -105,7 +90,6 @@ function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
           <Footer />
         </>
       ) : (
-        // Protected routes: Require authentication
         <SignedIn>
           <Header />
           <Layout className="container mx-auto px-4 py-8">
@@ -117,43 +101,43 @@ function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
         </SignedIn>
       )}
       {!isPublicRoute && (
-     <SignedOut>
-  <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200">
-    <div className="bg-white rounded-lg p-8 max-w-md w-full text-center">
-      <div className="mb-6">
-        <img
-          src="/icon.png" // Replace with your logo path
-          alt="Expense Goose Logo"
-          className="mx-auto h-16 w-16"
-        />
-      </div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Expense Goose</h1>
-      <p className="text-lg text-gray-600 mb-6">Sign in or create an account to manage your expenses effortlessly.</p>
-      <div className="flex flex-col space-y-4">
-        <SignInButton>
-          <button className="w-full px-6 py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md transition duration-200">
-            Sign In
-          </button>
-        </SignInButton>
-        <SignUpButton>
-          <button className="w-full px-6 py-3 font-bold text-blue-600 bg-white border border-blue-600 hover:bg-blue-50 rounded-lg shadow-md transition duration-200">
-            Sign Up
-          </button>
-        </SignUpButton>
-      </div>
-      <p className="mt-6 text-sm text-gray-500">
-        By signing in, you agree to our{' '}
-        <a href="/terms-of-service" className="text-blue-600 hover:underline">
-          Terms of Service
-        </a>{' '}
-        and{' '}
-        <a href="/privacy-policy" className="text-blue-600 hover:underline">
-          Privacy Policy
-        </a>.
-      </p>
-    </div>
-  </div>
-</SignedOut>
+        <SignedOut>
+          <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200">
+            <div className="bg-white rounded-lg p-8 max-w-md w-full text-center">
+              <div className="mb-6">
+                <img
+                  src="/icon.png"
+                  alt="Expense Goose Logo"
+                  className="mx-auto h-16 w-16"
+                />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Expense Goose</h1>
+              <p className="text-lg text-gray-600 mb-6">Sign in or create an account to manage your expenses effortlessly.</p>
+              <div className="flex flex-col space-y-4">
+                <SignInButton>
+                  <button className="w-full px-6 py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md transition duration-200">
+                    Sign In
+                  </button>
+                </SignInButton>
+                <SignUpButton>
+                  <button className="w-full px-6 py-3 font-bold text-blue-600 bg-white border border-blue-600 hover:bg-blue-50 rounded-lg shadow-md transition duration-200">
+                    Sign Up
+                  </button>
+                </SignUpButton>
+              </div>
+              <p className="mt-6 text-sm text-gray-500">
+                By signing in, you agree to our{' '}
+                <a href="/terms-of-service" className="text-blue-600 hover:underline">
+                  Terms of Service
+                </a>{' '}
+                and{' '}
+                <a href="/privacy-policy" className="text-blue-600 hover:underline">
+                  Privacy Policy
+                </a>.
+              </p>
+            </div>
+          </div>
+        </SignedOut>
       )}
     </>
   );
