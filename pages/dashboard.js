@@ -55,9 +55,9 @@ function App() {
     checkSubscriptionStatus();
   }, [user]);
 
-  const tools = [
+const tools = [
 
-    {
+  {
       title: "Expense Tracker",
       description: "Track and analyze your spending data",
       icon: ClipboardList,
@@ -108,98 +108,46 @@ function App() {
       bgHover: "hover:bg-blue-50",
     },
     {
+      title: "Auto Loan Calculator",
+      description: "Calculate your monthly auto loan payments",
+      icon: Car,
+      path: "/tools/auto-loan-calculator",
+      color: "text-blue-600",
+      bgHover: "hover:bg-blue-50",
+    },
+    {
       title: "Emergency Fund Calculator",
       description: "Estimate the amount to save for emergencies",
       icon: PiggyBank,
       path: "/tools/emergency-fund-calculator",
       color: "text-red-600",
       bgHover: "hover:bg-red-50",
-      comingSoon: true,
     },
     {
       title: "Retirement Spending Calculator",
       description: "Plan how much you'll need in retirement",
       icon: Award,
-      path: "/retirement-spending-calculator",
+      path: "/tools/retirement-spending-calculator",
       color: "text-indigo-600",
       bgHover: "hover:bg-indigo-50",
-      comingSoon: true,
     },
     {
       title: "Grocery Budget Calculator",
       description: "Set your monthly grocery spending",
       icon: DollarSign,
-      path: "/grocery-budget-calculator",
+      path: "/tools/grocery-budget-calculator",
       color: "text-pink-600",
       bgHover: "hover:bg-pink-50",
-      comingSoon: true,
     },
     {
       title: "Relocation Calculator",
       description: "Compare expenses when moving to a new city",
       icon: MapPin,
-      path: "/relocation-calculator",
+      path: "/tools/relocation-calculator",
       color: "text-teal-600",
       bgHover: "hover:bg-teal-50",
-      comingSoon: true,
-    },
-    {
-      title: "Cost of Living Comparison",
-      description: "Compare the cost of living across cities",
-      icon: Banknote,
-      path: "/cost-of-living-comparison",
-      color: "text-amber-600",
-      bgHover: "hover:bg-amber-50",
-      comingSoon: true,
-    },
-    {
-      title: "Saving Money Tips",
-      description: "Learn how to grow your savings faster",
-      icon: Wallet,
-      path: "/saving-money",
-      color: "text-rose-600",
-      bgHover: "hover:bg-rose-50",
-      comingSoon: true,
-    },
-    {
-      title: "Every Dollar Tool",
-      description: "Track every dollar you spend or save",
-      icon: DollarSign,
-      path: "/every-dollar",
-      color: "text-cyan-600",
-      bgHover: "hover:bg-cyan-50",
-      comingSoon: true,
-    },
-    {
-      title: "You Need a Budget",
-      description: "Discover the power of budgeting proactively",
-      icon: TrendingUp,
-      path: "/you-need-a-budget",
-      color: "text-emerald-600",
-      bgHover: "hover:bg-emerald-50",
-      comingSoon: true,
-    },
-    {
-      title: "Zero-Based Budgeting",
-      description: "Give every dollar a job before the month begins",
-      icon: Calculator,
-      path: "/zero-based-budgeting",
-      color: "text-fuchsia-600",
-      bgHover: "hover:bg-fuchsia-50",
-      comingSoon: true,
-    },
-    {
-      title: "Define Budget",
-      description: "Understand what budgeting really means",
-      icon: Mail,
-      path: "/define-budget",
-      color: "text-sky-600",
-      bgHover: "hover:bg-sky-50",
-      comingSoon: true,
     },
     
-
- 
   ];
   
   const filteredTools = tools.filter(tool =>

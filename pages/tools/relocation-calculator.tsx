@@ -36,10 +36,10 @@ export default function RelocationCalculator() {
   return (
     <>
       <Head>
-        <title>Relocation Calculator | Compare Moving Expenses</title>
+        <title>Relocation Cost Calculator | Compare Moving Expenses</title>
         <meta
           name="description"
-          content="Use our Relocation Calculator to compare expenses between your current city and a new city. Plan your move with confidence."
+          content="Move smarter! Use our free relocation calculator to estimate moving, rent, groceries, and more. Avoid hidden costs—plan your move in seconds."
         />
         <meta
           name="keywords"
@@ -158,6 +158,21 @@ export default function RelocationCalculator() {
             </div>
           </section>
         )}
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-semibold mb-4">Embed This Calculator on Your Site</h2>
+          <p className="mb-2 text-base text-gray-700">
+            Want to share this relocation calculator with your audience? Copy and paste the code below into your website or blog:
+          </p>
+          <div className="bg-gray-100 rounded p-4 mb-2">
+            <code className="block text-sm text-gray-800 whitespace-pre overflow-x-auto">
+              {`<iframe src="https://www.expensegoose.com/tools/relocation-calculator?embed=1" width="100%" height="600" style="border:none;max-width:500px;"></iframe>`}
+            </code>
+          </div>
+          <p className="text-xs text-gray-500">
+            The widget is fully responsive and works on any website.
+          </p>
+        </section>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Tips for Relocating</h2>
