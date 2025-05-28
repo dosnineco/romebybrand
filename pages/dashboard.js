@@ -20,6 +20,7 @@ import { useUser } from '@clerk/nextjs';
 import { supabase } from '../lib/supabase';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { ArrowRight, PenTool as Tool, Zap, Users, BookOpen, Car } from "lucide-react";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -146,8 +147,7 @@ const tools = [
       path: "/tools/relocation-calculator",
       color: "text-teal-600",
       bgHover: "hover:bg-teal-50",
-    },
-    
+    }
   ];
   
   const filteredTools = tools.filter(tool =>
