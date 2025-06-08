@@ -12,7 +12,7 @@ import QuickExpense from '../components/Misc/QuickExpense';
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  const publicRoutes = ['/', '/tools', '/refund-policy', '/privacy-policy', '/about', '/terms-of-service', '/checkout'];
+  const publicRoutes = ['/','/demo', '/tools', '/refund-policy', '/privacy-policy', '/about', '/terms-of-service', '/checkout'];
   const isPublicRoute = publicRoutes.some((route) =>
     router.pathname === route || router.pathname.startsWith(`${route}/`)
   );

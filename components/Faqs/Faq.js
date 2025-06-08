@@ -21,7 +21,7 @@ const FAQ = () => {
   };
 
   return (
-    <section className="min-h-screen bg-gray-100 w-full rounded-lg py-10 px-4 sm:px-6 lg:px-8">
+    <section className="min-h-screen  w-full rounded-lg py-10 px-4 sm:px-6 lg:px-8">
       <h2 className="text-3xl pt-6 font-bold text-inherit text-center mb-4">Frequently Asked Questions</h2>
       <p className="text-center text-sm text-inherit mb-8">Have no worries, we got you.</p>
       <div className="max-w-2xl mx-auto space-y-4">

@@ -6,12 +6,13 @@ const PricingComponent = () => {
     <>
     
           {/* <h2 className="text-4xl pt-6 font-bold capitalize text-inherit text-center mb-4">Become the best version of yourself!</h2> */}
+        <div className="  w-full  p-4 text-white grid flex justify-center  items-center w-full">
 
   
-        <div className="  w-full max-w-screen-md mx-auto px-4 py-8 text-white grid grid-cols-1 md:grid-cols-2 gap-3 justify-center  items-center">
+        {/* <div className="  w-full max-w-screen-md mx-auto px-4 py-8 text-white grid grid-cols-1 md:grid-cols-2 gap-3 justify-center  items-center"> */}
 
           {/* Features Section */}
-          <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+          {/* <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
       
 
             <ul className="space-y-4">
@@ -39,12 +40,12 @@ const PricingComponent = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
 
      
 
           {/* Lifetime Deal Card */}
-          <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center relative border-2 border-yellow-500">
+          <div className="bg-gray-800 p-10 rounded-lg shadow-lg text-center relative border-2 border-yellow-500">
             <div className="absolute top-0 right-0 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-bl-lg">
               POPULAR
             </div>
@@ -60,7 +61,7 @@ const PricingComponent = () => {
               Get Access Now
             </a>
           </div>
-        </div>
+        </div>                  
             </>
 
      

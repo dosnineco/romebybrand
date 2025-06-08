@@ -1,286 +1,177 @@
-
-
+import Head from "next/head";
+import Link from "next/link";
+import { CheckCircle, ShieldCheck, TrendingUp, Users, Zap } from "lucide-react";
+import PricingComponent from "../components/Misc/PricingComponent";
 import Faq from '../components/Faqs/Faq';
 
-import Seo from '../components/Misc/Seo';
-import PricingComponent from '../components/Misc/PricingComponent';
-import { ArrowRight, PenTool as Tool, Zap, Users, BookOpen, Car } from "lucide-react";
-import SignupPopup from '../components/Misc/SignupPopup';
-import { useState } from "react";
-
-import { 
-  BarChart2, 
-  Calculator, 
-  Mail, 
-  DollarSign,
-  Settings,
-  Search,
-  Award,
-  MapPin,
-  PiggyBank,
-  Banknote,
-  PieChart,
-  Wallet,
-  TrendingUp,
-  ClipboardList
-} from "lucide-react";
-import { supabase } from '../lib/supabase';
-import { useEffect } from "react";
-
-
-function Tools() {
-  const [searchTerm, setSearchTerm] = useState("");
-
-  
-  const tools = [
-
-  {
-      title: "Expense Tracker",
-      description: "Track and analyze your spending data",
-      icon: ClipboardList,
-      path: "/expense-tracker",
-      color: "text-orange-600",
-      bgHover: "hover:bg-orange-50",
-      
-    },
-    {
-      title: "Saving Money Calculator",
-      description: "Project how much you can save over time",
-      icon: PiggyBank,
-      path: "/saving-money-calculator",
-      color: "text-stone-600",
-      bgHover: "hover:bg-stone-50",
-    },
-    {
-      title: "Sales Tracker",
-      description: " ",
-      icon: Calculator,
-      path: "/sales-tracker",
-      color: "text-yellow-600",
-      bgHover: "hover:bg-yellow-50",
-    },
-    {
-      title: "Cost of Living Calculator",
-      description: " ",
-      icon: Calculator,
-      path: "/tools/cost-of-living",
-      color: "text-green-600",
-      bgHover: "hover:bg-green-50",
-    },
-
-    {
-      title: "Living Expenses Calculator",
-      description: "Calculate your monthly living expenses",
-      icon: BarChart2,
-      path: "/tools/living-expenses",
-      color: "text-pink-600",
-      bgHover: "hover:bg-pink-50",
-    },
-    {
-      title: "Monthly Spending Calculator",
-      description: "Estimate your monthly spending based on your income and expenses",
-      icon: Mail,
-      path: "/tools/monthly-calculator",
-      color: "text-blue-600",
-      bgHover: "hover:bg-blue-50",
-    },
-    {
-      title: "Auto Loan Calculator",
-      description: "Calculate your monthly auto loan payments",
-      icon: Car,
-      path: "/tools/auto-loan-calculator",
-      color: "text-blue-600",
-      bgHover: "hover:bg-blue-50",
-    },
-    {
-      title: "Emergency Fund Calculator",
-      description: "Estimate the amount to save for emergencies",
-      icon: PiggyBank,
-      path: "/tools/emergency-fund-calculator",
-      color: "text-red-600",
-      bgHover: "hover:bg-red-50",
-    },
-    {
-      title: "Retirement Spending Calculator",
-      description: "Plan how much you'll need in retirement",
-      icon: Award,
-      path: "/tools/retirement-spending-calculator",
-      color: "text-indigo-600",
-      bgHover: "hover:bg-indigo-50",
-    },
-    {
-      title: "Grocery Budget Calculator",
-      description: "Set your monthly grocery spending",
-      icon: DollarSign,
-      path: "/tools/grocery-budget-calculator",
-      color: "text-pink-600",
-      bgHover: "hover:bg-pink-50",
-    },
-    {
-      title: "Relocation Calculator",
-      description: "Compare expenses when moving to a new city",
-      icon: MapPin,
-      path: "/tools/relocation-calculator",
-      color: "text-teal-600",
-      bgHover: "hover:bg-teal-50",
-    },
-    
-  ];
-  
-  const filteredTools = tools.filter(tool =>
-    tool.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tool.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  const [totalSaved, setTotalSaved] = useState(0);
-
-  useEffect(() => {
-    const fetchTotalSaved = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("total_expenses")
-          .select("total_amount")
-          .single();
-  
-        if (error) {
-          console.error("Error fetching total saved:", error);
-        } else {
-          setTotalSaved(data.total_amount || 0);
-        }
-      } catch (err) {
-        console.error("Unexpected error fetching total saved:", err);
-      }
-    };
-  
-    fetchTotalSaved();
-  }, []);
-  
-
-  return (
-    <div className="min-h-screen p-1 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className=" p-4 md:p-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-inherit capitalize font-bold text-xl mb-2">
-             I built a tool with 15+ financial tools to help you save more 
-            </h1>
-            <p className="text-gray-500 text-base">
-              Explore our collection of financial tools to help you manage your money better.
-            </p>
-            <div className="flex items-center justify-between mt-4">
-              <a
-                href="/checkout"
-                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold"
-              >
-                Explore All Tools
-                <ArrowRight className="ml-2" />
-              </a>
-            </div>
-            <div className="mt-6">
-        
-        </div>
-          </div>
-
-          <div className="w-full mx-auto text-center flex items-center justify-center ">
-          <p className="text-lg  bg-green-100  p-3 round-lg w-full font-semibold text-center text-green-900 ">
-            Users have saved  ${totalSaved.toLocaleString()} with us!
-          </p>
-      </div>
-
-          {/* Search */}
-          <div className="relative mb-8">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-inherit" />
-            <input
-              type="text"
-              placeholder="Search tools..."
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-          {/* Tools Grid */}
-          
-  {/* Tools Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            {filteredTools.map((tool) => {
-              const Icon = tool.icon;
-              return tool.comingSoon ? (
-                <div
-                  key={tool.title}
-                  className={`group block p-4 rounded-lg bg-gray-100 transition-all duration-200 ${tool.bgHover}`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`p-2 rounded-full ${tool.color} bg-opacity-10 flex items-center justify-center`}>
-                      <Icon className="w-8 h-8 text-gray-400" />
-                    </div>
-                    <h2 className="text-base font-semibold text-gray-400">
-                      {tool.title}
-                    </h2>
-                  </div>
-                </div>
-              ) : (
-                <a
-                  key={tool.path}
-                  href={tool.path}
-                  className={`group block p-4 rounded-lg bg-gray-100 transition-all duration-200 ${tool.bgHover}`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`p-2 rounded-full ${tool.color} bg-opacity-10 flex items-center justify-center`}>
-                      <Icon className={`w-8 h-8 ${tool.color}`} />
-                    </div>
-                    <h2 className="text-base font-semibold text-inherit">
-                      {tool.title}
-                    </h2>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-
-export default function Home() {
-
-
-
+export default function ExpenseTrackerLanding() {
   return (
     <>
-      <Seo 
-          siteTitle="Expense Goose"
-          pageTitle="Best Online Expense Software & Business Expense Tracking"
-          description="Expense Goose is the leading free expense tracking software for small businesses. Manage your finances with powerful expense management tools and tracking software."
-          url="https://www.expensegoose.com"
-          image="https://www.expensegoose.com/images/hero.jpg"
-      />
+      <Head>
+        <title>
+          Best Expense Tracking Software & Petty Cash Spending Tools | Expense Goose
+        </title>
+        <meta
+          name="description"
+          content="Expense Goose is the #1 expense tracking software and petty cash spending tool. Track expenses, manage petty cash, and control your business or personal finances with ease. Try our free demo or unlock premium for a one-time fee."
+        />
+        <meta
+          name="keywords"
+          content="expense tracking software, petty cash spending tools, expense tracker, budget app, business expense management, free expense tracker, online expense tracker"
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://expensegoose.com/" />
+        {/* Open Graph */}
+        <meta property="og:title" content="Best Expense Tracking Software & Petty Cash Spending Tools | Expense Goose" />
+        <meta property="og:description" content="Track expenses, manage petty cash, and control your business or personal finances with ease. Try our free demo or unlock premium for a one-time fee." />
+        <meta property="og:url" content="https://expensegoose.com/" />
+        <meta property="og:image" content="https://expensegoose.com/images/expense-tracker-og.jpg" />
+        {/* JSON-LD Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              "name": "Expense Goose - Expense Tracking Software",
+              "url": "https://expensegoose.com/",
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "All",
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.9",
+                "reviewCount": "12000"
+              },
+              "offers": {
+                "@type": "Offer",
+                "price": "15",
+                "priceCurrency": "USD"
+              }
+            }),
+          }}
+        />
+      </Head>
+      <main className="bg-white min-h-screen">
+        {/* Hero Section */}
+        <section className="max-w-4xl mx-auto px-4 py-16 text-center">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4">
+            The <span className="text-blue-600">#1 Expense Tracking Software</span> & Petty Cash Spending Tool
+          </h1>
+          <p className="text-base sm:text-xl text-gray-700 mb-8">
+            Effortlessly track expenses, manage petty cash, and control your business or personal finances. Trusted by over <span className="font-bold text-green-600">2 million</span> users worldwide.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
+            <Link href="/expense-tracker" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg text-lg shadow transition">
+              Get Started Free
+            </Link>
+            <Link href="/demo" className="bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold px-8 py-4 rounded-lg text-lg transition">
+              Try Demo
+            </Link>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6 mt-8">
+            <div className="flex items-center gap-2 text-base text-gray-600">
+              <Users className="w-5 h-5 text-green-500" />
+              2.1M+ Monthly Visits
+            </div>
 
+            <div className="flex items-center gap-2 text-base text-gray-600">
+              <ShieldCheck className="w-5 h-5 text-blue-500" />
+              Secure & Private
+            </div>
+          </div>
+        </section>
 
+      
 
-
-      <Tools /> 
-      <PricingComponent />
-      <Faq />
-
-      <div className="flex items-center justify-center my-8 py-4">
-          <a
-            href="https://www.producthunt.com/posts/expense-goose?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-expense&#0045;goose"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+        {/* Features Section */}
+        <section className="max-w-5xl mx-auto px-4 py-12 grid md:grid-cols-2 gap-10">
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Expense Tracking Software Features</h2>
+            <ul className="space-y-4 text-base text-gray-700">
+              <li className="flex items-start gap-2">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-1" />
+                <span>Track expenses, income, and petty cash in one place</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-1" />
+                <span>Custom categories, budgets, and spending insights</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-1" />
+                <span>Export data to CSV, PDF, or Excel anytime</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-1" />
+                <span>Mobile-friendly, cloud-based, and always secure</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-1" />
+                <span>Multi-user access for teams and organizations</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-1" />
+                <span>Real-time petty cash balance and alerts</span>
+              </li>
+            </ul>
+            <Link href="/signup" className="mt-8 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg text-lg shadow transition">
+              Start Tracking Free
+            </Link>
+          </div>
+          <div>
             <img
-              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=950226&theme=dark&t=1743996217555"
-              alt="Expense&#0032;Goose - Track&#0032;spending&#0032;with&#0032;100&#0043;&#0032;free&#0032;financial&#0032;tools&#0046; | Product Hunt"
-              style={{ width: '250px', height: '54px' }}
-              width="250"
-              height="54"
+              src="/cta-gif.gif"
+              alt="Expense Tracking Software Screenshot"
+              className="rounded-lg shadow-lg border"
+              loading="lazy"
             />
-          </a>
-        </div>
+          </div>
+        </section>
+
+        {/* Benefits Section */}
+        <section className="max-w-5xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-8">
+          <div className="bg-gray-50 rounded-lg p-6 flex flex-col items-center text-center shadow-sm">
+            <Zap className="w-10 h-10 text-blue-600 mb-3" />
+            <h2 className="font-bold text-lg mb-2">Instant Expense Logging</h2>
+            <p className="text-base text-gray-600">Add expenses in seconds from any device. No learning curve, no clutter.</p>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-6 flex flex-col items-center text-center shadow-sm">
+            <TrendingUp className="w-10 h-10 text-green-600 mb-3" />
+            <h2 className="font-bold text-lg mb-2">Visualize & Analyze</h2>
+            <p className="text-base text-gray-600">Beautiful charts and insights help you spot trends and stay on budget.</p>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-6 flex flex-col items-center text-center shadow-sm">
+            <CheckCircle className="w-10 h-10 text-yellow-500 mb-3" />
+            <h2 className="font-bold text-lg mb-2">One-Time Payment</h2>
+            <p className="text-base text-gray-600">No subscriptions, no recurring fees. Pay once, use forever.</p>
+          </div>
+        </section>
+
+        {/* Pricing & Payment */}
+        <section className="w-full  mx-auto px-4 py-12 text-center bg-yellow-50 rounded-lg shadow mb-12 border border-yellow-100">
+          <h2 className="text-2xl font-bold mb-2 text-gray-900">Unlock Premium for a One-Time Fee</h2>
+          <p className="text-lg text-gray-700 mb-4">
+             No subscriptions, no hidden fees.
+          </p>
+
+
+           <Link href="/checkout"
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-4 rounded-lg text-lg shadow transition mt-4"
+     
+     >
+            Pay $15 &amp; Unlock Premium
+            </Link>
+          <p className="mt-3 text-sm text-gray-500">
+            Secure payment via Paypal. 
+          </p>
+        </section>
+
+        {/* FAQ Section */}
+        <Faq />
+
+  
+
+     
+      </main>
     </>
   );
 }
