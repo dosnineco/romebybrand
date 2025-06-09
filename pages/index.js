@@ -1,7 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
 import { CheckCircle, ShieldCheck, TrendingUp, Users, Zap } from "lucide-react";
-import PricingComponent from "../components/Misc/PricingComponent";
 import Faq from '../components/Faqs/Faq';
 
 export default function ExpenseTrackerLanding() {

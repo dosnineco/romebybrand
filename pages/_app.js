@@ -84,7 +84,7 @@ function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
         <>
           <Header />
           <Layout className="container mx-auto px-4 py-8">
-            {!isHomePage && <BreadcrumbsMinimal />}
+            {/* {!isHomePage && <BreadcrumbsMinimal />} */}
             <Component {...pageProps} />
           </Layout>
           <Footer />
@@ -93,7 +93,7 @@ function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
         <SignedIn>
           <Header />
           <Layout className="container mx-auto px-4 py-8">
-            {!isHomePage && <BreadcrumbsMinimal />}
+            {/* {!isHomePage && <BreadcrumbsMinimal />} */}
             <Component {...pageProps} />
           </Layout>
           <QuickExpense />

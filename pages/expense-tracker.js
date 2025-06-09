@@ -88,7 +88,7 @@ const graphDataload = {
     {
       label: 'Spending',
       data: monthlySpendingData.map((item) => item.total),
-      borderColor: '#FBBF24', // Gold-like color for the line
+      borderColor: '#2364e8', // Gold-like color for the line
       backgroundColor: 'rgba(251, 191, 36, 0.2)', // Transparent gold fill
       pointBackgroundColor: '#FBBF24', // Gold color for points
       pointBorderColor: '#FBBF24',
@@ -368,7 +368,40 @@ const csvHeaders = [
     }));
   };
 
-
+const HowToUseModal = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40">
+      <div className="bg-white rounded-2xl shadow-2xl w-11/12 max-w-lg p-6 relative">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 p-2 rounded bg-gray-200 text-gray-400 hover:text-gray-700 text-xl"
+          aria-label="Close"
+        >
+          ✕
+        </button>
+        <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800">How to Use the Expense Tracker</h2>
+        <ol className="list-decimal pl-5 text-gray-700 text-base space-y-2">
+          <li>Click settings at the top - set your category limits.</li>
+          <li>Add your expenses using the "Add Transaction" button.</li>
+          <li>Edit or delete transactions as needed.</li>
+          <li>Use filters and search to find past expenses.</li>
+          <li>Visualize your spending with the chart.</li>
+          <li>Download your data as CSV for offline use.</li>
+        </ol>
+      <p className="mt-4 text-gray-600 text-sm text-center">
+          Need more help?{" "}
+          <a
+            href="mailto:dosnineco@gmail.com"
+            className="text-blue-600 underline"
+          >
+            Email us at dosnineco@gmail.com
+          </a>
+        </p>
+      </div>
+    </div>
+  );
+};
 
   const fetchTransactions = async () => {
     if (!user) return;
@@ -1003,9 +1036,9 @@ return (
 
       <div className="mt-8">
         <h2 className="text-xl sm:text-2xl font-semibold mb-4">Spending Over Time</h2>
-        <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+        <div className=" p-2 sm:p-4 rounded-lg">
           {monthlySpendingData.length > 0 ? (
-            <div className="h-full">
+            <div className="h-full w-full">
               <Line data={graphDataload} options={graphOptions} />
             </div>
           ) : (
