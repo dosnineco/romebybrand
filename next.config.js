@@ -1,20 +1,23 @@
 const path = require('path');
-
-module.exports = {
-  webpack: (config) => {
-    config.resolve.alias['@components'] = path.join(__dirname, 'components');
-    return config;
-  },
-  images: {
-    domains: ['images.unsplash.com'], // Add the domain here
-  },
-};
-
 const withPWA = require('next-pwa')({
   dest: 'public',
-  disable: process.env.NODE_ENV === 'development', // Disable PWA in development
+  disable: process.env.NODE_ENV === 'development',
 });
 
-module.exports = withPWA({
-  reactStrictMode: true,
+const withMDX = require('@next/mdx')({
+  extension: /\.mdx?$/,
 });
+
+module.exports = withPWA(
+  withMDX({
+    reactStrictMode: true,
+    pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
+    images: {
+      domains: ['images.unsplash.com'],
+    },
+    webpack: (config) => {
+      config.resolve.alias['@components'] = path.join(__dirname, 'components');
+      return config;
+    },
+  })
+);

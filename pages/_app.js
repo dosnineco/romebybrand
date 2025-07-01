@@ -9,13 +9,21 @@ import BreadcrumbsMinimal from '../components/BreadCrumbs/BreadcrumbsWithIcons';
 import { useEffect } from 'react';
 import { supabase } from '../lib/supabase'; // Ensure this is correctly configured
 import QuickExpense from '../components/Misc/QuickExpense';
+// import Mdxcomponents from '../components/Mdxcomponents';
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
   const publicRoutes = ['/','/demo', '/tools', '/refund-policy', '/privacy-policy', '/about', '/terms-of-service', '/checkout'];
-  const isPublicRoute = publicRoutes.some((route) =>
-    router.pathname === route || router.pathname.startsWith(`${route}/`)
-  );
+  // const isPublicRoute = publicRoutes.some((route) =>
+  //   router.pathname === route || router.pathname.startsWith(`${route}/`)
+  // );
+
+
+  const isMarkdownPage = router.pathname.startsWith('/blog');
+
+const isPublicRoute = isMarkdownPage || publicRoutes.some((route) =>
+  router.pathname === route || router.pathname.startsWith(`${route}/`)
+);
   const isHomePage = router.pathname === '/';
 
   return (
@@ -25,13 +33,14 @@ function MyApp({ Component, pageProps }) {
         Component={Component}
         pageProps={pageProps}
         isPublicRoute={isPublicRoute}
+        isMarkdownPage={isMarkdownPage}
         isHomePage={isHomePage}
       />
     </ClerkProvider>
   );
 }
 
-function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
+function AppContent({ Component,isMarkdownPage, pageProps, isPublicRoute, isHomePage }) {
   const { isSignedIn, user } = useUser();
 
   useEffect(() => {
@@ -80,17 +89,25 @@ function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
 
   return (
     <>
-      {isPublicRoute ? (
-        <>
-          <Header />
-          <Layout className="container mx-auto px-4 py-8">
-            {/* {!isHomePage && <BreadcrumbsMinimal />} */}
-            <Component {...pageProps} />
-          </Layout>
-          <Footer />
-        </>
-      ) : (
-        <SignedIn>
+
+    {isMarkdownPage ? (
+  <>
+    <Header />
+    <Layout className="container mx-auto px-4 py-8">
+      <Component {...pageProps} />
+    </Layout>
+    <Footer />
+  </>
+) : isPublicRoute ? (
+  <>
+    <Header />
+    <Layout className="container mx-auto px-4 py-8">
+      <Component {...pageProps} />
+    </Layout>
+    <Footer />
+  </>
+) : (
+  <SignedIn>
           <Header />
           <Layout className="container mx-auto px-4 py-8">
             {/* {!isHomePage && <BreadcrumbsMinimal />} */}
@@ -99,7 +116,10 @@ function AppContent({ Component, pageProps, isPublicRoute, isHomePage }) {
           <QuickExpense />
           <Footer />
         </SignedIn>
-      )}
+)}
+
+
+
       {!isPublicRoute && (
         <SignedOut>
           <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200">

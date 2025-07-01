@@ -4,7 +4,7 @@ import Head from "next/head";
 export default function AdminDashboard() {
   const adminPages = [
     { title: "Analytics Dashboard", path: "/admin/analytics" },
-    { title: "Settings", path: "/admin/settings" },
+    { title: "Blog Admin", path: "/admin/blog-admin" },
     { title: "Indexing Tool", path: "/admin/indexing" },
     { title: "Subscribers", path: "/admin/subscribers" },
   ];
