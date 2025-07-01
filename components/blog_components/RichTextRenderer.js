@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import YouTubeVideo from "../Misc/YouTubeVideo";
 import DOMPurify from "dompurify";
 
@@ -30,6 +30,14 @@ function renderWithYouTube(html) {
 }
 
 export default function RichTextRenderer({ html }) {
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) return null;
+
   // Add Tailwind classes to HTML tags
   let styledHtml = html
     .replace(/<h1>/g, '<h1 class="text-3xl font-bold text-center mb-6">')

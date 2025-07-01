@@ -57,10 +57,8 @@ export default function BlogPostPage({ post }) {
             className="w-full max-h-96 object-cover rounded mb-6"
           />
         )}
-        {/* <RichTextRenderer html={post.content} /> */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-500">Published on {new Date(post.created_at).toLocaleDateString()}</p>
-        </div>
+        <RichTextRenderer html={post.content} />
+
       </main>
     </>
   );

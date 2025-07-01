@@ -2,12 +2,6 @@
 User-agent: *
 Allow: /
 
-
-Disallow: /admin
-Disallow: /admin/analytics
-Disallow: /admin/indexing
-Disallow: /admin/subscribers
-
 # Host
 Host: https://www.expensegoose.com
 
