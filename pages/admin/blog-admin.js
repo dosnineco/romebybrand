@@ -471,12 +471,12 @@ export default function BlogAdmin() {
         )}
 
         {/* Example: Render a preview of the content with Tailwind styles */}
-        {editing && form.content && (
+        {/* {editing && form.content && (
           <div className="mt-8 max-w-screen-md">
             <h2 className="text-2xl font-semibold mb-4">Preview</h2>
             <RichTextRenderer html={form.content} />
           </div>
-        )}
+        )} */}
 
         {/* Uncomment to render the raw HTML content for debugging */}
 
