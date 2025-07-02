@@ -169,7 +169,7 @@ export default function BlogAdmin() {
     if (!file) return;
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
-    const filePath = `${user.id}/${fileName}`;
+    const filePath = `${fileName}`;
 
     let { error } = await supabase.storage.from("blog-covers").upload(filePath, file, {
       cacheControl: "3600",
