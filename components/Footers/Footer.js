@@ -54,6 +54,9 @@ export default function Footer() {
           <a href="/about" className="text-base text-blue-500 hover:underline mx-2">
             About
           </a>
+          <a href="/blog" className="text-base text-blue-500 hover:underline mx-2">
+            Blog
+          </a>
           <a href="/admin" className="text-base text-blue-500 hover:underline mx-2">
             main
           </a>

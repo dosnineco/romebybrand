@@ -17,7 +17,7 @@ const emptyPost = {
   content: "",
   coverimageurl: "",
   ispublished: false,
-  publishedat: null,
+  publishedat: "",
   authorid: "",
   createdat: "",
   updatedat: "",
@@ -36,22 +36,70 @@ function sanitizeInput(input) {
   return DOMPurify.sanitize(input, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
 }
 
+function countWords(html) {
+  const text = DOMPurify.sanitize(html, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
 export default function BlogAdmin() {
-  const { user, isSignedIn } = useUser();
+  const { user, isSignedIn, isLoaded } = useUser();
   const [posts, setPosts] = useState([]);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyPost);
   const [loading, setLoading] = useState(false);
+  const [showChecklist, setShowChecklist] = useState(false);
+  const [checklistItems, setChecklistItems] = useState([]);
+  const [accessAllowed, setAccessAllowed] = useState(false);
   const fileInputRef = useRef();
 
   // Tiptap editor instance with Image extension
   const editor = useEditor({
-    extensions: [StarterKit, Image],
-    content: form.content,
+    extensions: [Image, StarterKit],
+    editable: true,
+    content: "",
+    editorProps: {
+      attributes: {
+        class: "prose prose-lg text-base  w-full min-h-[300px] p-4 border rounded bg-gray-50",
+      },
+    },
+    autofocus: "end",
+    onCreate: ({ editor }) => {
+      // Initialize editor with empty content or existing form content
+      if (editing && form.content) {
+        editor.commands.setContent(form.content);
+      } else {
+        editor.commands.setContent("");
+      }
+    },
+
+  
     onUpdate: ({ editor }) => {
       setForm((f) => ({ ...f, content: editor.getHTML() }));
     },
   });
+
+  // Check admin/editor access
+  useEffect(() => {
+    async function checkAccess() {
+      if (!user || !user.id) {
+        setAccessAllowed(false);
+        return;
+      }
+      const { data, error } = await supabase
+        .from("users")
+        .select("is_admin")
+        .eq("clerk_id", user.id)
+        .single();
+      if (error || !data) {
+        setAccessAllowed(false);
+      } else {
+        setAccessAllowed(!!data.is_admin);
+      }
+    }
+    if (isLoaded && isSignedIn) {
+      checkAccess();
+    }
+  }, [user, isLoaded, isSignedIn]);
 
   // Sync Tiptap content and editability when editing a post
   useEffect(() => {
@@ -67,10 +115,10 @@ export default function BlogAdmin() {
   }, [editing, editor]);
 
   useEffect(() => {
-    if (!isSignedIn) return;
+    if (!isSignedIn || !accessAllowed) return;
     fetchPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSignedIn]);
+  }, [isSignedIn, accessAllowed]);
 
   async function fetchPosts() {
     setLoading(true);
@@ -166,19 +214,49 @@ export default function BlogAdmin() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
+  function getChecklist(form, publish) {
+    const missing = [];
+    if (!form.title) missing.push("Title is required");
+    if (!form.slug) missing.push("Slug is required");
+    if (!form.summary) missing.push("Summary is required");
+    if (!form.coverimageurl) missing.push("Cover image is required");
+    if (countWords(form.content) < 1000) missing.push("Content must be at least 1000 words");
+    // Slug must be unique before publishing
+    if (
+      publish &&
+      posts.some((p) => p.slug === form.slug && p.id !== form.id)
+    ) {
+      missing.push("Slug must be unique");
+    }
+    return missing;
+  }
+
   async function savePost(publish = false) {
     setLoading(true);
     const now = new Date().toISOString();
 
-    // Sanitize all fields before saving
+    // Pre-publish checklist
+    const missing = getChecklist(form, publish);
+    if (publish && missing.length) {
+      setChecklistItems(missing);
+      setShowChecklist(true);
+      setLoading(false);
+      return;
+    }
+
+    // Scheduled publishing logic
+    const nowDate = new Date();
+    const scheduledDate = form.publishedat ? new Date(form.publishedat) : nowDate;
+    const isReadyToPublish = publish && scheduledDate <= nowDate;
+
     let post = {
       ...form,
       title: sanitizeInput(form.title),
       slug: sanitizeInput(form.slug),
       summary: sanitizeInput(form.summary),
       content: DOMPurify.sanitize(form.content),
-      ispublished: publish ? true : form.ispublished,
-      publishedat: publish ? now : form.publishedat,
+      ispublished: isReadyToPublish,
+      publishedat: form.publishedat || (publish ? now : null),
       updatedat: now,
       authorid: user.id,
     };
@@ -199,13 +277,45 @@ export default function BlogAdmin() {
     if (editor) editor.commands.setContent("");
     await fetchPosts();
     setLoading(false);
-    alert(`Post ${publish ? "published" : "saved as draft"} successfully!`);
+    alert(`Post ${publish ? (isReadyToPublish ? "published" : "scheduled") : "saved as draft"} successfully!`);
+  }
+
+  async function deletePost(postId) {
+    if (!window.confirm("Are you sure you want to delete this draft?")) return;
+    setLoading(true);
+    const { error } = await supabase.from("blog_posts").delete().eq("id", postId);
+    if (error) {
+      alert("Error deleting post: " + error.message);
+    } else {
+      setPosts((posts) => posts.filter((p) => p.id !== postId));
+      alert("Draft deleted.");
+    }
+    setLoading(false);
   }
 
   function cancelEdit() {
     setEditing(null);
     setForm(emptyPost);
     if (editor) editor.commands.setContent("");
+  }
+
+  // Block all UI if not admin/editor
+  if (!isLoaded || accessAllowed === null) {
+    return (
+      <main className="max-w-screen-md mx-auto px-4 py-8">
+        <p className="text-center text-lg text-gray-500">Checking permissions...</p>
+      </main>
+    );
+  }
+  if (!accessAllowed) {
+    return (
+      <main className="max-w-screen-md mx-auto px-4 py-8">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded text-center">
+          <h2 className="text-2xl font-bold mb-2">Access Denied</h2>
+          <p>You must be an admin or editor to access this page.</p>
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -218,6 +328,27 @@ export default function BlogAdmin() {
         <p className="text-base text-gray-700 mb-4 text-center">
           Create, edit, and publish blog posts.
         </p>
+
+        {/* Pre-publish checklist modal */}
+        {showChecklist && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg">
+              <h3 className="text-xl font-bold mb-2">Please fix the following before publishing:</h3>
+              <ul className="list-disc pl-6 mb-4 text-red-700">
+                {checklistItems.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+                onClick={() => setShowChecklist(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
         {!editing && (
           <>
             <button
@@ -234,15 +365,30 @@ export default function BlogAdmin() {
                     <span>
                       <span className="font-semibold">{post.title}</span>
                       <span className="ml-2 text-gray-500 text-sm">
-                        {post.ispublished ? "Published" : "Draft"}
+                        {post.ispublished
+                          ? (post.publishedat && new Date(post.publishedat) > new Date()
+                            ? "Scheduled"
+                            : "Published")
+                          : "Draft"}
                       </span>
                     </span>
-                    <button
-                      className="px-4 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-blue-400"
-                      onClick={() => editPost(post)}
-                    >
-                      Edit
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        className="px-4 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-blue-400"
+                        onClick={() => editPost(post)}
+                      >
+                        Edit
+                      </button>
+                      {!post.ispublished && (
+                        <button
+                          className="px-4 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:ring-2 focus:ring-red-400"
+                          onClick={() => deletePost(post.id)}
+                          disabled={loading}
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -253,7 +399,7 @@ export default function BlogAdmin() {
 
         {editing && (
           <form
-            className="bg-white p-6 rounded-lg w-full mx-auto"
+            className="bg-white p-3 rounded-lg w-full mx-auto"
             onSubmit={(e) => {
               e.preventDefault();
               savePost(false);
@@ -271,7 +417,7 @@ export default function BlogAdmin() {
                 onChange={handleChange}
                 className="w-full border px-2 py-2 rounded text-base"
                 required
-                disabled={form.ispublished}
+                // Title is always editable
               />
             </div>
             <div className="mb-4">
@@ -347,74 +493,58 @@ export default function BlogAdmin() {
                   onChange={uploadEditorImage}
                 />
               </div>
-              <div className=" rounded bg-white w-full h-full relative">
+              <div className=" w-full min-h-[300px] ">
                 {editor && (
                   <>
-                    <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
-                      <div className="flex gap-2 bg-white border rounded shadow px-2 py-1">
+                    <BubbleMenu className="w-full bg-white p-2 rounded border"
+                     editor={editor} tippyOptions={{ duration: 30 }}>
+                      <div className="flex gap-2 text-base  rounded  px-2 py-1">
+                        {/* ...editor buttons... */}
                         <button
                           type="button"
                           className={`font-bold ${editor.isActive('bold') ? 'text-blue-600' : ''}`}
                           onClick={() => editor.chain().focus().toggleBold().run()}
-                        >
-                          B
-                        </button>
+                        >B</button>
                         <button
                           type="button"
                           className={`italic ${editor.isActive('italic') ? 'text-blue-600' : ''}`}
                           onClick={() => editor.chain().focus().toggleItalic().run()}
-                        >
-                          I
-                        </button>
+                        >I</button>
                         <button
                           type="button"
                           className={`underline ${editor.isActive('underline') ? 'text-blue-600' : ''}`}
                           onClick={() => editor.chain().focus().toggleUnderline().run()}
-                        >
-                          U
-                        </button>
+                        >U</button>
                         <button
                           type="button"
                           className={editor.isActive('strike') ? 'text-blue-600' : ''}
                           onClick={() => editor.chain().focus().toggleStrike().run()}
-                        >
-                          S
-                        </button>
+                        >S</button>
                         <button
                           type="button"
                           className={editor.isActive('heading', { level: 1 }) ? 'text-blue-600' : ''}
                           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-                        >
-                          H1
-                        </button>
+                        >H1</button>
                         <button
                           type="button"
                           className={editor.isActive('heading', { level: 2 }) ? 'text-blue-600' : ''}
                           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                        >
-                          H2
-                        </button>
+                        >H2</button>
                         <button
                           type="button"
                           className={editor.isActive('heading', { level: 3 }) ? 'text-blue-600' : ''}
                           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                        >
-                          H3
-                        </button>
+                        >H3</button>
                         <button
                           type="button"
                           className={editor.isActive('bulletList') ? 'text-blue-600' : ''}
                           onClick={() => editor.chain().focus().toggleBulletList().run()}
-                        >
-                          •••
-                        </button>
+                        >•••</button>
                         <button
                           type="button"
                           className={editor.isActive('orderedList') ? 'text-blue-600' : ''}
                           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                        >
-                          123
-                        </button>
+                        >123</button>
                         <button
                           type="button"
                           onClick={() => {
@@ -423,24 +553,30 @@ export default function BlogAdmin() {
                               editor.chain().focus().setLink({ href: url }).run();
                             }
                           }}
-                        >
-                          Url
-                        </button>
+                        >Url</button>
                         <button
                           type="button"
                           onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                        >
-                          Img
-                        </button>
+                        >Img</button>
                       </div>
                     </BubbleMenu>
                     <EditorContent
-                      className="prose prose-lg w-full min-h-[300px] p-4 border rounded bg-gray-50"
-
-                    editor={editor} />
+                      editor={editor}
+                    />
                   </>
                 )}
               </div>
+            </div>
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">Schedule Publish Date</label>
+              <input
+                type="datetime-local"
+                name="publishedat"
+                value={form.publishedat?.slice(0, 16) || ""}
+                onChange={(e) => setForm(f => ({ ...f, publishedat: e.target.value }))}
+                className="w-full border px-2 py-2 rounded text-base"
+                disabled={form.ispublished}
+              />
             </div>
             <div className="flex gap-2">
               <button
@@ -466,23 +602,23 @@ export default function BlogAdmin() {
               >
                 Cancel
               </button>
+              {/* Delete button for drafts only */}
+              {!form.ispublished && editing !== "new" && (
+                <button
+                  type="button"
+                  className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                  onClick={async () => {
+                    await deletePost(form.id);
+                    cancelEdit();
+                  }}
+                  disabled={loading}
+                >
+                  Delete Draft
+                </button>
+              )}
             </div>
           </form>
         )}
-
-        {/* Example: Render a preview of the content with Tailwind styles */}
-        {/* {editing && form.content && (
-          <div className="mt-8 max-w-screen-md">
-            <h2 className="text-2xl font-semibold mb-4">Preview</h2>
-            <RichTextRenderer html={form.content} />
-          </div>
-        )} */}
-
-        {/* Uncomment to render the raw HTML content for debugging */}
-
-        {/* This is commented out to avoid rendering raw HTML in production */}
-
-        {/* <RichTextRenderer html={form.content} /> */}
       </main>
     </>
   );
