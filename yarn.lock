@@ -2017,10 +2017,10 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-horizontal-rule/-/extension-horizontal-rule-2.23.1.tgz#854bfadce34ff28eb9e23034c54f3c718a33e5d1"
   integrity sha512-uHEF0jpmhtgAxjKw8/s5ipEeTnu99f9RVMGAlmcthJ5Fx9TzH0MvtH4dtBNEu5MXC7+0bNsnncWo125AAbCohg==
 
-"@tiptap/extension-image@^2.23.1":
-  version "2.23.1"
-  resolved "https://registry.yarnpkg.com/@tiptap/extension-image/-/extension-image-2.23.1.tgz#28e7dffa052bee6f2c841717f23fb5488c66acee"
-  integrity sha512-8j2FLBWKq6j27aQcOAlmyKixxHflW8j5FhxLgPPS6hithgFQVET4OYH+1c6r7Qd/T4YoAqt/0PmNZ/gYWI9gzg==
+"@tiptap/extension-image@^2.24.2":
+  version "2.24.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-image/-/extension-image-2.24.2.tgz#8d33271517ae088a5ade937fc6f7f0a34bd2cc64"
+  integrity sha512-fiv6TSH8tkjT8C18jR3wU9Bq1Z50hXxtymDHeqnpIDtpxjIgktc8ngkuys11gUTK28UBGUbdBmJcd3oPXFKhZg==
 
 "@tiptap/extension-italic@^2.23.1":
   version "2.23.1"
@@ -2046,6 +2046,26 @@
   version "2.23.1"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-strike/-/extension-strike-2.23.1.tgz#c2d73782659a2597df74da6982e0e63696ab48bb"
   integrity sha512-hAT9peYkKezRGp/EcPQKtyYQT+2XGUbb26toTr9XIBQIeQCuCpT+FirPrDMrMVWPwcJt7Rv+AzoVjDuBs9wE0A==
+
+"@tiptap/extension-table-cell@^2.24.2":
+  version "2.24.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-table-cell/-/extension-table-cell-2.24.2.tgz#43c104d81ed1b1ec215fc61723d5740a6236ae76"
+  integrity sha512-Sjmn4qkedy5HVXXUFE5v13hrq+CSJrcol1HjXlP1HMtDdJFBDVXz5ZrkIXvQrt1SyBA9S1fftsK9pQfnJMt8WQ==
+
+"@tiptap/extension-table-header@^2.24.2":
+  version "2.24.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-table-header/-/extension-table-header-2.24.2.tgz#dfbdb704650fc49805c6c688e2e8bab059d3b002"
+  integrity sha512-Exvpc84tPfTYcRQCrUgSVwztsRZobSFqlDEWB68f++iIeh5ZzDz2XrQGJ7KryymrYs10wdXljv4A9hepngiGwg==
+
+"@tiptap/extension-table-row@^2.24.2":
+  version "2.24.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-table-row/-/extension-table-row-2.24.2.tgz#bb40c2a5ec57ffa8eb0d691e7d7f8bbf2b14267c"
+  integrity sha512-nfc+samnjYcNksvtgNJ/9U/xk4hAzUJM34d3IXEKdCWLuMPa3smEkEsGJTSymnsI7M7m8hNTTQxDFah5OjNGPw==
+
+"@tiptap/extension-table@^2.24.2":
+  version "2.24.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-table/-/extension-table-2.24.2.tgz#ff6797d632a169c5ae1b16a7833f990e3f63bc41"
+  integrity sha512-MaOzmkZMQIp8j4GJRojKfbgRp7I19WSG6iWUTVDKLne5W0jt2PWnSqz7AXpoo9XDPrq7lckOTuBMb+woZRQBYQ==
 
 "@tiptap/extension-text-style@^2.23.1":
   version "2.23.1"

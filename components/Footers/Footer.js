@@ -39,25 +39,25 @@ export default function Footer() {
           Copyright © {new Date().getFullYear()} Expense Goose Ltd.
         </p>
         <div className="mt-2">
-          <a href="/terms-of-service" className="text-base text-blue-500 hover:underline mx-2">
+          <a href="/terms-of-service" className="text-base text-green-600 hover:underline mx-2">
             Terms of Service
           </a>
-          <a href="/privacy-policy" className="text-blue-500 hover:underline mx-2">
+          <a href="/privacy-policy" className="text-green-600 hover:underline mx-2">
             Privacy Policy
           </a>
-          <a href="/refund-policy" className="text-base text-blue-500 hover:underline mx-2">
+          <a href="/refund-policy" className="text-base text-green-600 hover:underline mx-2">
             Refund Policy
           </a>
-          <a href="/checkout" className="text-base text-blue-500 hover:underline mx-2">
+          <a href="/checkout" className="text-base text-green-600 hover:underline mx-2">
             Pricing
           </a>
-          <a href="/about" className="text-base text-blue-500 hover:underline mx-2">
+          <a href="/about" className="text-base text-green-600 hover:underline mx-2">
             About
           </a>
-          <a href="/blog" className="text-base text-blue-500 hover:underline mx-2">
+          <a href="/blog" className="text-base text-green-600 hover:underline mx-2">
             Blog
           </a>
-          <a href="/admin" className="text-base text-blue-500 hover:underline mx-2">
+          <a href="/admin" className="text-base text-green-600 hover:underline mx-2">
             main
           </a>
         </div>
