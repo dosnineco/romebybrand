@@ -19,8 +19,8 @@ module.exports = {
       },
     },
   },
-  plugins: [],
-  variants: {
+ plugins: [require('@tailwindcss/typography')],
+   variants: {
     extend: {
       scrollBehavior: ['responsive'],
     },

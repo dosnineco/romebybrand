@@ -8,6 +8,20 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import DOMPurify from "dompurify";
 import RichTextRenderer from "../../components/blog_components/RichTextRenderer";
+               import { 
+  Bold, 
+  Italic, 
+  Underline, 
+  Strikethrough, 
+  Heading1, 
+  Heading2, 
+  Heading3, 
+  List, 
+  ListOrdered, 
+  Link, 
+  Image as ImageIcon 
+} from 'lucide-react';
+ import { Save, Upload, XCircle, Trash2 } from "lucide-react";
 
 const emptyPost = {
   id: "",
@@ -59,7 +73,7 @@ export default function BlogAdmin() {
     content: "",
     editorProps: {
       attributes: {
-        class: "prose prose-lg text-base  w-full min-h-[300px] p-4 border rounded bg-gray-50",
+        class: "text-base  w-full h-full  bg-white focus:outline-none transition-all",
       },
     },
     autofocus: "end",
@@ -364,7 +378,7 @@ export default function BlogAdmin() {
                   <li key={post.id} className="mb-2 flex justify-between items-center">
                     <span>
                       <span className="font-semibold">{post.title}</span>
-                      <span className="ml-2 text-gray-500 text-sm">
+                      <span className="ml-2 text-gray-500 text-base">
                         {post.ispublished
                           ? (post.publishedat && new Date(post.publishedat) > new Date()
                             ? "Scheduled"
@@ -466,25 +480,11 @@ export default function BlogAdmin() {
                   className="w-full max-h-48 object-cover rounded mb-2"
                 />
               )}
-              <input
-                id="coverimageurl"
-                name="coverimageurl"
-                value={form.coverimageurl}
-                onChange={handleChange}
-                className="w-full border px-2 py-2 rounded text-base"
-                placeholder="Or paste an image URL"
-              />
+       
             </div>
-            <div className="mb-4">
-              <label className="block font-semibold mb-1">Content</label>
-              <div className="flex items-center gap-2 mb-2">
-                <button
-                  type="button"
-                  className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
-                  onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                >
-                  Insert Image
-                </button>
+            <div className=" w-full h-full text-base">
+              <div className=" flex items-center gap-2 mb-2">
+               
                 <input
                   type="file"
                   accept="image/*"
@@ -493,77 +493,117 @@ export default function BlogAdmin() {
                   onChange={uploadEditorImage}
                 />
               </div>
-              <div className=" w-full min-h-[300px] ">
+              <div className="  w-full min-h-[300px] ">
                 {editor && (
-                  <>
-                    <BubbleMenu className="w-full bg-white p-2 rounded border"
-                     editor={editor} tippyOptions={{ duration: 30 }}>
-                      <div className="flex gap-2 text-base  rounded  px-2 py-1">
-                        {/* ...editor buttons... */}
-                        <button
-                          type="button"
-                          className={`font-bold ${editor.isActive('bold') ? 'text-blue-600' : ''}`}
-                          onClick={() => editor.chain().focus().toggleBold().run()}
-                        >B</button>
-                        <button
-                          type="button"
-                          className={`italic ${editor.isActive('italic') ? 'text-blue-600' : ''}`}
-                          onClick={() => editor.chain().focus().toggleItalic().run()}
-                        >I</button>
-                        <button
-                          type="button"
-                          className={`underline ${editor.isActive('underline') ? 'text-blue-600' : ''}`}
-                          onClick={() => editor.chain().focus().toggleUnderline().run()}
-                        >U</button>
-                        <button
-                          type="button"
-                          className={editor.isActive('strike') ? 'text-blue-600' : ''}
-                          onClick={() => editor.chain().focus().toggleStrike().run()}
-                        >S</button>
-                        <button
-                          type="button"
-                          className={editor.isActive('heading', { level: 1 }) ? 'text-blue-600' : ''}
-                          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-                        >H1</button>
-                        <button
-                          type="button"
-                          className={editor.isActive('heading', { level: 2 }) ? 'text-blue-600' : ''}
-                          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                        >H2</button>
-                        <button
-                          type="button"
-                          className={editor.isActive('heading', { level: 3 }) ? 'text-blue-600' : ''}
-                          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                        >H3</button>
-                        <button
-                          type="button"
-                          className={editor.isActive('bulletList') ? 'text-blue-600' : ''}
-                          onClick={() => editor.chain().focus().toggleBulletList().run()}
-                        >•••</button>
-                        <button
-                          type="button"
-                          className={editor.isActive('orderedList') ? 'text-blue-600' : ''}
-                          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                        >123</button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const url = window.prompt('Enter URL');
-                            if (url) {
-                              editor.chain().focus().setLink({ href: url }).run();
-                            }
-                          }}
-                        >Url</button>
-                        <button
-                          type="button"
-                          onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                        >Img</button>
-                      </div>
-                    </BubbleMenu>
-                    <EditorContent
-                      editor={editor}
-                    />
-                  </>
+                  < main className="w-full text-base bg-white rounded-lg border p-4">
+     
+
+<BubbleMenu
+  className="w-full bg-white p-2 rounded border shadow flex flex-wrap gap-2"
+  editor={editor}
+  tippyOptions={{ duration: 30 }}
+>
+  <div className="flex flex-wrap gap-2 text-base bg-white rounded px-2 py-1">
+    <button
+      type="button"
+      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('bold') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+      title="Bold"
+      onClick={() => editor.chain().focus().toggleBold().run()}
+    >
+      <Bold size={18} />
+    </button>
+    <button
+      type="button"
+      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('italic') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+      title="Italic"
+      onClick={() => editor.chain().focus().toggleItalic().run()}
+    >
+      <Italic size={18} />
+    </button>
+    <button
+      type="button"
+      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('underline') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+      title="Underline"
+      onClick={() => editor.chain().focus().toggleUnderline().run()}
+    >
+      <Underline size={18} />
+    </button>
+    <button
+      type="button"
+      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('strike') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+      title="Strikethrough"
+      onClick={() => editor.chain().focus().toggleStrike().run()}
+    >
+      <Strikethrough size={18} />
+    </button>
+    <button
+      type="button"
+      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('heading', { level: 1 }) ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+      title="Heading 1"
+      onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+    >
+      <Heading1 size={18} />
+    </button>
+    <button
+      type="button"
+      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('heading', { level: 2 }) ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+      title="Heading 2"
+      onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+    >
+      <Heading2 size={18} />
+    </button>
+    <button
+      type="button"
+      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('heading', { level: 3 }) ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+      title="Heading 3"
+      onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+    >
+      <Heading3 size={18} />
+    </button>
+    <button
+      type="button"
+      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('bulletList') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+      title="Bullet List"
+      onClick={() => editor.chain().focus().toggleBulletList().run()}
+    >
+      <List size={18} />
+    </button>
+    <button
+      type="button"
+      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('orderedList') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+      title="Ordered List"
+      onClick={() => editor.chain().focus().toggleOrderedList().run()}
+    >
+      <ListOrdered size={18} />
+    </button>
+    <button
+      type="button"
+      className="p-2 rounded hover:bg-blue-50 transition text-gray-700"
+      title="Add Link"
+      onClick={() => {
+        const url = window.prompt('Enter URL');
+        if (url) {
+          editor.chain().focus().setLink({ href: url }).run();
+        }
+      }}
+    >
+      <Link size={18} />
+    </button>
+    <button
+      type="button"
+      className="p-2 rounded hover:bg-blue-50 transition text-gray-700"
+      title="Insert Image"
+      onClick={() => fileInputRef.current && fileInputRef.current.click()}
+    >
+      <ImageIcon size={18} />
+    </button>
+  </div>
+</BubbleMenu>
+
+<div className="text-base  w-full min-h-[300px] bg-white  focus:outline-none  transition-all text-gray-800 font-sans leading-relaxed placeholder:text-gray-400">
+  <EditorContent editor={editor} />
+</div>
+                  </main>
                 )}
               </div>
             </div>
@@ -578,45 +618,50 @@ export default function BlogAdmin() {
                 disabled={form.ispublished}
               />
             </div>
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400"
-                disabled={loading}
-              >
-                Save Draft
-              </button>
-              <button
-                type="button"
-                className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"
-                onClick={() => savePost(true)}
-                disabled={loading}
-              >
-                {form.ispublished ? "Update & Publish" : "Publish"}
-              </button>
-              <button
-                type="button"
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-blue-400"
-                onClick={cancelEdit}
-                disabled={loading}
-              >
-                Cancel
-              </button>
-              {/* Delete button for drafts only */}
-              {!form.ispublished && editing !== "new" && (
-                <button
-                  type="button"
-                  className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                  onClick={async () => {
-                    await deletePost(form.id);
-                    cancelEdit();
-                  }}
-                  disabled={loading}
-                >
-                  Delete Draft
-                </button>
-              )}
-            </div>
+
+<div className="flex gap-2">
+  <button
+    type="submit"
+    className="flex items-center gap-2 px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400"
+    disabled={loading}
+  >
+    <Save size={18} />
+    Save Draft
+  </button>
+  <button
+    type="button"
+    className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"
+    onClick={() => savePost(true)}
+    disabled={loading}
+  >
+    <Upload size={18} />
+    {form.ispublished ? "Update & Publish" : "Publish"}
+  </button>
+  <button
+    type="button"
+    className="flex items-center gap-2 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-blue-400"
+    onClick={cancelEdit}
+    disabled={loading}
+  >
+    <XCircle size={18} />
+    Cancel
+  </button>
+  {/* Delete button for drafts only */}
+  {!form.ispublished && editing !== "new" && (
+    <button
+      type="button"
+      className="flex items-center gap-2 px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600"
+      onClick={async () => {
+        await deletePost(form.id);
+        cancelEdit();
+      }}
+      disabled={loading}
+    >
+      <Trash2 size={18} />
+      Delete Draft
+    </button>
+  )}
+</div>
           </form>
         )}
       </main>
