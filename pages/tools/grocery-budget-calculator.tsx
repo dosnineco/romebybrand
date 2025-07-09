@@ -547,6 +547,58 @@ export default function GroceryBudgetCalculator() {
           </>
         )}
 
+        {/* More About Grocery Budgeting */}
+<section className="mb-10 bg-white rounded-lg shadow p-6">
+  <h2 className="text-2xl font-semibold mb-4">Why Budgeting for Groceries Matters</h2>
+  <p className="text-base text-gray-700 mb-2">
+    Groceries are one of the largest variable expenses for most households. By understanding your food spending, you can make smarter choices, reduce waste, and free up money for other priorities. A well-planned grocery budget helps you avoid impulse purchases, take advantage of sales, and ensure your family eats healthy, balanced meals.
+  </p>
+  <p className="text-base text-gray-700 mb-2">
+    The USDA Food Plans provide a helpful benchmark, but every family is unique. Factors like dietary needs, regional price differences, and how often you eat out all play a role. Our calculator takes these into account, giving you a truly personalized estimate.
+  </p>
+</section>
+
+<section className="mb-10 bg-white rounded-lg shadow p-6">
+  <h2 className="text-2xl font-semibold mb-4">Tips to Stretch Your Grocery Budget Further</h2>
+  <ul className="list-disc pl-6 text-base text-gray-700 space-y-2">
+    <li><span className="font-semibold text-blue-600">Plan your meals:</span> Create a weekly menu and shopping list to avoid buying unnecessary items.</li>
+    <li><span className="font-semibold text-blue-600">Shop sales and use coupons:</span> Take advantage of store promotions and digital coupons for extra savings.</li>
+    <li><span className="font-semibold text-blue-600">Buy in bulk:</span> Stock up on staples like rice, beans, and pasta when they’re on sale.</li>
+    <li><span className="font-semibold text-blue-600">Limit processed foods:</span> Whole foods are often cheaper and healthier than pre-packaged meals.</li>
+    <li><span className="font-semibold text-blue-600">Cook at home:</span> Preparing meals from scratch is almost always less expensive than eating out.</li>
+    <li><span className="font-semibold text-blue-600">Reduce food waste:</span> Store leftovers properly and use them for lunches or future dinners.</li>
+    <li><span className="font-semibold text-blue-600">Try store brands:</span> Generic or store-brand products are often just as good as name brands at a lower price.</li>
+  </ul>
+</section>
+
+<section className="mb-10 bg-white rounded-lg shadow p-6">
+  <h2 className="text-2xl font-semibold mb-4">How to Adjust Your Grocery Budget Over Time</h2>
+  <p className="text-base text-gray-700 mb-2">
+    Your grocery needs may change throughout the year. Holidays, school breaks, or changes in household size can all impact your spending. Review your budget every few months and adjust as needed. If you notice your actual spending is consistently higher or lower than your estimate, revisit your plan and update your calculator inputs.
+  </p>
+  <p className="text-base text-gray-700 mb-2">
+    Remember, the goal isn’t to spend as little as possible, but to spend wisely—balancing nutrition, convenience, and your family’s preferences.
+  </p>
+</section>
+
+<section className="mb-10 bg-white rounded-lg shadow p-6">
+  <h2 className="text-2xl font-semibold mb-4">Related Tools and Resources</h2>
+  <ul className="list-disc pl-6 text-base text-gray-700 space-y-2">
+    <li>
+      <a href="/tools/meal-planner" className="text-blue-600 hover:underline">Meal Planner Tool</a> – Plan your weekly meals and generate a smart shopping list.
+    </li>
+    <li>
+      <a href="/tools/pantry-inventory" className="text-blue-600 hover:underline">Pantry Inventory Tracker</a> – Keep track of what you have and reduce food waste.
+    </li>
+    <li>
+      <a href="/blog/grocery-saving-tips" className="text-blue-600 hover:underline">Top 25 Grocery Saving Tips</a> – Expert advice to help you save even more.
+    </li>
+    <li>
+      <a href="/tools/food-cost-comparator" className="text-blue-600 hover:underline">Food Cost Comparator</a> – Compare prices across stores and brands.
+    </li>
+  </ul>
+</section>
+
         {/* FAQs */}
         <section className="mt-10">
           <h2 className="text-2xl font-semibold mb-4">Frequently Asked Questions</h2>

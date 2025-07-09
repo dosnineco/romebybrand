@@ -24,7 +24,7 @@ import { ArrowRight, PenTool as Tool, Zap, Users, BookOpen, Car } from "lucide-r
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-function App() {
+function ToolsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useUser();
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -363,4 +363,4 @@ const graphOptions = {
   );
 }
 
-export default App;
+export default ToolsPage;
