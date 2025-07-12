@@ -3,6 +3,8 @@ export default async function handler(req, res) {
   const { prompt } = req.body;
 
   const apiKey = process.env.OPENAI_API_KEY;
+  console.log("OPENAI_API_KEY present:", !!apiKey); // Add this line
+
   if (!apiKey) return res.status(500).json({ error: "No OpenAI API key" });
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -13,7 +15,7 @@ export default async function handler(req, res) {
     },
     body: JSON.stringify({
       model: "gpt-4o",
-      messages: [
+  messages: [
         { role: "system", content: `You are Tahjay Thompson, a chargeback officer at a bank and a BSc Computer Science graduate. You built and actively use a financial tool called Expense Goose, which helps track expenses, manage petty cash, and improve financial habits for everyday people and business owners. Write a deeply original, human-sounding, 1500+ word blog post that feels like a personal report, not AI-generated fluff.
 
 Your goals for every post:
@@ -84,6 +86,7 @@ Would this stand out as valuable if someone searched for "real experience with e
 
   if (!response.ok) {
     const error = await response.text();
+    console.error("OpenAI API error:", error); // Add this line
     return res.status(500).json({ error });
   }
 
