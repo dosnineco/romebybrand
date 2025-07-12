@@ -5,6 +5,7 @@ import Head from "next/head";
 import PublishedBlogList from "../../components/blog_components/PublishedBlogList";
 import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Link  from '@tiptap/extension-link';
 import Image from "@tiptap/extension-image";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
@@ -12,6 +13,7 @@ import { HTMLContent, generateHTML } from '@tiptap/react';
 import { Sparkles, Loader2 } from "lucide-react";
 import RichTextRenderer from "../../components/blog_components/RichTextRenderer";
 import { 
+  UnlinkIcon,
   Bold, 
   Italic, 
   Underline, 
@@ -21,7 +23,7 @@ import {
   Heading3, 
   List, 
   ListOrdered, 
-  Link, 
+  Link as LinkExtension, 
   Image as ImageIcon 
 } from 'lucide-react';
  import { Save, Upload, SquarePen, Delete, Plus, XCircle, Trash2 } from "lucide-react";
@@ -219,7 +221,19 @@ async function handleAIGenerate() {
 
   // Tiptap editor instance with Image extension
   const editor = useEditor({
-    extensions: [Image, StarterKit],
+    extensions: [Image, StarterKit,  Bold, Italic, 
+        Underline, 
+        Strikethrough, 
+        Heading1, 
+        Heading2, 
+        Heading3, 
+        List, 
+        ListOrdered, 
+       Link.configure({
+      openOnClick: true,
+    }),
+  
+        Image],
     editable: true,
     content: "",
     editorProps: {
@@ -756,19 +770,37 @@ async function handleAIGenerate() {
                     >
                       <ListOrdered size={18} />
                     </button>
-                    <button
-                      type="button"
-                      className="p-2 rounded hover:bg-blue-50 transition text-gray-700"
-                      title="Add Link"
-                      onClick={() => {
-                        const url = window.prompt('Enter URL');
-                        if (url) {
-                          editor.chain().focus().setLink({ href: url }).run();
-                        }
-                      }}
-                    >
-                      <Link size={18} />
-                    </button>
+                  <button
+                    type="button"
+                    className="p-2 rounded hover:bg-blue-50 transition text-gray-700"
+                    title="Add Link"
+                    onClick={() => {
+                      const url = window.prompt('Enter URL (include https://)');
+                      const { state } = editor;
+                      const { from, to } = state.selection;
+
+                      if (!url) return;
+
+                      if (from === to) {
+                        alert('Please select some text to apply the link.');
+                        return;
+                      }
+
+                      editor.chain().focus().setLink({ href: url }).run();
+                    }}
+                  >
+                    <LinkExtension size={18} />
+                  </button>
+                  <button
+                    type="button"
+                    className="p-2 rounded hover:bg-red-50 transition text-gray-700"
+                    title="Remove Link"
+                    onClick={() => editor.chain().focus().unsetLink().run()}
+                  >
+                    <UnlinkIcon size={18} />
+                  </button>
+
+
                     <button
                       type="button"
                       className="p-2 rounded hover:bg-blue-50 transition text-gray-700"

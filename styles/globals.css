@@ -68,6 +68,7 @@ h2,h3,h4,h5{
   font-weight: 600;
   font-style: normal;
   line-height: 1.8;
+  font-size: 1.4rem;
 }
 
 p{
@@ -77,10 +78,18 @@ p{
     margin-top: 20px;
 }
 
+a {
+  text-decoration: none;
+  transition: color 0.3s ease;
+  color:blue;
+  font-weight: 600;
+  text-transform: capitalize;
+
+}
 
 @media (max-width: 768px) {
   h1{
-  font-size: 3rem;
+  font-size: 2rem;
   }
 }
 
