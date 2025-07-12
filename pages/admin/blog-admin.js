@@ -8,6 +8,8 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
+import { HTMLContent, generateHTML } from '@tiptap/react';
+
 
 import RichTextRenderer from "../../components/blog_components/RichTextRenderer";
                import { 
@@ -166,6 +168,9 @@ async function handleAIGenerate() {
   setAiError("");
   setForm((f) => ({ ...f, content: "" }));
 
+
+  
+
   const prompt = `
 You are a financial blogger for Expense Goose. Write a unique, high-quality, in-depth blog post based on the user's real financial data and tool usage.
 - Use the user's actual transaction data (converted to USD) for insights, trends, and examples.
@@ -179,9 +184,22 @@ Here is the user's transaction data (USD):\n${JSON.stringify(transactions, null,
 `;
 
   try {
-    await streamGeneratedContent(prompt, (token) => {
-      setForm((f) => ({ ...f, content: (f.content || "") + token }));
-    });
+let markdown = "";
+await streamGeneratedContent(prompt, (token) => {
+  markdown += token;
+});
+
+const cleanHTML = DOMPurify.sanitize(marked.parse(markdown));
+editor?.commands.setContent(cleanHTML, 'html');
+setForm((f) => ({ ...f, content: cleanHTML }));
+
+
+setAiLoading(false);
+setShowAIPanel(false);
+
+
+
+
     setAiLoading(false);
     setShowAIPanel(false);
   } catch (err) {
@@ -776,10 +794,10 @@ Here is the user's transaction data (USD):\n${JSON.stringify(transactions, null,
   </div>
 </BubbleMenu>
 
-<div className="text-base w-full min-h-[300px] bg-white focus:outline-none transition-all text-gray-800 font-sans leading-relaxed placeholder:text-gray-400">
+<div className="text-base w-full  bg-white focus:outline-none transition-all text-gray-800 font-sans leading-relaxed placeholder:text-gray-400">
   <EditorContent editor={editor} />
   {/* Show generated AI content preview below the editor if present */}
-  {form.content && (
+  {
     <section className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
       <h3 className="font-bold text-lg mb-4 text-blue-700">AI-Generated Blog Content Preview</h3>
       <article
@@ -787,11 +805,9 @@ Here is the user's transaction data (USD):\n${JSON.stringify(transactions, null,
         // Convert markdown to HTML before rendering
         dangerouslySetInnerHTML={{ __html: marked.parse(form.content) }}
       />
-      <div className="mt-4 text-xs text-gray-400">
-        (This content will be included when you save or publish your post.)
-      </div>
+
     </section>
-  )}
+  }
 </div>
 
                   </main>
