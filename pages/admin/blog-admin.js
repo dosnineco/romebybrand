@@ -67,6 +67,41 @@ async function convertJMDToUSD(amountJMD) {
   return amountJMD / USD_RATE;
 }
 
+
+async function streamGeneratedContent(prompt, onToken) {
+  const response = await fetch("/api/generate-blog", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ prompt }),
+  });
+
+  if (!response.body) throw new Error("No response body from OpenAI");
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let buffer = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+
+    const lines = buffer.split("\n\n");
+    buffer = lines.pop(); // keep the last incomplete chunk
+
+    for (const line of lines) {
+      if (line.startsWith("data: ")) {
+        const data = line.slice(6);
+        if (data === "[DONE]") return;
+        onToken(data);
+      }
+    }
+  }
+}
+ 
 // ChatGPT Integration
 async function generateBlogPost({ userId, transactions, extraInputs }) {
   const prompt = `
@@ -129,25 +164,33 @@ async function loadUserData() {
 async function handleAIGenerate() {
   setAiLoading(true);
   setAiError("");
+  setForm((f) => ({ ...f, content: "" }));
+
+  const prompt = `
+You are a financial blogger for Expense Goose. Write a unique, high-quality, in-depth blog post based on the user's real financial data and tool usage.
+- Use the user's actual transaction data (converted to USD) for insights, trends, and examples.
+- Reference their use of tools like the Expense Tracker, Time Travel Wallet, and others.
+- Incorporate the following extra value inputs: ${extraInputs}
+- Make the post engaging, actionable, and valuable for readers.
+- Ensure the content passes Google's "helpful content" and "thin content" tests by being detailed, data-driven, and original.
+- Use headings, lists, and real numbers from the user's data.
+- End with a call to action to try Expense Goose.
+Here is the user's transaction data (USD):\n${JSON.stringify(transactions, null, 2)}
+`;
+
   try {
-    const aiContent = await generateBlogPost({
-      userId: user.id,
-      transactions,
-      extraInputs,
+    await streamGeneratedContent(prompt, (token) => {
+      setForm((f) => ({ ...f, content: (f.content || "") + token }));
     });
-    setForm((f) => ({
-      ...f,
-      title: "How I Used Expense Goose to Transform My Finances",
-      summary: "A real user's journey using Expense Goose tools, with actionable insights and real data.",
-      content: aiContent,
-    }));
     setAiLoading(false);
     setShowAIPanel(false);
   } catch (err) {
+    console.error(err);
     setAiError("AI generation failed. Please try again.");
     setAiLoading(false);
   }
 }
+
 
 
   // ai contnent generation

@@ -1,22 +1,49 @@
+// pages/api/generate.ts
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).end();
+  if (req.method !== "POST") {
+    res.status(405).end("Method not allowed");
+    return;
+  }
+
+  // Optional: CORS header (only if calling from another domain)
+  res.setHeader("Access-Control-Allow-Origin", "*");
+
   const { prompt } = req.body;
-
   const apiKey = process.env.OPENAI_API_KEY;
-  console.log("OPENAI_API_KEY present:", !!apiKey); // Add this line
 
-  if (!apiKey) return res.status(500).json({ error: "No OpenAI API key" });
+  if (!apiKey) {
+    return res.status(500).json({ error: "No OpenAI API key" });
+  }
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "gpt-4o",
-  messages: [
-        { role: "system", content: `You are Tahjay Thompson, a chargeback officer at a bank and a BSc Computer Science graduate. You built and actively use a financial tool called Expense Goose, which helps track expenses, manage petty cash, and improve financial habits for everyday people and business owners. Write a deeply original, human-sounding, 1500+ word blog post that feels like a personal report, not AI-generated fluff.
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
+  });
+
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder("utf-8");
+
+  // Keep-alive ping every 15s
+  const keepAlive = setInterval(() => {
+    res.write(`data: \uD83D\uDC93\n\n`);
+  }, 15000);
+
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4o",
+        stream: true,
+        temperature: 0.5,
+        messages: [
+          {
+            role: "system",
+            content: `You are Tahjay Thompson, a chargeback officer at a bank and a BSc Computer Science graduate. You built and actively use a financial tool called Expense Goose, which helps track expenses, manage petty cash, and improve financial habits for everyday people and business owners. Write a deeply original, human-sounding, 1500+ word blog post that feels like a personal report, not AI-generated fluff.
 
 Your goals for every post:
 
@@ -76,21 +103,60 @@ Does this sound like it came from someone with experience?
 
 Would this make someone trust the Expense Goose brand more?
 
-Would this stand out as valuable if someone searched for "real experience with expense tracking tools"? ` },
-        { role: "user", content: prompt }
-      ],
-      max_tokens: 1000,
-      temperature: 0.5,
-    }),
-  });
+Would this stand out as valuable if someone searched for "real experience with expense tracking tools"?`,
+          },
+          { role: "user", content: prompt },
+        ],
+      }),
+    });
 
-  if (!response.ok) {
-    const error = await response.text();
-    console.error("OpenAI API error:", error); // Add this line
-    return res.status(500).json({ error });
+    if (!response.ok || !response.body) {
+      const error = await response.text();
+      console.error("OpenAI Error:", error);
+      res.write(`data: [ERROR] ${error}\n\n`);
+      clearInterval(keepAlive);
+      res.end();
+      return;
+    }
+
+    const reader = response.body.getReader();
+    let done = false;
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split("\n").filter((line) => line.trim() !== "");
+
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          const data = line.replace("data: ", "");
+
+          if (data === "[DONE]") {
+            clearInterval(keepAlive);
+            res.write(`data: [DONE]\n\n`);
+            res.end();
+            return;
+          }
+
+          try {
+            const parsed = JSON.parse(data);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              res.write(`data: ${content}\n\n`);
+            }
+          } catch (e) {
+            console.error("Could not parse line", line, e);
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Unexpected server error:", err);
+    res.write(`data: [ERROR] Unexpected error occurred\n\n`);
+    res.end();
+  } finally {
+    clearInterval(keepAlive);
   }
-
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content || "";
-  res.status(200).json({ content });
 }
