@@ -40,6 +40,7 @@ export default async function handler(req, res) {
         model: "gpt-4o",
         stream: true,
         temperature: 0.5,
+        max_tokens: 1000,
         messages: [
           {
             role: "system",
