@@ -77,8 +77,8 @@ Would this make someone trust the Expense Goose brand more?
 Would this stand out as valuable if someone searched for "real experience with expense tracking tools"? ` },
         { role: "user", content: prompt }
       ],
-      max_tokens: 2000,
-      temperature: 0.8,
+      max_tokens: 1000,
+      temperature: 0.5,
     }),
   });
 
