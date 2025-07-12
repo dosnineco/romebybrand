@@ -7,6 +7,8 @@ import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import DOMPurify from "dompurify";
+import { marked } from "marked";
+
 import RichTextRenderer from "../../components/blog_components/RichTextRenderer";
                import { 
   Bold, 
@@ -55,7 +57,100 @@ function countWords(html) {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+
+import { Sparkles, Loader2 } from "lucide-react";
+
+// Currency conversion utility (JMD to USD)
+async function convertJMDToUSD(amountJMD) {
+  // Use a real API in production; static rate for demo
+  const USD_RATE = 155;
+  return amountJMD / USD_RATE;
+}
+
+// ChatGPT Integration
+async function generateBlogPost({ userId, transactions, extraInputs }) {
+  const prompt = `
+You are a financial blogger for Expense Goose. Write a unique, high-quality, in-depth blog post based on the user's real financial data and tool usage.
+- Use the user's actual transaction data (converted to USD) for insights, trends, and examples.
+- Reference their use of tools like the Expense Tracker, Time Travel Wallet, and others.
+- Incorporate the following extra value inputs: ${extraInputs}
+- Make the post engaging, actionable, and valuable for readers.
+- Ensure the content passes Google's "helpful content" and "thin content" tests by being detailed, data-driven, and original.
+- Use headings, lists, and real numbers from the user's data.
+- End with a call to action to try Expense Goose.
+Here is the user's transaction data (USD):\n${JSON.stringify(transactions, null, 2)}
+`;
+
+  const res = await fetch("/api/generate-blog", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt }),
+  });
+  if (!res.ok) throw new Error("Failed to generate blog post");
+  const { content } = await res.json();
+  return content;
+}
 export default function BlogAdmin() {
+
+const [aiLoading, setAiLoading] = useState(false);
+const [aiError, setAiError] = useState("");
+const [extraInputs, setExtraInputs] = useState("");
+const [transactions, setTransactions] = useState([]);
+const [showAIPanel, setShowAIPanel] = useState(false);
+
+// Load user's transactions and convert to USD
+async function loadUserData() {
+  setAiLoading(true);
+  setAiError("");
+  try {
+    const { data, error } = await supabase
+      .from("transactions")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("transaction_date", { ascending: false });
+    if (error) throw error;
+    // Convert all amounts to USD
+    const converted = await Promise.all(
+      (data || []).map(async (tx) => ({
+        ...tx,
+        amount_usd: await convertJMDToUSD(Number(tx.amount)),
+      }))
+    );
+    setTransactions(converted);
+    setAiLoading(false);
+    setShowAIPanel(true);
+  } catch (err) {
+    setAiError("Failed to load your data.");
+    setAiLoading(false);
+  }
+}
+
+// Generate blog post with ChatGPT and load into form
+async function handleAIGenerate() {
+  setAiLoading(true);
+  setAiError("");
+  try {
+    const aiContent = await generateBlogPost({
+      userId: user.id,
+      transactions,
+      extraInputs,
+    });
+    setForm((f) => ({
+      ...f,
+      title: "How I Used Expense Goose to Transform My Finances",
+      summary: "A real user's journey using Expense Goose tools, with actionable insights and real data.",
+      content: aiContent,
+    }));
+    setAiLoading(false);
+    setShowAIPanel(false);
+  } catch (err) {
+    setAiError("AI generation failed. Please try again.");
+    setAiLoading(false);
+  }
+}
+
+
+  // ai contnent generation
   const { user, isSignedIn, isLoaded } = useUser();
   const [posts, setPosts] = useState([]);
   const [editing, setEditing] = useState(null);
@@ -412,6 +507,8 @@ export default function BlogAdmin() {
         )}
 
         {editing && (
+
+          
           <form
             className="bg-white p-3 rounded-lg w-full mx-auto"
             onSubmit={(e) => {
@@ -482,6 +579,42 @@ export default function BlogAdmin() {
               )}
        
             </div>
+
+            <div className="mb-8">
+  <button
+    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg hover:from-blue-600 hover:to-green-600 transition font-semibold"
+    onClick={loadUserData}
+    disabled={aiLoading}
+  >
+    <Sparkles className="w-5 h-5" />
+    {aiLoading ? "Loading..." : "AI Blog Writer: Use My Real Data"}
+  </button>
+  {aiError && <div className="text-red-600 mt-2">{aiError}</div>}
+</div>
+
+{showAIPanel && (
+  <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <h3 className="font-bold text-lg mb-2">Supercharge Your Blog Post with AI</h3>
+    <p className="mb-2 text-gray-700">
+      We'll use your real transaction data (converted to USD) and any extra info you provide to generate a unique, high-quality blog post that passes Google's helpful content test.
+    </p>
+    <textarea
+      className="w-full border rounded p-2 mb-2"
+      rows={3}
+      placeholder="Add extra info, tips, or external insights to include (optional)..."
+      value={extraInputs}
+      onChange={(e) => setExtraInputs(e.target.value)}
+    />
+    <button
+      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-semibold"
+      onClick={handleAIGenerate}
+      disabled={aiLoading}
+    >
+      {aiLoading ? <Loader2 className="animate-spin w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
+      Generate Blog Post with AI
+    </button>
+  </div>
+)}
             <div className=" w-full h-full text-base">
               <div className=" flex items-center gap-2 mb-2">
                
@@ -600,9 +733,24 @@ export default function BlogAdmin() {
   </div>
 </BubbleMenu>
 
-<div className="text-base  w-full min-h-[300px] bg-white  focus:outline-none  transition-all text-gray-800 font-sans leading-relaxed placeholder:text-gray-400">
+<div className="text-base w-full min-h-[300px] bg-white focus:outline-none transition-all text-gray-800 font-sans leading-relaxed placeholder:text-gray-400">
   <EditorContent editor={editor} />
+  {/* Show generated AI content preview below the editor if present */}
+  {form.content && (
+    <section className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+      <h3 className="font-bold text-lg mb-4 text-blue-700">AI-Generated Blog Content Preview</h3>
+      <article
+        className="prose max-w-none prose-headings:text-blue-800 prose-h2:mt-8 prose-h3:mt-6 prose-p:mb-4 prose-ul:pl-6 prose-ol:pl-6 prose-li:mb-2 prose-img:rounded"
+        // Convert markdown to HTML before rendering
+        dangerouslySetInnerHTML={{ __html: marked.parse(form.content) }}
+      />
+      <div className="mt-4 text-xs text-gray-400">
+        (This content will be included when you save or publish your post.)
+      </div>
+    </section>
+  )}
 </div>
+
                   </main>
                 )}
               </div>
