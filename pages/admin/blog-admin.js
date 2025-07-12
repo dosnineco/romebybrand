@@ -9,10 +9,9 @@ import Image from "@tiptap/extension-image";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
 import { HTMLContent, generateHTML } from '@tiptap/react';
-
-
+import { Sparkles, Loader2 } from "lucide-react";
 import RichTextRenderer from "../../components/blog_components/RichTextRenderer";
-               import { 
+import { 
   Bold, 
   Italic, 
   Underline, 
@@ -25,7 +24,7 @@ import RichTextRenderer from "../../components/blog_components/RichTextRenderer"
   Link, 
   Image as ImageIcon 
 } from 'lucide-react';
- import { Save, Upload, XCircle, Trash2 } from "lucide-react";
+ import { Save, Upload, SquarePen, Delete, Plus, XCircle, Trash2 } from "lucide-react";
 
 const emptyPost = {
   id: "",
@@ -60,7 +59,6 @@ function countWords(html) {
 }
 
 
-import { Sparkles, Loader2 } from "lucide-react";
 
 // Currency conversion utility (JMD to USD)
 async function convertJMDToUSD(amountJMD) {
@@ -70,7 +68,7 @@ async function convertJMDToUSD(amountJMD) {
 }
 
 
-async function streamGeneratedContent(prompt, onToken) {
+async function streamGeneratedContent(prompt, onToken, onComplete) {
   const response = await fetch("/api/generate-blog", {
     method: "POST",
     headers: {
@@ -84,6 +82,7 @@ async function streamGeneratedContent(prompt, onToken) {
   const reader = response.body.getReader();
   const decoder = new TextDecoder("utf-8");
   let buffer = "";
+  let fullMarkdown = "";
 
   while (true) {
     const { value, done } = await reader.read();
@@ -92,52 +91,62 @@ async function streamGeneratedContent(prompt, onToken) {
     buffer += decoder.decode(value, { stream: true });
 
     const lines = buffer.split("\n\n");
-    buffer = lines.pop(); // keep the last incomplete chunk
+    buffer = lines.pop(); // keep incomplete line
 
     for (const line of lines) {
       if (line.startsWith("data: ")) {
-        const data = line.slice(6);
-        if (data === "[DONE]") return;
-        onToken(data);
+        const data = line.slice(6).trim();
+
+        if (data === "[DONE]") {
+          if (typeof onComplete === "function") {
+            onComplete(fullMarkdown);
+          }
+          return;
+        }
+
+     try {
+          const parsed = JSON.parse(data);
+          const token = parsed.content || parsed?.delta?.content;
+
+          if (parsed.type === "final") {
+            // Final full blog markdown
+            if (typeof onComplete === "function") {
+              onComplete(parsed.content);
+            }
+            return;
+          }
+
+          if (token) {
+            fullMarkdown += token;
+            onToken(token);
+          }
+        } catch {
+          // fallback for raw token
+          fullMarkdown += data;
+          onToken(data);
+        }
+
       }
     }
   }
-}
- 
-// ChatGPT Integration
-async function generateBlogPost({ userId, transactions, extraInputs }) {
-  const prompt = `
-You are a financial blogger for Expense Goose. Write a unique, high-quality, in-depth blog post based on the user's real financial data and tool usage.
-- Use the user's actual transaction data (converted to USD) for insights, trends, and examples.
-- Reference their use of tools like the Expense Tracker, Time Travel Wallet, and others.
-- Incorporate the following extra value inputs: ${extraInputs}
-- Make the post engaging, actionable, and valuable for readers.
-- Ensure the content passes Google's "helpful content" and "thin content" tests by being detailed, data-driven, and original.
-- Use headings, lists, and real numbers from the user's data.
-- End with a call to action to try Expense Goose.
-Here is the user's transaction data (USD):\n${JSON.stringify(transactions, null, 2)}
-`;
 
-  const res = await fetch("/api/generate-blog", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt }),
-  });
-  if (!res.ok) throw new Error("Failed to generate blog post");
-  const { content } = await res.json();
-  return content;
+  if (typeof onComplete === "function") {
+    onComplete(fullMarkdown);
+  }
 }
+
+ 
+
 export default function BlogAdmin() {
+
 
 const [aiLoading, setAiLoading] = useState(false);
 const [aiError, setAiError] = useState("");
 const [extraInputs, setExtraInputs] = useState("");
 const [transactions, setTransactions] = useState([]);
-const [showAIPanel, setShowAIPanel] = useState(false);
 
 // Load user's transactions and convert to USD
 async function loadUserData() {
-  setAiLoading(true);
   setAiError("");
   try {
     const { data, error } = await supabase
@@ -154,11 +163,11 @@ async function loadUserData() {
       }))
     );
     setTransactions(converted);
-    setAiLoading(false);
-    setShowAIPanel(true);
-  } catch (err) {
-    setAiError("Failed to load your data.");
-    setAiLoading(false);
+    return converted.map(tx => `- ${tx.description}: $${tx.amount_usd.toFixed(2)}`).join("\n");
+  } catch (error) {
+    console.error("Error loading transactions:", error);
+    setAiError("Failed to load user data. Please try again.");
+    return "";
   }
 }
 
@@ -172,46 +181,34 @@ async function handleAIGenerate() {
   
 
   const prompt = `
-You are a financial blogger for Expense Goose. Write a unique, high-quality, in-depth blog post based on the user's real financial data and tool usage.
-- Use the user's actual transaction data (converted to USD) for insights, trends, and examples.
-- Reference their use of tools like the Expense Tracker, Time Travel Wallet, and others.
-- Incorporate the following extra value inputs: ${extraInputs}
-- Make the post engaging, actionable, and valuable for readers.
-- Ensure the content passes Google's "helpful content" and "thin content" tests by being detailed, data-driven, and original.
-- Use headings, lists, and real numbers from the user's data.
-- End with a call to action to try Expense Goose.
-Here is the user's transaction data (USD):\n${JSON.stringify(transactions, null, 2)}
+ 
+      use this for the blog post.${extraInputs}
+      Here is the user's transaction data :\n${JSON.stringify(transactions, null, 2)}
 `;
 
-  try {
-let markdown = "";
-await streamGeneratedContent(prompt, (token) => {
-  markdown += token;
-});
+    try {
+      let markdown = "";
+      await streamGeneratedContent(prompt, (token) => {
+        markdown += token;
+      });
 
-const cleanHTML = DOMPurify.sanitize(marked.parse(markdown));
-editor?.commands.setContent(cleanHTML, 'html');
-setForm((f) => ({ ...f, content: cleanHTML }));
-
-
-setAiLoading(false);
-setShowAIPanel(false);
-
-
-
-
-    setAiLoading(false);
-    setShowAIPanel(false);
-  } catch (err) {
-    console.error(err);
-    setAiError("AI generation failed. Please try again.");
-    setAiLoading(false);
-  }
+      const cleanHTML = DOMPurify.sanitize(marked.parse(markdown));
+      editor?.commands.setContent(cleanHTML, 'html');
+      setForm((f) => ({ ...f, content: cleanHTML }));
+      setAiLoading(false);
+      setShowAIPanel(false);
+      setAiLoading(false);
+      setShowAIPanel(false);
+    } catch (err) {
+      console.error(err);
+      setAiError("AI generation failed. Please try again.");
+      setAiLoading(false);
+    }
 }
 
 
 
-  // ai contnent generation
+  // ai content generation
   const { user, isSignedIn, isLoaded } = useUser();
   const [posts, setPosts] = useState([]);
   const [editing, setEditing] = useState(null);
@@ -390,7 +387,7 @@ setShowAIPanel(false);
     if (!form.slug) missing.push("Slug is required");
     if (!form.summary) missing.push("Summary is required");
     if (!form.coverimageurl) missing.push("Cover image is required");
-    if (countWords(form.content) < 1000) missing.push("Content must be at least 1000 words");
+    if (countWords(form.content) < 700) missing.push("Content must be at least 700 words");
     // Slug must be unique before publishing
     if (
       publish &&
@@ -493,7 +490,7 @@ setShowAIPanel(false);
       <Head>
         <meta name="description" content="Create, edit, and publish blog posts." />
       </Head>
-      <main className="max-w-screen-md mx-auto px-4 py-8">
+      <main className="w-full max-w-screen-md mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-center mb-6">Blog Admin Editor</h1>
         <p className="text-base text-gray-700 mb-4 text-center">
           Create, edit, and publish blog posts.
@@ -522,19 +519,23 @@ setShowAIPanel(false);
         {!editing && (
           <>
             <button
-              className="mb-6 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"
+              className="mb-6 px-6 py-3 bg-blue-500  text-sm font-bold text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"
               onClick={newPost}
             >
-              Add a New Post
+              New Post <Plus className="inline w-4 h-4 ml-2" />
             </button>
+
             <section>
-              <h2 className="text-2xl font-semibold mb-4">All Posts</h2>
+              <h2 className="text-base font-semibold mb-4">All Posts</h2>
+              <hr className="mb-4" />
+
+              {loading && <p className="text-gray-500 text-sm">Loading posts...</p>}
               <ul className="list-disc list-inside mb-4 text-base">
                 {posts.map((post) => (
                   <li key={post.id} className="mb-2 flex justify-between items-center">
                     <span>
                       <span className="font-semibold">{post.title}</span>
-                      <span className="ml-2 text-gray-500 text-base">
+                      <span className="ml-2 text-gray-500 text-sm">
                         {post.ispublished
                           ? (post.publishedat && new Date(post.publishedat) > new Date()
                             ? "Scheduled"
@@ -542,12 +543,13 @@ setShowAIPanel(false);
                           : "Draft"}
                       </span>
                     </span>
+
                     <div className="flex gap-2">
                       <button
                         className="px-4 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-blue-400"
                         onClick={() => editPost(post)}
                       >
-                        Edit
+                        <SquarePen className="inline w-4 h-4" />
                       </button>
                       {!post.ispublished && (
                         <button
@@ -555,7 +557,7 @@ setShowAIPanel(false);
                           onClick={() => deletePost(post.id)}
                           disabled={loading}
                         >
-                          Delete
+                          <Delete className="inline w-4 h-4" />
                         </button>
                       )}
                     </div>
@@ -568,8 +570,6 @@ setShowAIPanel(false);
         )}
 
         {editing && (
-
-          
           <form
             className="bg-white p-3 rounded-lg w-full mx-auto"
             onSubmit={(e) => {
@@ -641,234 +641,224 @@ setShowAIPanel(false);
        
             </div>
 
-            <div className="mb-8">
-  <button
-    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg hover:from-blue-600 hover:to-green-600 transition font-semibold"
-    onClick={loadUserData}
-    disabled={aiLoading}
-  >
-    <Sparkles className="w-5 h-5" />
-    {aiLoading ? "Loading..." : "AI Blog Writer: Use My Real Data"}
-  </button>
-  {aiError && <div className="text-red-600 mt-2">{aiError}</div>}
-</div>
+          {/* ai blog content */}
+          <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="font-bold text-lg mb-2">Supercharge Your Blog Post with AI</h3>
 
-{showAIPanel && (
-  <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-    <h3 className="font-bold text-lg mb-2">Supercharge Your Blog Post with AI</h3>
-    <p className="mb-2 text-gray-700">
-      We'll use your real transaction data (converted to USD) and any extra info you provide to generate a unique, high-quality blog post that passes Google's helpful content test.
-    </p>
-    <textarea
-      className="w-full border rounded p-2 mb-2"
-      rows={3}
-      placeholder="Add extra info, tips, or external insights to include (optional)..."
-      value={extraInputs}
-      onChange={(e) => setExtraInputs(e.target.value)}
-    />
-    <button
-      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-semibold"
-      onClick={handleAIGenerate}
-      disabled={aiLoading}
-    >
-      {aiLoading ? <Loader2 className="animate-spin w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
-      Generate Blog Post with AI
-    </button>
-  </div>
-)}
-            <div className=" w-full h-full text-base">
-              <div className=" flex items-center gap-2 mb-2">
-               
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  style={{ display: "none" }}
-                  onChange={uploadEditorImage}
-                />
-              </div>
-              <div className="  w-full min-h-[300px] ">
-                {editor && (
-                  < main className="w-full text-base bg-white rounded-lg border p-4">
-     
+            <p className="mb-2 text-gray-700">
+              We'll generate a unique, high-quality blog post that passes Google's helpful content test.
+            </p>
+            <textarea
+              className="w-full h-full border rounded p-2 mb-2"
+              rows={3}
+              placeholder="Add extra info, tips, or external insights to include (optional)..."
+              value={extraInputs}
+              onChange={(e) => setExtraInputs(e.target.value)}
+            />
+            <button
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-semibold"
+              onClick={handleAIGenerate}
+              disabled={aiLoading}
+            >
+              {aiLoading ? <Loader2 className="animate-spin w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
+              Generate
+            </button>
+          </div>
 
-<BubbleMenu
-  className="w-full bg-white p-2 rounded border shadow flex flex-wrap gap-2"
-  editor={editor}
-  tippyOptions={{ duration: 30 }}
->
-  <div className="flex flex-wrap gap-2 text-base bg-white rounded px-2 py-1">
-    <button
-      type="button"
-      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('bold') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
-      title="Bold"
-      onClick={() => editor.chain().focus().toggleBold().run()}
-    >
-      <Bold size={18} />
-    </button>
-    <button
-      type="button"
-      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('italic') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
-      title="Italic"
-      onClick={() => editor.chain().focus().toggleItalic().run()}
-    >
-      <Italic size={18} />
-    </button>
-    <button
-      type="button"
-      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('underline') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
-      title="Underline"
-      onClick={() => editor.chain().focus().toggleUnderline().run()}
-    >
-      <Underline size={18} />
-    </button>
-    <button
-      type="button"
-      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('strike') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
-      title="Strikethrough"
-      onClick={() => editor.chain().focus().toggleStrike().run()}
-    >
-      <Strikethrough size={18} />
-    </button>
-    <button
-      type="button"
-      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('heading', { level: 1 }) ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
-      title="Heading 1"
-      onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-    >
-      <Heading1 size={18} />
-    </button>
-    <button
-      type="button"
-      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('heading', { level: 2 }) ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
-      title="Heading 2"
-      onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-    >
-      <Heading2 size={18} />
-    </button>
-    <button
-      type="button"
-      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('heading', { level: 3 }) ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
-      title="Heading 3"
-      onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-    >
-      <Heading3 size={18} />
-    </button>
-    <button
-      type="button"
-      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('bulletList') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
-      title="Bullet List"
-      onClick={() => editor.chain().focus().toggleBulletList().run()}
-    >
-      <List size={18} />
-    </button>
-    <button
-      type="button"
-      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('orderedList') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
-      title="Ordered List"
-      onClick={() => editor.chain().focus().toggleOrderedList().run()}
-    >
-      <ListOrdered size={18} />
-    </button>
-    <button
-      type="button"
-      className="p-2 rounded hover:bg-blue-50 transition text-gray-700"
-      title="Add Link"
-      onClick={() => {
-        const url = window.prompt('Enter URL');
-        if (url) {
-          editor.chain().focus().setLink({ href: url }).run();
-        }
-      }}
-    >
-      <Link size={18} />
-    </button>
-    <button
-      type="button"
-      className="p-2 rounded hover:bg-blue-50 transition text-gray-700"
-      title="Insert Image"
-      onClick={() => fileInputRef.current && fileInputRef.current.click()}
-    >
-      <ImageIcon size={18} />
-    </button>
-  </div>
-</BubbleMenu>
-
-<div className="text-base w-full  bg-white focus:outline-none transition-all text-gray-800 font-sans leading-relaxed placeholder:text-gray-400">
-  <EditorContent editor={editor} />
-  {/* Show generated AI content preview below the editor if present */}
-  {
-    <section className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-      <h3 className="font-bold text-lg mb-4 text-blue-700">AI-Generated Blog Content Preview</h3>
-      <article
-        className="prose max-w-none prose-headings:text-blue-800 prose-h2:mt-8 prose-h3:mt-6 prose-p:mb-4 prose-ul:pl-6 prose-ol:pl-6 prose-li:mb-2 prose-img:rounded"
-        // Convert markdown to HTML before rendering
-        dangerouslySetInnerHTML={{ __html: marked.parse(form.content) }}
-      />
-
-    </section>
-  }
-</div>
-
-                  </main>
-                )}
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="block font-semibold mb-1">Schedule Publish Date</label>
+          <div className=" w-full h-full text-base">
+            <div className=" flex items-center gap-2 mb-2">
+              
               <input
-                type="datetime-local"
-                name="publishedat"
-                value={form.publishedat?.slice(0, 16) || ""}
-                onChange={(e) => setForm(f => ({ ...f, publishedat: e.target.value }))}
-                className="w-full border px-2 py-2 rounded text-base"
-                disabled={form.ispublished}
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={uploadEditorImage}
               />
             </div>
+            <div className="  w-full h-full ">
+              {editor && (
+                < main className="w-full text-base bg-white rounded-lg border p-4">
+                  <BubbleMenu
+                  className="w-full bg-white p-2 rounded border shadow flex flex-wrap gap-2"
+                  editor={editor}
+                  tippyOptions={{ duration: 15 }}
+                  >
+                  <div className="flex flex-wrap gap-2 text-base bg-white rounded px-2 py-1">
+                    <button
+                      type="button"
+                      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('bold') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+                      title="Bold"
+                      onClick={() => editor.chain().focus().toggleBold().run()}
+                    >
+                      <Bold size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('italic') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+                      title="Italic"
+                      onClick={() => editor.chain().focus().toggleItalic().run()}
+                    >
+                      <Italic size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('underline') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+                      title="Underline"
+                      onClick={() => editor.chain().focus().toggleUnderline().run()}
+                    >
+                      <Underline size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('strike') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+                      title="Strikethrough"
+                      onClick={() => editor.chain().focus().toggleStrike().run()}
+                    >
+                      <Strikethrough size={18} />
+                    </button>
 
-<div className="flex gap-2">
-  <button
-    type="submit"
-    className="flex items-center gap-2 px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400"
-    disabled={loading}
-  >
-    <Save size={18} />
-    Save Draft
-  </button>
-  <button
-    type="button"
-    className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"
-    onClick={() => savePost(true)}
-    disabled={loading}
-  >
-    <Upload size={18} />
-    {form.ispublished ? "Update & Publish" : "Publish"}
-  </button>
-  <button
-    type="button"
-    className="flex items-center gap-2 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-blue-400"
-    onClick={cancelEdit}
-    disabled={loading}
-  >
-    <XCircle size={18} />
-    Cancel
-  </button>
-  {/* Delete button for drafts only */}
-  {!form.ispublished && editing !== "new" && (
-    <button
-      type="button"
-      className="flex items-center gap-2 px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600"
-      onClick={async () => {
-        await deletePost(form.id);
-        cancelEdit();
-      }}
-      disabled={loading}
-    >
-      <Trash2 size={18} />
-      Delete Draft
-    </button>
-  )}
-</div>
+                    <button
+                      type="button"
+                      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('heading', { level: 1 }) ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+                      title="Heading 1"
+                      onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+                    >
+                      <Heading1 size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('heading', { level: 2 }) ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+                      title="Heading 2"
+                      onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                    >
+                      <Heading2 size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('heading', { level: 3 }) ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+                      title="Heading 3"
+                      onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                    >
+                      <Heading3 size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('bulletList') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+                      title="Bullet List"
+                      onClick={() => editor.chain().focus().toggleBulletList().run()}
+                    >
+                      <List size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`p-2 rounded hover:bg-blue-50 transition ${editor.isActive('orderedList') ? 'text-blue-600 bg-blue-100' : 'text-gray-700'}`}
+                      title="Ordered List"
+                      onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                    >
+                      <ListOrdered size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      className="p-2 rounded hover:bg-blue-50 transition text-gray-700"
+                      title="Add Link"
+                      onClick={() => {
+                        const url = window.prompt('Enter URL');
+                        if (url) {
+                          editor.chain().focus().setLink({ href: url }).run();
+                        }
+                      }}
+                    >
+                      <Link size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      className="p-2 rounded hover:bg-blue-50 transition text-gray-700"
+                      title="Insert Image"
+                      onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                    >
+                      <ImageIcon size={18} />
+                    </button>
+                  </div>
+                  </BubbleMenu>
+
+                  <div className="text-base w-full  bg-white focus:outline-none transition-all text-gray-800 font-sans leading-relaxed placeholder:text-gray-400">
+                      <EditorContent editor={editor} />
+                  {/* Show generated AI content preview below the editor if present */}
+                  {
+                    <section className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <h3 className="font-bold text-lg mb-4 text-blue-700">AI-Generated Blog Content Preview</h3>
+                      <article
+                        className="prose max-w-none prose-headings:text-blue-800 prose-h2:mt-8 prose-h3:mt-6 prose-p:mb-4 prose-ul:pl-6 prose-ol:pl-6 prose-li:mb-2 prose-img:rounded"
+                        // Convert markdown to HTML before rendering
+                        dangerouslySetInnerHTML={{ __html: form.content }}
+                      />
+
+                    </section>
+                  }
+                  </div>
+
+                </main>
+              )}
+            </div>
+            
+          </div>
+
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Schedule</label>
+            <input
+              type="datetime-local"
+              name="publishedat"
+              value={form.publishedat?.slice(0, 16) || ""}
+              onChange={(e) => setForm(f => ({ ...f, publishedat: e.target.value }))}
+              className="w-full border px-2 py-2 rounded text-base"
+              disabled={form.ispublished}
+            />
+          </div>
+
+          <div className="flex gap-2 bottom-0 left-0 right-0 bg-white p-4 border-t">
+            <button
+              type="submit"
+              className="flex items-center text-sm font-bold  gap-2 px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400"
+              disabled={loading}
+            >
+              <Save size={18} />
+              Save Draft
+            </button>
+            <button
+              type="button"
+              className="flex items-center gap-2 px-6 text-sm font-bold   py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"
+              onClick={() => savePost(true)}
+              disabled={loading}
+            >
+              <Upload size={18} />
+              {form.ispublished ? "Update & Publish" : "Publish"}
+            </button>
+            <button
+              type="button"
+              className="flex items-center gap-2 text-sm font-bold  px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-blue-400"
+              onClick={cancelEdit}
+              disabled={loading}
+            >
+              <XCircle size={18} />
+              Cancel
+            </button>
+            {/* Delete button for drafts only */}
+            {!form.ispublished && editing !== "new" && (
+              <button
+                type="button"
+                className="flex items-center gap-2 px-6 py-3 bg-red-500 text-sm font-bold text-white rounded-lg hover:bg-red-600"
+                onClick={async () => {
+                  await deletePost(form.id);
+                  cancelEdit();
+                }}
+                disabled={loading}
+              >
+                <Trash2 size={18} />
+                Delete Draft
+              </button>
+            )}
+          </div>
           </form>
         )}
       </main>
