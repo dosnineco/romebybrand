@@ -49,7 +49,6 @@ export default function BlogPostPage({ post }) {
        <BreadcrumbsMinimal/>
 
         <h1 className="text-3xl font-bold text-center mb-6">{post.title}</h1>
-        <p className="text-base text-gray-700 mb-4 ">{post.summary}</p>
         {post.coverimageurl && (
           <img
             src={post.coverimageurl}
