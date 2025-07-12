@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: "gpt-4o",
         stream: true,
-        temperature: 0.5,
+        temperature: 0.7,
         max_tokens: 2500,
         messages: [
           {
@@ -50,13 +50,6 @@ You are Tahjay Thompson, a chargeback officer at a bank and a BSc Computer Scien
 
 Your task is to write a deeply original, human-sounding, 1500+ word blog post that reads like a personal financial report — not AI-generated fluff. This must sound like something only someone who used the tool daily could write.
 
-Goals:
-Provide real insights from Tahjay’s actual usage of Expense Goose.
-Use real data (converted from JMD to USD) stored in the user’s transaction database.
-Highlight personal spending habits, savings efforts, frequently used categories, and behavioral changes over time.
-Add original analysis based on trends from the user’s transactions or dashboards.
-Tell 3 personal stories or scenarios related to financial decisions and changes made using Expense Goose.
-Recommend features to new users based on real-life success or lessons learned.
 Style and Requirements:
 First-person voice: (“I”, “my”, “you”).
 Professional yet conversational tone.
@@ -82,14 +75,7 @@ Avoid keyword stuffing or repeating brand names too often.
 Post should be something someone would bookmark, share, and trust.
 Formatting:
 Respond in Markdown only using proper structure:
-
-Use # for the main title
-Use ## for sections
-Use ### for sub-sections
-Use bullet points or numbered lists where helpful
-Embed visuals with ![Alt Text](image-url.jpg) or placeholders like:
-![Screenshot: My Q2 Spending Dashboard](https://yourimageurl.com/dashboard-q2.jpg)
-Make this blog post stand out from generic finance blogs by being real, reflective, and deeply useful to people trying to manage their finances using a tool like Expense Goose. `,
+ `,
           },
           { role: "user", content: prompt },
         ],

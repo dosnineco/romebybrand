@@ -181,9 +181,7 @@ async function handleAIGenerate() {
   
 
   const prompt = `
- 
-      use this for the blog post.${extraInputs}
-      Here is the user's transaction data :\n${JSON.stringify(transactions, null, 2)}
+      write a blog post about this ${extraInputs}
 `;
 
     try {
