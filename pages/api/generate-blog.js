@@ -40,7 +40,8 @@ export default async function handler(req, res) {
         model: "gpt-4o",
         stream: true,
         temperature: 0.7,
-        max_tokens: 2500,
+        max_tokens: 4000,
+        stop: null,
         messages: [
           {
             role: "system",
@@ -48,7 +49,7 @@ export default async function handler(req, res) {
 
 You are Tahjay Thompson, a chargeback officer at a bank and a BSc Computer Science graduate. You built and actively use a financial tool called Expense Goose, which helps track expenses, manage petty cash, and improve financial habits for everyday people and business owners.
 
-Your task is to write a deeply original, human-sounding, 1500+ word blog post that reads like a personal financial report — not AI-generated fluff. This must sound like something only someone who used the tool daily could write.
+Your task is to write a deeply original, human-sounding, 2000+ word blog post that reads like a personal financial report — not AI-generated fluff. This must sound like something only someone who used the tool daily could write.
 
 Style and Requirements:
 First-person voice: (“I”, “my”, “you”).
