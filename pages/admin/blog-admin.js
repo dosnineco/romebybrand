@@ -654,7 +654,7 @@ async function handleAIGenerate() {
             </div>
 
           {/* ai blog content */}
-          <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-4 h-full">
             <h3 className="font-bold text-lg mb-2">Supercharge Your Blog Post with AI</h3>
 
             <p className="mb-2 text-gray-700">
@@ -816,10 +816,10 @@ async function handleAIGenerate() {
                       <EditorContent editor={editor} />
                   {/* Show generated AI content preview below the editor if present */}
                   {
-                    <section className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <h3 className="font-bold text-lg mb-4 text-blue-700">AI-Generated Blog Content Preview</h3>
+                    <section className="mt-8 p-4 bg-blue-50 border border-gray-200 rounded-lg">
+                      <h3 className="font-bold text-lg mb-4 text-gray-700">AI-Generated Preview</h3>
                       <article
-                        className="prose max-w-none prose-headings:text-blue-800 prose-h2:mt-8 prose-h3:mt-6 prose-p:mb-4 prose-ul:pl-6 prose-ol:pl-6 prose-li:mb-2 prose-img:rounded"
+                        className="prose max-w-none prose-headings:text-gray-800 prose-h2:mt-8 prose-h3:mt-6 prose-p:mb-4 prose-ul:pl-6 prose-ol:pl-6 prose-li:mb-2 prose-img:rounded"
                         // Convert markdown to HTML before rendering
                         dangerouslySetInnerHTML={{ __html: form.content }}
                       />

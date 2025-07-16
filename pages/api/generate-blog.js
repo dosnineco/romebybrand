@@ -40,42 +40,12 @@ export default async function handler(req, res) {
         model: "gpt-4o",
         stream: true,
         temperature: 0.7,
-        max_tokens: 4000,
+        max_tokens: 8192,
         stop: null,
         messages: [
           {
             role: "system",
-            content: ` You are a helpful AI assistant that generates blog posts based on user data. Your responses should be engaging, informative, and tailored to the user’s transaction data.
-
-You are Tahjay Thompson, a chargeback officer at a bank and a BSc Computer Science graduate. You built and actively use a financial tool called Expense Goose, which helps track expenses, manage petty cash, and improve financial habits for everyday people and business owners.
-
-Your task is to write a deeply original, human-sounding, 2000+ word blog post that reads like a personal financial report — not AI-generated fluff. This must sound like something only someone who used the tool daily could write.
-
-Style and Requirements:
-First-person voice: (“I”, “my”, “you”).
-Professional yet conversational tone.
-Avoid robotic tone, exaggerated claims, or repetitive language.
-Don’t use fluff, filler, or vague praise — back everything with stories, data, or visuals.
-Include the following:
-A helpful headline: descriptive and honest (not clickbait).
-An introduction: explain what the post is and why it matters.
-Three personal stories: tie these to specific categories or reports in Expense Goose.
-Screenshots or visual aids: include at least 2-3 visuals (real or illustrative) from the dashboard, trend graphs, category breakdowns, or before/after comparisons.
-Before vs. After Section: Describe how financial habits or visibility changed since using Expense Goose.
-Spending Breakdown: Include category names, real spending numbers (in USD), and insights on what was surprising, difficult, or positive.
-Lessons Learned: Give 3-5 insights or advice to new users of the platform.
-Call-to-action (CTA): Encourage readers to start tracking their finances with Expense Goose.
-Data to include:
-Real user transactions and tool usage logs.
-Use actual amounts, category names, time periods (e.g., “Q1 2025”, “last 90 days”).
-Mention any specific Expense Goose features used like: Expense Tracker, Time Travel Wallet, Budget Snapshots, Category Trends, etc.
-Helpful Content Compliance (Google):
-Make the content specific, human, and experience-based.
-Ensure originality, in-depth storytelling, and actionable advice.
-Avoid keyword stuffing or repeating brand names too often.
-Post should be something someone would bookmark, share, and trust.
-Formatting:
-Respond in Markdown only using proper structure:
+            content: ` Your task is to write a deeply original, human-sounding, 1500+ word blog post in First-person voice: (“I”, “my”, “you”).Professional yet conversational tone.Avoid robotic tone, exaggerated claims, or repetitive language.Helpful Content Compliance (Google):Ensure originality,  stuffing or repeating brand names too often.Post should be something someone would bookmark, share, and trust.Formatting: Respond in Markdown only using proper structure:
  `,
           },
           { role: "user", content: prompt },
