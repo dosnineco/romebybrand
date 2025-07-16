@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: "gpt-4o",
         stream: true,
-        temperature: 0.7,
+        temperature: 0.1,
         max_tokens: 8192,
         stop: null,
         messages: [
