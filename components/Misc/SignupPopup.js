@@ -9,7 +9,10 @@ const ForceEmailSignup = () => {
   useEffect(() => {
     const alreadySignedUp = localStorage.getItem('expenseGooseSignedUp');
     if (!alreadySignedUp) {
-      setShowModal(true);
+      const timer = setTimeout(() => {
+        setShowModal(true);
+      }, 30000); // 30 seconds delay
+      return () => clearTimeout(timer);
     }
   }, []);
 
