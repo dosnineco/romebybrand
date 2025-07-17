@@ -2,7 +2,7 @@ import { supabase } from "../../lib/supabase";
 import Head from "next/head";
 import RichTextRenderer from "../../components/blog_components/RichTextRenderer";
 import BreadcrumbsMinimal from '../../components/BreadCrumbs/BreadcrumbsWithIcons';
-
+import SignupPopup from "../../components/Misc/SignupPopup";
 export async function getStaticPaths() {
   // Fetch all published posts' slugs
   const { data } = await supabase
@@ -50,15 +50,15 @@ export default function BlogPostPage({ post }) {
 
   <h1 className="sm:text-6xl text-3xl font-bold text-center mb-6">{post.title}</h1>
 
-<div class="mt-2 mb-4 w-full flex items-center space-x-3  text-gray-500 p-2 ">
-  
-  <div class="text-sm">
-    <p>
-      Written by 
-      <a href="https://www.linkedin.com/in/tahjay-thompson/" class="underline ml-1 text-sm text-gray-500">Tahjay Thompson</a> 
-    </p>
-  </div>
-</div>
+        <div class="mt-2 mb-4 w-full flex items-center space-x-3  text-gray-500 p-2 ">
+          
+          <div class="text-sm">
+            <p>
+              Written by 
+              <a href="https://www.linkedin.com/in/tahjay-thompson/" class="underline ml-1 text-sm text-gray-500">Tahjay Thompson</a> 
+            </p>
+          </div>
+        </div>
 
         {post.coverimageurl && (
           <img
@@ -68,6 +68,7 @@ export default function BlogPostPage({ post }) {
           />
         )}
         <RichTextRenderer html={post.content} />
+       <SignupPopup/>
 
       </main>
     </>
