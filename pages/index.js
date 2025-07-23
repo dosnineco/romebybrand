@@ -364,19 +364,31 @@ export default function ExpenseTrackerLanding() {
         </div>
       </section>
         
-        {/* Pricing & Payment */}
-        <section className="w-full  mx-auto px-4 py-12 text-center bg-blue-50  mb-12 border border-blue-100">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">
-            Unlock Premium Features for Just $15 One-Time
-          </h2>
-          <p className="text-lg text-gray-700 mb-6">
-            Upgrade to our premium plan and gain access to advanced features, priority support, and exclusive updates.
-          </p>
-          <Link href="/pricing" className="inline-block bg-gray-600 text-white hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition">
-            Upgrade Now
-          </Link>
+    {/* Pricing & Payment */}
+<section className="w-full mx-auto px-6 py-16 text-center bg-gradient-to-br from-green-600 to-green-100 border border-blue-100  mb-12">
+  <h2 className="text-4xl font-extrabold text-white mb-4 leading-tight">
+    Get Lifetime Access for Just <span className="text-blue-600">$15</span>
 
-        </section>
+
+
+  </h2>
+  
+  <p className="text-lg text-white mb-6 max-w-2xl mx-auto">
+    One-time payment. No subscriptions. Instantly unlock advanced features, priority support, and exclusive tools to manage your money better.
+  </p>
+  <div className="flex flex-col sm:flex-row justify-center gap-4">
+    <Link
+      href="/pricing"
+      className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md"
+    >
+      Get Lifetime Access
+    </Link>
+    <span className="text-sm text-gray-900 pt-2">
+      💡 Risk-free: Pay once, use forever.
+    </span>
+  </div>
+</section>
+
 
         {/* FAQ Section */}
         <Faq />
