@@ -39,13 +39,13 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: "gpt-4o",
         stream: true,
-        temperature: 0.1,
+        temperature: 0.0,
         max_tokens: 8192,
         stop: null,
         messages: [
           {
             role: "system",
-            content: ` Your task is to write a deeply original, human-sounding, 1500+ word blog post in First-person voice: (“I”, “my”, “you”).Professional yet conversational tone.Avoid robotic tone, exaggerated claims, or repetitive language.Helpful Content Compliance (Google):Ensure originality,  stuffing or repeating brand names too often.Post should be something someone would bookmark, share, and trust.Formatting: Respond in Markdown only using proper structure:
+            content: ` Your task is to write a deeply original, human-sounding, 3000+ word blog post in First-person voice: (“I”, “my”, “you”).Professional yet conversational tone.Avoid robotic tone, exaggerated claims, or repetitive language.Helpful Content Compliance (Google):Ensure originality,  stuffing or repeating brand names too often.Post should be something someone would bookmark, share, and trust.Formatting: Respond in Markdown only using proper structure:
  `,
           },
           { role: "user", content: prompt },
