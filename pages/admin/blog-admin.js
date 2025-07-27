@@ -304,7 +304,7 @@ async function handleAIGenerate() {
     const { data, error } = await supabase
       .from("blog_posts")
       .select("*")
-      .order("createdat", { ascending: false });
+      .order("updatedat", { ascending: false });
     if (!error) setPosts(data);
     setLoading(false);
   }
@@ -553,6 +553,11 @@ async function handleAIGenerate() {
                             ? "Scheduled"
                             : "Published")
                           : "Draft"}
+                      </span>
+                          <span className="ml-2 text-gray-500 text-sm">
+                        {post.updatedat
+                          ? `Updated: ${new Date(post.updatedat).toLocaleDateString()}`
+                          : ``}
                       </span>
                     </span>
 
