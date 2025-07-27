@@ -1,44 +1,40 @@
-// pages/api/index-urls.js
-import { google } from 'googleapis';
-import path from 'path';
-import { promises as fs } from 'fs';
-
+// /pages/api/index-urls.js
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
+  const { urls } = req.body;
+  const apiKey = process.env.BING_API_KEY;
+
+  if (!Array.isArray(urls)) {
+    return res.status(400).json({ error: 'Invalid URL list' });
+  }
+
+  const endpoint = `https://ssl.bing.com/webmaster/api.svc/json/SubmitUrlbatch?apikey=${apiKey}`;
+
   try {
-    const { urls } = req.body;
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        siteUrl: 'https://www.expensegoose.com', // change to your domain
+        urlList: urls,
+      }),
+    });
 
-    const keyPath = path.join(process.cwd(), 'indexing-service-account.json');
-    const keyFile = await fs.readFile(keyPath, 'utf8');
-    const key = JSON.parse(keyFile);
+    const result = await response.json();
 
-    const auth = new google.auth.JWT(
-      key.client_email,
-      null,
-      key.private_key,
-      ['https://www.googleapis.com/auth/indexing']
-    );
+    // Build custom result for UI
+    const results = urls.map(url => ({
+      url,
+      status: result?.ErrorCode === 0 ? 'Submitted' : result?.Message || 'Failed',
+    }));
 
-    const indexing = google.indexing({ version: 'v3', auth });
-
-    const results = [];
-
-    for (const url of urls) {
-      const res = await indexing.urlNotifications.publish({
-        requestBody: {
-          url: url,
-          type: 'URL_UPDATED',
-        },
-      });
-      results.push({ url, status: 'Submitted' });
-    }
-
-    res.status(200).json({ message: 'All URLs submitted!', results });
+    return res.status(200).json({ success: true, results });
   } catch (error) {
-    console.error('Indexing error:', error);
-    res.status(500).json({ message: 'Error submitting URLs', error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 }
