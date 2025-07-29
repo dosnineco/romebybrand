@@ -1,40 +1,35 @@
-// /pages/api/index-urls.js
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
+// /pages/api/index-urls.ts or .js
 
+export default async function handler(req, res) {
   const { urls } = req.body;
-  const apiKey = process.env.BING_API_KEY;
+
+  const INDEXNOW_KEY = 'd0b0dbe1202c44cb8bc5a0cb8ff4d812';
+  const KEY_LOCATION = `https://www.expensegoose.com/${INDEXNOW_KEY}.txt`;
 
   if (!Array.isArray(urls)) {
-    return res.status(400).json({ error: 'Invalid URL list' });
+    return res.status(400).json({ error: 'URLs should be an array' });
   }
 
-  const endpoint = `https://ssl.bing.com/webmaster/api.svc/json/SubmitUrlbatch?apikey=${apiKey}`;
+  const indexNowPayload = {
+    host: 'expensegoose.com',
+    key: INDEXNOW_KEY,
+    keyLocation: KEY_LOCATION,
+    urlList: urls,
+  };
 
-  try {
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        siteUrl: 'https://www.expensegoose.com', // change to your domain
-        urlList: urls,
-      }),
-    });
+  const indexNowResponse = await fetch('https://api.indexnow.org/indexnow', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(indexNowPayload),
+  });
 
-    const result = await response.json();
+  const resultText = await indexNowResponse.text(); // IndexNow may not return JSON
+  const indexNowSuccess = indexNowResponse.status === 200;
 
-    // Build custom result for UI
-    const results = urls.map(url => ({
-      url,
-      status: result?.ErrorCode === 0 ? 'Submitted' : result?.Message || 'Failed',
-    }));
+  const results = urls.map((url) => ({
+    url,
+    status: indexNowSuccess ? 'Submitted to IndexNow' : `Failed: ${resultText}`,
+  }));
 
-    return res.status(200).json({ success: true, results });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+  return res.status(200).json({ results });
 }

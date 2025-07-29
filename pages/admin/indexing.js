@@ -1,7 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+import {
+  LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer
+} from 'recharts';
 import { supabase } from '../../lib/supabase';
 import { useUser } from '@clerk/nextjs';
 
@@ -34,13 +35,14 @@ export default function IndexingPage() {
     setLoading(true);
     setResults(null);
 
-    const urlArray = urls.split('\n').map(url => url.trim()).filter(Boolean);
+    const urlArray = urls
+      .split('\n')
+      .map((url) => url.trim())
+      .filter(Boolean);
 
     const res = await fetch('/api/index-urls', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ urls: urlArray }),
     });
 
@@ -49,15 +51,18 @@ export default function IndexingPage() {
     setLoading(false);
   };
 
-  const graphData = results?.results?.map((r, index) => ({
-    name: `#${index + 1}`,
-    status: r.status === 'Submitted' ? 1 : 0,
-  })) || [];
+  const graphData =
+    results?.results?.map((r, index) => ({
+      name: `#${index + 1}`,
+      status: r.status === 'Submitted' ? 1 : 0,
+    })) || [];
 
   if (!isAdmin) {
     return (
       <div className="max-w-screen-md mx-auto px-4 py-8">
-        <p className="text-center text-gray-700 mt-10">You do not have access to this page.</p>
+        <p className="text-center text-gray-700 mt-10">
+          You do not have access to this page.
+        </p>
       </div>
     );
   }
@@ -66,13 +71,21 @@ export default function IndexingPage() {
     <>
       <Head>
         <title>Bulk Google Indexing Tool - Expense Goose</title>
-        <meta name="description" content="Submit multiple URLs to Google Indexing API easily. Boost your SEO and speed up indexing times with our bulk indexing tool." />
-        <meta name="keywords" content="Google Indexing, Bulk Submit URLs, SEO Tools, Index API, URL Indexing" />
+        <meta
+          name="description"
+          content="Submit multiple URLs to Google's Indexing API easily. Boost your SEO and speed up indexing times with our bulk indexing tool."
+        />
+        <meta
+          name="keywords"
+          content="Google Indexing, Bulk Submit URLs, SEO Tools, Index API, URL Indexing"
+        />
         <link rel="canonical" href="https://expensegoose.com/indexing" />
       </Head>
 
       <main className="max-w-screen-md mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-6">Google Bulk Indexing Tool</h1>
+        <h1 className="text-3xl font-bold text-center mb-6">
+          Google Bulk Indexing Tool
+        </h1>
         <p className="text-base text-gray-700 mb-4 text-center">
           Paste your URLs below and submit them to Google's Indexing API to speed up your page indexing.
         </p>
@@ -101,11 +114,12 @@ export default function IndexingPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">Results</h2>
             <ul className="list-disc list-inside mb-6 text-base text-gray-700">
-              {Array.isArray(results?.results) && results.results.map((r, i) => (
-                <li key={i}>
-                  {r.url}: {r.status}
-                </li>
-              ))}
+              {Array.isArray(results?.results) &&
+                results.results.map((r, i) => (
+                  <li key={i}>
+                    {r.url}: {r.status}
+                  </li>
+                ))}
             </ul>
 
             <h3 className="text-xl font-semibold mb-4">Indexing Graph</h3>
@@ -116,14 +130,17 @@ export default function IndexingPage() {
                   <XAxis dataKey="name" />
                   <YAxis allowDecimals={false} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="status" stroke="#3b82f6" strokeWidth={2} />
+                  <Line
+                    type="monotone"
+                    dataKey="status"
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </section>
         )}
-
-   
       </main>
     </>
   );
