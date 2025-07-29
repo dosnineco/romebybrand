@@ -30,6 +30,13 @@ class MyDocument extends Document {
           />
                
    <meta name="p:domain_verify" content="f13494dbdb591fc3cc3233e6f660a5eb"/>
+
+   {/* adsense */}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2046215299064356"
+          crossOrigin="anonymous"
+        ></script>
     
         </Head>     
         <body className="snap-y snap-mandatory h-screen overflow-y-scroll Default ">
