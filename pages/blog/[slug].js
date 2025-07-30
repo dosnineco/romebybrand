@@ -3,7 +3,7 @@ import Head from "next/head";
 import RichTextRenderer from "../../components/blog_components/RichTextRenderer";
 import BreadcrumbsMinimal from '../../components/BreadCrumbs/BreadcrumbsWithIcons';
 import SignupPopup from "../../components/Misc/SignupPopup";
-import SignUpBanner from "../../../components/Misc/SignUpBanner";
+import SignUpBanner from "../../components/Misc/SignUpBanner";
 
 export async function getStaticPaths() {
   // Fetch all published posts' slugs
