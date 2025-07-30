@@ -79,7 +79,7 @@ export default function IndexingPage() {
           name="keywords"
           content="Google Indexing, Bulk Submit URLs, SEO Tools, Index API, URL Indexing"
         />
-        <link rel="canonical" href="https://expensegoose.com/indexing" />
+        <link rel="canonical" href="https://www.expensegoose.com/admin/indexing" />
       </Head>
 
       <main className="max-w-screen-md mx-auto px-4 py-8">
@@ -87,7 +87,7 @@ export default function IndexingPage() {
           Google Bulk Indexing Tool
         </h1>
         <p className="text-base text-gray-700 mb-4 text-center">
-          Paste your URLs below and submit them to Google's Indexing API to speed up your page indexing.
+          Paste your URLs below and submit to speed up your page indexing.
         </p>
 
         <section className="mb-8">
@@ -122,23 +122,7 @@ export default function IndexingPage() {
                 ))}
             </ul>
 
-            <h3 className="text-xl font-semibold mb-4">Indexing Graph</h3>
-            <div className="h-64 bg-white rounded-lg p-4 shadow">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={graphData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="status"
-                    stroke="#3b82f6"
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+
           </section>
         )}
       </main>

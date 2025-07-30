@@ -37,6 +37,7 @@ class MyDocument extends Document {
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2046215299064356"
           crossOrigin="anonymous"
         ></script>
+        <meta name="yandex-verification" content="ff59d7507fd2396e" />
     
         </Head>     
         <body className="snap-y snap-mandatory h-screen overflow-y-scroll Default ">

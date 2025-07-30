@@ -3,6 +3,8 @@ import Head from "next/head";
 import RichTextRenderer from "../../components/blog_components/RichTextRenderer";
 import BreadcrumbsMinimal from '../../components/BreadCrumbs/BreadcrumbsWithIcons';
 import SignupPopup from "../../components/Misc/SignupPopup";
+import SignUpBanner from "../../../components/Misc/SignUpBanner";
+
 export async function getStaticPaths() {
   // Fetch all published posts' slugs
   const { data } = await supabase
@@ -67,6 +69,7 @@ export default function BlogPostPage({ post }) {
             className="w-full max-h-96 object-cover rounded mb-6"
           />
         )}
+        <SignUpBanner />
         <RichTextRenderer html={post.content} />
        <SignupPopup/>
 
