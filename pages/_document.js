@@ -14,7 +14,7 @@ class MyDocument extends Document {
           <meta name="theme-color" content="#ffffff"/>
           <script
             async
-            src={`https://www.googletagmanager.com/gtag/js?id='G-9PZEXD5SEW'`}
+            src={`https://www.googletagmanager.com/gtag/js?id=G-9PZEXD5SEW`}
           />           
           <script
             dangerouslySetInnerHTML={{
@@ -39,6 +39,8 @@ class MyDocument extends Document {
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2046215299064356"
           crossOrigin="anonymous"
         ></script>
+        <meta name="google-adsense-account" content="ca-pub-2046215299064356" />
+
     
         </Head>     
         <body className="snap-y snap-mandatory h-screen overflow-y-scroll Default ">
