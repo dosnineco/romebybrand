@@ -41,7 +41,7 @@ class MyDocument extends Document {
         ></script>
         <meta name="google-adsense-account" content="ca-pub-2046215299064356" />
 
-    
+
         </Head>     
         <body className="snap-y snap-mandatory h-screen overflow-y-scroll Default ">
           
