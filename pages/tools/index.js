@@ -17,7 +17,7 @@ import {
 
 import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { ArrowRight, PenTool as Tool, Zap, Users, BookOpen, Car } from "lucide-react";
@@ -275,42 +275,7 @@ const graphOptions = {
     <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-xl  p-6 md:p-8">
-          {/* Header */}
-          <div className="mb-8 w-full grid grid-cols-2 items-center justify-center gap-4">
-            <p className="text-inherit font-semibold text-xl mb-2">
-              Dashboard
-            </p>
-            
-
-          {!loading && (
-            <div className="flex items-center justify-center">
-              {isSubscribed ? (
-                <div className="flex items-center justify-center px-4 py-2">
-                  <Award className="h-6 w-6 text-yellow-500 mr-2" />
-                  <span className="text-yellow-500 font-bold"> Premium</span>
-                </div>
-              ) : (
-                <a href="/checkout" className="flex items-center justify-center px-4 py-2">
-                  <span className=" text-blue-500 font-bold font-base hover:underline">{user.firstName} Get Premium!</span>
-                </a>
-              )}
-            </div>
-          )}
-          </div>
-
-          {/* Search */}
-          <div className="relative mb-8">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-inherit" />
-            <input
-              type="text"
-              placeholder="Search tools..."
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Free Tools</h1>
 
         {/* Tools Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">

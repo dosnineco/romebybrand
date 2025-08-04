@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Head from "next/head";
+import {  Trash2, Save} from 'lucide-react';
+
 import {
   LineChart,
   Line,
@@ -335,7 +337,7 @@ export default function GroceryBudgetCalculator() {
         <SignUpBanner />
 
         {/* Calculator Section */}
-        <section className="mb-10 bg-white rounded-lg shadow p-6">
+        <section className="mb-10 bg-white  p-6">
           <h2 className="text-2xl font-semibold mb-4">Personalize Your Grocery Budget</h2>
           <form
             onSubmit={(e) => {
@@ -359,7 +361,7 @@ export default function GroceryBudgetCalculator() {
                       max={120}
                       value={m.age}
                       onChange={(e) => updateMember(m.id, "age", Number(e.target.value))}
-                      className="w-20 p-2 border border-gray-300 rounded"
+                      className="input w-20 p-2 border border-gray-300 rounded"
                       aria-label="Age"
                       required
                     />
@@ -372,7 +374,7 @@ export default function GroceryBudgetCalculator() {
                       id={`gender-${m.id}`}
                       value={m.gender}
                       onChange={(e) => updateMember(m.id, "gender", e.target.value)}
-                      className="p-2 border border-gray-300 rounded"
+                      className="input p-2 border border-gray-300 rounded"
                       aria-label="Gender"
                     >
                       {GENDERS.map((g) => (
@@ -388,7 +390,7 @@ export default function GroceryBudgetCalculator() {
                       id={`dietary-${m.id}`}
                       value={m.dietary}
                       onChange={(e) => updateMember(m.id, "dietary", e.target.value)}
-                      className="p-2 border border-gray-300 rounded"
+                      className="input p-2 border border-gray-300 rounded"
                       aria-label="Dietary Needs"
                     >
                       {DIETARY_OPTIONS.map((d) => (
@@ -407,20 +409,21 @@ export default function GroceryBudgetCalculator() {
                       max={21}
                       value={m.mealsOut}
                       onChange={(e) => updateMember(m.id, "mealsOut", Number(e.target.value))}
-                      className="w-24 p-2 border border-gray-300 rounded"
+                      className="input w-24 p-2 border border-gray-300 rounded"
                       aria-label="Meals Eaten Out Per Week"
                       placeholder="Meals Out"
                     />
                   </div>
                   {members.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeMember(m.id)}
-                      className="text-red-500 hover:underline ml-2 mt-6"
-                      aria-label="Remove Member"
+              
+                  <button
+                    type="button"
+                    onClick={() => removeMember(m.id)}
+                    aria-label="Remove Member"
+                    className="text-red-600 hover:text-red-900"
                     >
-                      Remove
-                    </button>
+                      <Trash2 className="h-5 w-5" />
+                  </button>
                   )}
                 </div>
               ))}
@@ -495,60 +498,47 @@ export default function GroceryBudgetCalculator() {
           </form>
         </section>
 
-        {/* Results */}
-        {showResults && groceryBudget !== null && (
-          <>
-            <section className="mb-8">
-              <div className="p-4 bg-gray-100 rounded-lg">
-                <h2 className="text-2xl font-semibold mb-4">Results</h2>
-                <p className="text-base text-gray-700 mb-2">
-                  <span className="font-bold text-blue-600">Monthly Grocery Budget:</span>{" "}
-                  <span className="font-bold text-blue-600">${groceryBudget.toFixed(2)}</span>
-                </p>
-                <p className="text-base text-gray-700 mb-2">
-                  <span className="font-bold text-blue-600">Weekly Grocery Budget:</span>{" "}
-                  <span className="font-bold text-blue-600">${weeklyBudget?.toFixed(2)}</span>
-                </p>
-                <button
-                  onClick={handleExport}
-                  className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                  aria-label="Export Budget as CSV"
-                >
-                  Export Budget as CSV
-                </button>
-              </div>
-            </section>
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4">Monthly Budget Breakdown</h2>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={graphData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis tickFormatter={(value) => `$${value}`} />
-                  <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
-                  <Legend />
-                  <Bar dataKey="monthlyBudget" fill="#8884d8" name="Monthly Budget ($)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </section>
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">Weekly Budget Breakdown</h2>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={weeklyGraphData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis tickFormatter={(value) => `$${value}`} />
-                  <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
-                  <Legend />
-                  <Line type="monotone" dataKey="weeklyBudget" stroke="#82ca9d" name="Weekly Budget ($)" />
-                </LineChart>
-              </ResponsiveContainer>
-            </section>
-          </>
-        )}
+ {/* Results */}
+{showResults && groceryBudget !== null && (
+  <>
+    <section className="mb-8">
+      <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
+        <h2 className="text-xl font-medium mb-3 text-gray-700">Results</h2>
+        <p className="text-base text-gray-600 mb-1">
+          <span className="font-semibold text-blue-500">Monthly Grocery Budget:</span>{" "}
+          <span className="font-semibold text-blue-500">${groceryBudget.toFixed(2)}</span>
+        </p>
+        <p className="text-base text-gray-600 mb-1">
+          <span className="font-semibold text-blue-500">Weekly Grocery Budget:</span>{" "}
+          <span className="font-semibold text-blue-500">${weeklyBudget?.toFixed(2)}</span>
+        </p>
+        <button
+          onClick={handleExport}
+          className="mt-3 px-3 py-1.5 border border-green-400 text-green-700 bg-white rounded hover:bg-green-50 transition"
+          aria-label="Export Budget as CSV"
+        >
+          Export Budget as CSV
+        </button>
+      </div>
+    </section>
+    <section className="mb-8">
+      <h2 className="text-lg font-normal mb-3 text-gray-700">Monthly Budget Breakdown</h2>
+      <ResponsiveContainer width="100%" height={260}>
+        <BarChart data={graphData} margin={{ top: 16, right: 24, left: 12, bottom: 4 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis tickFormatter={(value) => `$${value}`} />
+          <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
+          <Legend />
+          <Bar dataKey="monthlyBudget" fill="#b3b8ee" name="Monthly Budget ($)" />
+        </BarChart>
+      </ResponsiveContainer>
+    </section>
+  </>
+)}
 
         {/* More About Grocery Budgeting */}
-<section className="mb-10 bg-white rounded-lg shadow p-6">
+<section className="mb-10 bg-white p-6">
   <h2 className="text-2xl font-semibold mb-4">Why Budgeting for Groceries Matters</h2>
   <p className="text-base text-gray-700 mb-2">
     Groceries are one of the largest variable expenses for most households. By understanding your food spending, you can make smarter choices, reduce waste, and free up money for other priorities. A well-planned grocery budget helps you avoid impulse purchases, take advantage of sales, and ensure your family eats healthy, balanced meals.
@@ -558,7 +548,7 @@ export default function GroceryBudgetCalculator() {
   </p>
 </section>
 
-<section className="mb-10 bg-white rounded-lg shadow p-6">
+<section className="mb-10 bg-white p-6">
   <h2 className="text-2xl font-semibold mb-4">Tips to Stretch Your Grocery Budget Further</h2>
   <ul className="list-disc pl-6 text-base text-gray-700 space-y-2">
     <li><span className="font-semibold text-blue-600">Plan your meals:</span> Create a weekly menu and shopping list to avoid buying unnecessary items.</li>
@@ -571,7 +561,7 @@ export default function GroceryBudgetCalculator() {
   </ul>
 </section>
 
-<section className="mb-10 bg-white rounded-lg shadow p-6">
+<section className="mb-10 bg-white   p-6">
   <h2 className="text-2xl font-semibold mb-4">How to Adjust Your Grocery Budget Over Time</h2>
   <p className="text-base text-gray-700 mb-2">
     Your grocery needs may change throughout the year. Holidays, school breaks, or changes in household size can all impact your spending. Review your budget every few months and adjust as needed. If you notice your actual spending is consistently higher or lower than your estimate, revisit your plan and update your calculator inputs.
@@ -581,20 +571,22 @@ export default function GroceryBudgetCalculator() {
   </p>
 </section>
 
-<section className="mb-10 bg-white rounded-lg shadow p-6">
+<section className="mb-10 bg-white  p-6">
   <h2 className="text-2xl font-semibold mb-4">Related Tools and Resources</h2>
   <ul className="list-disc pl-6 text-base text-gray-700 space-y-2">
     <li>
-      <a href="/tools/meal-planner" className="text-blue-600 hover:underline">Meal Planner Tool</a> – Plan your weekly meals and generate a smart shopping list.
+      <a href="/blog/budgeting-after-job-loss" className="text-blue-600 hover:underline">Budgeting After Job Loss</a> – Losing a job is one of those life events that can feel like a punch to the gut. I know because I've been there...
     </li>
     <li>
-      <a href="/tools/pantry-inventory" className="text-blue-600 hover:underline">Pantry Inventory Tracker</a> – Keep track of what you have and reduce food waste.
+      <a href="/blog/frugal-living-finance-tips" className="text-blue-600 hover:underline">frugal living finance tips</a> – As someone who has been navigating the world of personal finance, I've learned a lot from my spending habits..
     </li>
     <li>
       <a href="/blog/grocery-saving-tips" className="text-blue-600 hover:underline">Top 25 Grocery Saving Tips</a> – Expert advice to help you save even more.
     </li>
     <li>
-      <a href="/tools/food-cost-comparator" className="text-blue-600 hover:underline">Food Cost Comparator</a> – Compare prices across stores and brands.
+      <a href="/tools/monthly-calculator" className="text-blue-600 hover:underline">Monthly Spending Calculator</a> – Estimate your monthly expenses, set a budget, and track your savings.
+
+
     </li>
   </ul>
 </section>

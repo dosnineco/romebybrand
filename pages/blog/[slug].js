@@ -71,7 +71,7 @@ export default function BlogPostPage({ post }) {
         )}
         <SignUpBanner />
         <RichTextRenderer html={post.content} />
-       <SignupPopup/>
+       {/* <SignupPopup/> */}
 
       </main>
     </>

@@ -64,11 +64,17 @@ const Header = () => {
           </SignedIn>
 
           <SignedOut>
+            <Link href="/blog" className="text-inherit text-sm font-bold">
+              Blog
+            </Link>
+            <Link href="/tools" className="text-inherit text-sm font-bold">
+              Free Tools
+            </Link>
 
           <Link href="/checkout" className="text-inherit text-sm font-bold">
               Pricing
             </Link>
-            <Link href="/dashboard" className="text-inherit text-sm font-bold">
+            <Link href="/dashboard" className="btn text-inherit text-sm font-bold">
               Login
             </Link>
           </SignedOut>
@@ -101,8 +107,30 @@ const Header = () => {
             <SignedOut>
             
               <Link
-                href="/dashboard"
+                href="/checkout"
                 className="text-gray-700 text-sm font-bold"
+                onClick={() => setIsOpen(false)}
+              >
+                Pricing
+              </Link>
+         
+              <Link
+                href="/blog"
+                className="text-gray-700 text-sm font-bold"
+                onClick={() => setIsOpen(false)}
+              >
+                Blog
+              </Link>
+              <Link
+                href="/tools"
+                className="text-gray-700 text-sm font-bold"
+                onClick={() => setIsOpen(false)}
+              >
+                Free Tools
+              </Link>
+                   <Link
+                href="/dashboard"
+                className="btn text-gray-700 text-sm font-bold"
                 onClick={() => setIsOpen(false)}
               >
                 Login
