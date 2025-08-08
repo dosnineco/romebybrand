@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Head from "next/head";
 import {  Trash2, Save} from 'lucide-react';
-
+import BlogScroller from "../../components/Misc/BlogScroller";
 import {
   LineChart,
   Line,
@@ -496,6 +496,7 @@ export default function GroceryBudgetCalculator() {
               Calculate
             </button>
           </form>
+
         </section>
 
  {/* Results */}
@@ -512,13 +513,7 @@ export default function GroceryBudgetCalculator() {
           <span className="font-semibold text-blue-500">Weekly Grocery Budget:</span>{" "}
           <span className="font-semibold text-blue-500">${weeklyBudget?.toFixed(2)}</span>
         </p>
-        <button
-          onClick={handleExport}
-          className="mt-3 px-3 py-1.5 border border-green-400 text-green-700 bg-white rounded hover:bg-green-50 transition"
-          aria-label="Export Budget as CSV"
-        >
-          Export Budget as CSV
-        </button>
+
       </div>
     </section>
     <section className="mb-8">
@@ -534,6 +529,8 @@ export default function GroceryBudgetCalculator() {
         </BarChart>
       </ResponsiveContainer>
     </section>
+                <BlogScroller />
+
   </>
 )}
 

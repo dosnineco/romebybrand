@@ -11,6 +11,7 @@ export default function AdminDashboard() {
   ];
 
   return (
+    
     <>
       <Head>
         <title>Admin Dashboard</title>

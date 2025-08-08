@@ -219,6 +219,22 @@ async function handleAIGenerate() {
   const [accessAllowed, setAccessAllowed] = useState(false);
   const fileInputRef = useRef();
 
+
+  const togglePin = async (postId, currentValue) => {
+  const { error } = await supabase
+    .from("blog_posts")
+    .update({ is_pinned: !currentValue })
+    .eq("id", postId);
+
+  if (error) {
+    console.error("Error updating pin status:", error);
+  } else {
+    // Refresh posts
+    fetchPosts();
+  }
+};
+
+
   // Tiptap editor instance with Image extension
   const editor = useEditor({
     extensions: [Image, StarterKit,  Bold, Italic, 
@@ -568,6 +584,15 @@ async function handleAIGenerate() {
                       >
                         <SquarePen className="inline w-4 h-4" />
                       </button>
+                      <button
+                        onClick={() => togglePin(post.id, post.is_pinned)}
+                        className={`px-3 py-1 rounded text-white ${
+                          post.is_pinned ? "bg-green-600" : "bg-gray-400"
+                        }`}
+                      >
+                        {post.is_pinned ? "Pinned" : "Pin"}
+                      </button>
+
                       {!post.ispublished && (
                         <button
                           className="px-4 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:ring-2 focus:ring-red-400"
@@ -579,6 +604,7 @@ async function handleAIGenerate() {
                       )}
                     </div>
                   </li>
+                  
                 ))}
               </ul>
             </section>
