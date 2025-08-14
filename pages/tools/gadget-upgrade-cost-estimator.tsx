@@ -145,4 +145,3 @@ const GadgetUpgradeCostEstimator: React.FC<GadgetUpgradeCostEstimatorProps> = ()
 export default GadgetUpgradeCostEstimator;
 
 
-This code provides a structured and modular approach to building the "Gadget Upgrade Cost Estimator" tool using Next.js and React. It includes a responsive design with TailwindCSS, a bar chart for visualizing results, and a CSV export feature. The page is optimized for readability, accessibility, and future scalability.

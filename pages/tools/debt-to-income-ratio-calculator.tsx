@@ -21,9 +21,13 @@ const DebtToIncomeRatioCalculator: React.FC = () => {
   const [inputs, setInputs] = useState<UserInput[]>(defaultCategories);
   const [result, setResult] = useState<number | null>(null);
 
-  const handleInputChange = (index: number, field: keyof UserInput, value: string) => {
+  const handleInputChange = (index: number, field: 'category' | 'amount', value: string) => {
     const updatedInputs = [...inputs];
-    updatedInputs[index][field] = field === 'amount' ? parseFloat(value) : value;
+    if (field === 'amount') {
+      updatedInputs[index].amount = parseFloat(value);
+    } else {
+      updatedInputs[index].category = value;
+    }
     setInputs(updatedInputs);
   };
 
@@ -148,4 +152,3 @@ const DebtToIncomeRatioCalculator: React.FC = () => {
 export default DebtToIncomeRatioCalculator;
 
 
-This code provides a structured and modular approach to building a Debt-to-Income Ratio Calculator using Next.js and React. It includes a responsive design with Tailwind CSS, a bar chart for visualizing data, and features like adding/removing categories and exporting results as CSV. The page is optimized for readability, accessibility, and future scalability.

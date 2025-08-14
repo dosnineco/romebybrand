@@ -150,4 +150,3 @@ const DebtSnowballTracker: React.FC = () => {
 export default DebtSnowballTracker;
 
 
-This code provides a structured and modular approach to creating a Debt Snowball Tracker tool using Next.js and TypeScript. It includes a form for entering debts, a calculation function for the snowball method, a chart for visualizing the payoff timeline, and options to add new debts and export data as CSV. The UI is styled with TailwindCSS for a modern and responsive design.

@@ -171,4 +171,3 @@ const InventoryCostTracker: React.FC = () => {
 export default InventoryCostTracker;
 
 
-This code provides a comprehensive and user-friendly inventory cost tracking tool using Next.js and TailwindCSS. It includes features like adding/removing items, cost analysis with a bar chart, tips for managing inventory costs, and an FAQ section. The page is designed to be responsive and accessible, with a focus on usability and maintainability.

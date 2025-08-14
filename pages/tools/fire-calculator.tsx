@@ -138,4 +138,3 @@ const FAQSection: React.FC = () => (
 export default FireCalculator;
 
 
-This code provides a comprehensive and modular Next.js page component for a FIRE Calculator tool. It includes a main component with state management, input handling, calculation logic, and UI rendering. The page is styled using Tailwind CSS and includes additional components for tips and FAQs to enhance user engagement.

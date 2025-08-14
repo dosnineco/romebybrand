@@ -127,4 +127,3 @@ const FAQ: React.FC = () => (
 export default MonthlyExpenseTracker;
 
 
-This code provides a structured and modular approach to building a "Monthly Expense Tracker" tool using Next.js and TypeScript. It includes a main component for tracking expenses, a chart for visualizing data, and a FAQ section for user guidance. The use of Tailwind CSS ensures a modern and responsive design.

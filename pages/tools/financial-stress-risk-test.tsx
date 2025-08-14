@@ -158,4 +158,3 @@ const FAQ: React.FC = () => (
 export default FinancialStressRiskTest;
 
 
-This refactored code provides a clean, modular, and accessible implementation of the "Financial Stress Risk Test" tool using Next.js and TailwindCSS. It includes a responsive design, a bar chart for visualizing data, and an export feature for downloading results as a CSV file. The code is organized into logical sections, making it easy to maintain and extend.

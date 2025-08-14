@@ -1,4 +1,3 @@
-typescript
 // /pages/tools/minimalist-lifestyle-savings-estimator.tsx
 
 import React, { useState } from 'react';
@@ -151,4 +150,3 @@ const FAQ: React.FC = () => (
 export default MinimalistLifestyleSavingsEstimator;
 
 
-This code provides a structured and modular Next.js page component for the "Minimalist Lifestyle Savings Estimator" tool. It includes a main component with state management, handlers, and UI rendering, as well as a separate FAQ component. The page is styled using Tailwind CSS and includes a responsive bar chart using Recharts. The CSV export functionality is implemented using `react-csv`.

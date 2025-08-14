@@ -156,4 +156,3 @@ const FitnessMembershipCostTracker: React.FC = () => {
 export default FitnessMembershipCostTracker;
 
 
-This code provides a comprehensive and user-friendly tool for tracking fitness membership costs. It includes a form for adding memberships, a list of current memberships with the ability to remove them, a bar chart for visualizing costs, and tips for managing expenses. The page is styled using TailwindCSS and includes SEO tags and a CSV export feature.

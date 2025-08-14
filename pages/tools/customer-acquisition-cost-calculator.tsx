@@ -1,4 +1,3 @@
-Certainly! Below is the refactored code for the "Customer Acquisition Cost Calculator" as a Next.js page component. The code is organized into logical sections and uses Tailwind CSS for styling. I've modularized repeated UI elements and ensured accessibility and performance optimizations.
 
 
 // /pages/tools/customer-acquisition-cost-calculator.tsx
@@ -159,4 +158,3 @@ const FAQSection: React.FC = () => (
 export default CustomerAcquisitionCostCalculator;
 
 
-This code is structured to be easily maintainable and scalable, with clear separation of concerns and modular components. It uses Tailwind CSS for styling and ensures accessibility and performance optimizations.

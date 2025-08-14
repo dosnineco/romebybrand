@@ -136,4 +136,3 @@ const ETFExpenseRatioCostCalculator: NextPage = () => {
 export default ETFExpenseRatioCostCalculator;
 
 
-This code provides a complete Next.js page component for the "ETF Expense Ratio Cost Calculator" tool. It includes a form for user input, a chart for visualizing results, and options to export data as CSV. The page is styled using Tailwind CSS and includes SEO tags and JSON-LD schema for better search engine visibility.

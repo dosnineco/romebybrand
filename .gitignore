@@ -5,7 +5,9 @@ node_modules
 .node_modules/ar
 .node_modules
 /node_modules
-
+./private
+../private
+/private
 
 /.pnp
 .pnp.js

@@ -1,4 +1,3 @@
-typescript
 // /pages/tools/gig-work-earnings-tracker.tsx
 
 import React, { useState } from 'react';
@@ -151,4 +150,3 @@ const FAQ: React.FC = () => (
 export default GigWorkEarningsTracker;
 
 
-This code provides a structured and modular Next.js page component for the "Gig Work Earnings Tracker" tool. It includes a main component with state management, handlers, and UI rendering, as well as a separate FAQ component. The page is styled using TailwindCSS and includes a bar chart for visualizing earnings data.

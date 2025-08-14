@@ -32,7 +32,7 @@ const EcoFriendlyLivingSavingsTool: React.FC = () => {
     setUserInputs([...userInputs, { category: '', item: '', cost: 0, savings: 0 }]);
   };
 
-  const handleInputChange = (index: number, field: keyof UserInput, value: any) => {
+  const handleInputChange = <K extends keyof UserInput>(index: number, field: K, value: UserInput[K]) => {
     const newInputs = [...userInputs];
     newInputs[index][field] = value;
     setUserInputs(newInputs);
@@ -163,4 +163,3 @@ const FAQSection: React.FC = () => (
 export default EcoFriendlyLivingSavingsTool;
 
 
-This code provides a structured and modular Next.js page component for the "Eco-Friendly Living Savings Tool". It includes a form for user input, a bar chart for visualizing savings, and a section for tips and FAQs. The use of Tailwind CSS ensures a modern and responsive design, while the code is organized for maintainability and scalability.

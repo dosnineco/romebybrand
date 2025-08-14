@@ -31,7 +31,11 @@ const DollarCostAveragingCalculator: React.FC = () => {
 
   const handleInputChange = (index: number, field: keyof UserInput, value: string | number) => {
     const newInputs = [...inputs];
-    newInputs[index][field] = typeof value === 'string' ? parseFloat(value) : value;
+    if (field === 'amount' || field === 'frequency') {
+      newInputs[index][field] = typeof value === 'string' ? parseFloat(value) : value;
+    } else if (field === 'category') {
+      newInputs[index][field] = value as string;
+    }
     setInputs(newInputs);
   };
 
@@ -146,4 +150,3 @@ const DollarCostAveragingCalculator: React.FC = () => {
 export default DollarCostAveragingCalculator;
 
 
-This refactored code organizes the page into logical sections, uses Tailwind CSS for styling, and includes a responsive design with a bar chart. It also provides a CSV export feature and includes a tips section to enhance user engagement.

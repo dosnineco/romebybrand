@@ -1,4 +1,3 @@
-Here's a refactored Next.js page component for the "Holiday Gift Budget Planner" tool, following the specified requirements:
 
 
 // /pages/tools/holiday-gift-budget-planner.tsx
@@ -146,4 +145,3 @@ const FAQSection: React.FC = () => (
 export default HolidayGiftBudgetPlanner;
 
 
-This refactored code includes the main component, a tips section, and an FAQ section, all styled with Tailwind CSS. The page is designed to be responsive and accessible, with clear naming conventions and modular components for easy maintenance and scalability.

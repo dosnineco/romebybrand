@@ -133,4 +133,3 @@ const EmergencyFundGoalTracker: React.FC = () => {
 export default EmergencyFundGoalTracker;
 
 
-This code provides a structured and modular Next.js page component for the "Emergency Fund Goal Tracker" tool. It includes a form for inputting expenses, a bar chart for visualizing data, and sections for tips and FAQs. The page is styled using TailwindCSS and is designed to be responsive and accessible.

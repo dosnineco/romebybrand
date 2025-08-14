@@ -166,4 +166,3 @@ const FAQ: React.FC = () => (
 export default CreditUtilizationTracker;
 
 
-This code provides a comprehensive and user-friendly credit utilization tracker tool using Next.js and TailwindCSS. It includes a form for inputting credit card details, a calculation function to determine utilization rates, a chart for visualizing results, and options to add more categories and export data as CSV. The page is designed to be responsive and accessible, with a focus on readability and ease of use.

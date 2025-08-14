@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { Download } from 'lucide-react';
-import { saveAs } from 'file-saver';
 import { CSVLink } from 'react-csv';
 import { NextPage } from 'next';
 
@@ -193,6 +192,3 @@ const FAQ: React.FC = () => (
 );
 
 export default CompoundInterestCalculator;
-```
-
-This code provides a comprehensive and user-friendly compound interest calculator page using Next.js and TailwindCSS. It includes a form for user inputs, a results section with a bar chart, tips for maximizing compound interest, and a FAQ section. The page is designed to be responsive and accessible, with clear and concise code organization.

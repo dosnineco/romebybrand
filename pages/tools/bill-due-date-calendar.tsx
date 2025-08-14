@@ -36,7 +36,7 @@ const BillDueDateCalendar: NextPage = () => {
 
   const updateBill = (index: number, field: keyof Bill, value: string | number) => {
     const updatedBills = [...bills];
-    updatedBills[index][field] = value;
+    (updatedBills[index] as Bill)[field] = value as never;
     setBills(updatedBills);
     updateChartData(updatedBills);
   };

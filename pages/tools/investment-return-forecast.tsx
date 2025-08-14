@@ -170,4 +170,3 @@ const FAQ: React.FC = () => (
 export default InvestmentReturnForecast;
 
 
-This code provides a comprehensive and user-friendly investment return forecast tool using Next.js and TypeScript. It includes a responsive design with TailwindCSS, a bar chart for visualizing results, and features like CSV export and FAQs for user guidance.

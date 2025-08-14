@@ -1,4 +1,3 @@
-Certainly! Below is a refactored Next.js page component for a "Moving Cost Calculator" tool, following the specified requirements. The code is organized into logical sections and uses Tailwind CSS for styling. I've also included modular components for FAQs and Tips, and used TypeScript for type safety.
 
 
 // /pages/tools/moving-cost-calculator.tsx
@@ -154,4 +153,3 @@ const FAQSection: React.FC = () => (
 export default MovingCostCalculator;
 
 
-This code provides a clean, modular, and responsive design for the Moving Cost Calculator tool. It includes a form for inputting costs, a chart for visualizing the data, and sections for tips and FAQs. The use of Tailwind CSS ensures a modern and accessible UI.

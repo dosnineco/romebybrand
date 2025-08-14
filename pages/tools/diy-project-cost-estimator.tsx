@@ -136,4 +136,3 @@ const FAQ: React.FC = () => (
 export default DIYProjectCostEstimator;
 
 
-This code provides a comprehensive and modular Next.js page component for a DIY Project Cost Estimator tool. It includes a form for inputting costs, a bar chart for visualizing data, and features like CSV export and FAQs. The use of TailwindCSS ensures a modern and responsive design.

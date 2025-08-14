@@ -157,4 +157,3 @@ const DebtAvalancheTracker: NextPage = () => {
 export default DebtAvalancheTracker;
 
 
-This code provides a comprehensive Debt Avalanche Tracker tool using Next.js and React. It includes a form for inputting debts, a calculation function to determine the total interest, a chart to visualize the debts, and options to add new debts and export data as CSV. The page is styled using Tailwind CSS for a modern and responsive design.

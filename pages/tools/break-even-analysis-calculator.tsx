@@ -29,7 +29,11 @@ const BreakEvenAnalysisCalculator: React.FC = () => {
 
   const handleInputChange = (index: number, field: keyof UserInput, value: string) => {
     const newInputs = [...inputs];
-    newInputs[index][field] = field === 'category' ? value : parseFloat(value);
+    if (field === 'category') {
+      newInputs[index][field] = value as UserInput['category'];
+    } else {
+      newInputs[index][field] = parseFloat(value) as UserInput[typeof field];
+    }
     setInputs(newInputs);
   };
 

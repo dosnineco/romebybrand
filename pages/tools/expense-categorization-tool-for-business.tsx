@@ -156,4 +156,3 @@ const FAQSection: React.FC = () => (
 export default ExpenseCategorizationTool;
 
 
-This code provides a comprehensive and user-friendly tool for categorizing and analyzing business expenses. It includes a responsive design, accessible UI components, and the ability to export data as a CSV file. The code is organized into logical sections and uses Tailwind CSS for styling.

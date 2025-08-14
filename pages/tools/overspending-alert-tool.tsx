@@ -137,4 +137,3 @@ const OverspendingAlertTool: React.FC = () => {
 export default OverspendingAlertTool;
 
 
-This code provides a structured and modular Next.js page component for the "Overspending Alert Tool" with a focus on usability, maintainability, and scalability. It includes a form for user inputs, a chart for visualizing data, and options to add/remove categories and export results as CSV. The page is styled using TailwindCSS for a modern and responsive design.

@@ -1,4 +1,3 @@
-Certainly! Below is a refactored Next.js page component for a "Mortgage Payoff Calculator" using TypeScript, TailwindCSS, and React hooks. The code is organized into logical sections and includes modular components for FAQs and tips. The page is designed to be responsive and accessible.
 
 
 // /pages/tools/mortgage-payoff-calculator.tsx
@@ -177,4 +176,3 @@ const FAQ: React.FC = () => (
 export default MortgagePayoffCalculator;
 
 
-This code includes a main component for the calculator, a `Tips` component, and an `FAQ` component. The page is styled using TailwindCSS and includes a responsive bar chart using `recharts`. The code is organized for readability and maintainability, with clear naming conventions and comments.

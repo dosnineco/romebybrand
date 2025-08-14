@@ -177,4 +177,3 @@ const CreditCardInterestCalculator: React.FC = () => {
 export default CreditCardInterestCalculator;
 
 
-This code provides a comprehensive and user-friendly credit card interest calculator tool using Next.js and TailwindCSS. It includes a form for user input, a calculation function, a results section with a bar chart, tips for managing credit card debt, and a FAQ section. The page is styled for readability and accessibility, with responsive design considerations.

@@ -39,8 +39,11 @@ const ECommerceFeeCalculator: React.FC = () => {
   };
 
   const handleInputChange = (index: number, field: keyof UserInput, value: string | number) => {
-    const newInputs = [...userInputs];
-    newInputs[index][field] = value;
+    const newInputs: UserInput[] = [...userInputs];
+    newInputs[index] = {
+      ...newInputs[index],
+      [field]: value,
+    };
     setUserInputs(newInputs);
   };
 
@@ -179,4 +182,3 @@ const FAQSection: React.FC = () => (
 export default ECommerceFeeCalculator;
 
 
-This code provides a structured and modular approach to building the E-commerce Fee Calculator tool using Next.js and React. It includes a main component for the calculator, a separate FAQ section, and uses Tailwind CSS for styling. The code is organized into logical sections for imports, constants, types, state, handlers, and UI rendering, making it easy to maintain and extend.

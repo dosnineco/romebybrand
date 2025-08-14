@@ -137,4 +137,3 @@ const DigitalMinimalismCostSavingsTool: React.FC = () => {
 export default DigitalMinimalismCostSavingsTool;
 
 
-This code provides a comprehensive and modular implementation of the "Digital Minimalism Cost Savings Tool" using Next.js and TailwindCSS. It includes a responsive design, accessible forms, and a bar chart for visualizing savings. The code is organized into logical sections for imports, constants, types, state, handlers, calculation logic, and UI rendering, ensuring maintainability and scalability.

@@ -122,4 +122,3 @@ const FirstApartmentBudgetPlanner: React.FC = () => {
 export default FirstApartmentBudgetPlanner;
 
 
-This code provides a structured and modular approach to building the "First Apartment Budget Planner" tool using Next.js and TailwindCSS. It includes a responsive design, accessibility features, and the ability to export data as CSV. The page is optimized for readability and performance, with clear separation of concerns and easy-to-maintain code.

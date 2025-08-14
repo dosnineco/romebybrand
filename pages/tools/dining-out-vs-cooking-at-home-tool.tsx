@@ -1,4 +1,3 @@
-typescript
 // /pages/tools/dining-out-vs-cooking-at-home-tool.tsx
 
 import React, { useState } from 'react';
@@ -143,4 +142,3 @@ const FAQSection: React.FC = () => (
 export default DiningOutVsCookingAtHomeTool;
 
 
-This code provides a structured and modular Next.js page component for the "Dining Out vs Cooking at Home Tool". It includes a main component with state management, calculation logic, and UI rendering, as well as separate components for tips and FAQs. The page is styled using Tailwind CSS and includes a responsive bar chart using Recharts.

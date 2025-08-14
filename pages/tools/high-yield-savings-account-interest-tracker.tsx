@@ -4,7 +4,6 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Download } from 'lucide-react';
 import { saveAs } from 'file-saver';
 import { CSVLink } from 'react-csv';
 
@@ -51,13 +50,15 @@ const HighYieldSavingsAccountInterestTracker: React.FC = () => {
   };
 
   const exportCSV = () => {
-    const csvData = userInputs.map(input => ({
-      Category: input.category,
-      Principal: input.principal,
-      'Interest Rate': input.interestRate,
-      Years: input.years,
+    const csvData = chartData.map(data => ({
+      Category: data.name,
+      FinalAmount: data.value.toFixed(2),
     }));
-    saveAs(new Blob([csvData]), 'interest-tracker.csv');
+    const csvContent = 'data:text/csv;charset=utf-8,'
+      + 'Category,FinalAmount\n'
+      + csvData.map(e => `${e.Category},${e.FinalAmount}`).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'high_yield_savings_account_interest_tracker.csv');
   };
 
   // UI
@@ -154,4 +155,3 @@ const HighYieldSavingsAccountInterestTracker: React.FC = () => {
 export default HighYieldSavingsAccountInterestTracker;
 
 
-This code provides a comprehensive Next.js page component for a "High-Yield Savings Account Interest Tracker" tool. It includes a form for user inputs, a calculation function, a chart for visualizing results, and an export feature for CSV files. The page is styled using TailwindCSS and includes SEO tags and a JSON-LD schema for enhanced search engine visibility.

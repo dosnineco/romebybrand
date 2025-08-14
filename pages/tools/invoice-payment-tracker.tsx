@@ -145,4 +145,3 @@ const InvoicePaymentTracker: React.FC = () => {
 export default InvoicePaymentTracker;
 
 
-This code provides a comprehensive and user-friendly interface for tracking invoice payments. It includes sections for adding new invoices, viewing them in a chart, exporting data, and tips for managing invoices. The use of TailwindCSS ensures a modern and responsive design, while the modular structure and TypeScript interfaces enhance maintainability and scalability.

@@ -160,4 +160,3 @@ const CryptoInvestmentTracker: NextPage = () => {
 export default CryptoInvestmentTracker;
 
 
-This code provides a complete Next.js page component for a "Crypto Investment Tracker" tool. It includes a form for adding investments, a chart to visualize them, and options to export data as CSV. The page is styled using Tailwind CSS and includes SEO tags and JSON-LD schema for better search engine visibility.

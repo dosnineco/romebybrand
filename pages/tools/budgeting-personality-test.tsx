@@ -1,8 +1,12 @@
 // /pages/tools/budgeting-personality-test.tsx
 
+
+
 import React, { useState } from 'react';
+
 import Head from 'next/head';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+
 import { Download } from 'lucide-react';
 
 interface UserInput {

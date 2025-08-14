@@ -130,4 +130,3 @@ const LineOfCreditTracker: React.FC = () => {
 export default LineOfCreditTracker;
 
 
-This code provides a comprehensive and user-friendly tool for tracking lines of credit. It includes a form for inputting expenses, a calculation function, a chart for visualizing data, and options for exporting results. The page is styled using TailwindCSS for a modern and responsive design.

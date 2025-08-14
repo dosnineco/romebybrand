@@ -147,4 +147,3 @@ const LuxuryVsGenericProductCostTool: React.FC = () => {
 export default LuxuryVsGenericProductCostTool;
 
 
-This code provides a complete Next.js page component for the "Luxury vs Generic Product Cost Tool" with a clean, responsive design using TailwindCSS. It includes a form for user input, a results section with a bar chart, and options to export data as CSV. The page is structured with semantic HTML and accessible components, ensuring a user-friendly experience.

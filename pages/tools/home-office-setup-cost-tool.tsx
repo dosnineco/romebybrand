@@ -1,4 +1,3 @@
-Certainly! Below is the refactored code for the "Home Office Setup Cost Tool" as a Next.js page component using TypeScript, TailwindCSS, and React hooks. The code is organized into logical sections and includes modular components for FAQs and tips.
 
 
 // /pages/tools/home-office-setup-cost-tool.tsx
@@ -159,4 +158,3 @@ const FAQSection: React.FC = () => (
 export default HomeOfficeSetupCostTool;
 
 
-This code provides a structured and maintainable approach to building the "Home Office Setup Cost Tool" with a focus on usability, accessibility, and scalability. The use of TailwindCSS ensures a modern and responsive design, while the modular components for FAQs and tips enhance readability and reusability.

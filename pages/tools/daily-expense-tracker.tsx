@@ -130,4 +130,3 @@ const DailyExpenseTracker: React.FC = () => {
 export default DailyExpenseTracker;
 
 
-This code provides a structured and modular approach to building a Daily Expense Tracker tool using Next.js and TailwindCSS. It includes a form for adding expenses, a chart for visualizing data, tips for managing expenses, and an FAQ section. The code is organized for readability and maintainability, with a focus on accessibility and performance.

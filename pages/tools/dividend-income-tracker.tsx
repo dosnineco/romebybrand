@@ -27,7 +27,15 @@ const DividendIncomeTracker: NextPage = () => {
 
   const handleInputChange = (index: number, field: keyof DividendInput, value: string) => {
     const updatedDividends = [...dividends];
-    updatedDividends[index][field] = field === 'name' ? value : parseFloat(value);
+    const updatedDividend = { ...updatedDividends[index] };
+    if (field === 'name') {
+      updatedDividend.name = value;
+    } else if (field === 'amount') {
+      updatedDividend.amount = parseFloat(value);
+    } else if (field === 'yield') {
+      updatedDividend.yield = parseFloat(value);
+    }
+    updatedDividends[index] = updatedDividend;
     setDividends(updatedDividends);
   };
 
@@ -146,4 +154,3 @@ const DividendIncomeTracker: NextPage = () => {
 export default DividendIncomeTracker;
 
 
-This code provides a comprehensive and user-friendly dividend income tracker tool using Next.js and TypeScript. It includes a form for inputting stock data, calculates potential dividend income, displays results in a bar chart, and offers tips and FAQs for better understanding. The page is styled with Tailwind CSS for a modern and responsive design.

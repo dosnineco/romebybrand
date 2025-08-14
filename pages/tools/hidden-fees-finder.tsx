@@ -35,7 +35,11 @@ const HiddenFeesFinder: React.FC = () => {
 
   const handleInputChange = (index: number, field: keyof UserInput, value: string | number) => {
     const updatedInputs = [...userInputs];
-    updatedInputs[index][field] = field === 'amount' ? parseFloat(value as string) : value;
+    if (field === 'amount') {
+      updatedInputs[index].amount = parseFloat(value as string);
+    } else if (field === 'category') {
+      updatedInputs[index].category = value as string;
+    }
     setUserInputs(updatedInputs);
   };
 
@@ -156,4 +160,3 @@ const FAQSection: React.FC = () => (
 export default HiddenFeesFinder;
 
 
-This code provides a structured and modular Next.js page component for the "Hidden Fees Finder" tool. It includes a form for user inputs, a calculation function, a chart for visualizing results, and sections for tips and FAQs. The design is responsive and accessible, using Tailwind CSS for styling.

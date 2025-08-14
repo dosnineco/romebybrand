@@ -28,7 +28,7 @@ const CapitalGainsTaxEstimator: React.FC = () => {
 
   const handleInputChange = (index: number, field: keyof UserInput, value: string | number) => {
     const updatedInputs = [...userInputs];
-    updatedInputs[index][field] = typeof value === 'string' ? parseFloat(value) : value;
+    (updatedInputs[index][field] as typeof value) = typeof value === 'string' ? parseFloat(value) : value;
     setUserInputs(updatedInputs);
   };
 

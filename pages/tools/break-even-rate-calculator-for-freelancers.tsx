@@ -27,9 +27,13 @@ const BreakEvenRateCalculator: React.FC = () => {
   const [results, setResults] = useState<number>(0);
   const [chartData, setChartData] = useState<ChartData[]>([]);
 
-  const handleInputChange = (index: number, field: keyof UserInput, value: string) => {
+  const handleInputChange = (index: number, field: 'amount' | 'category', value: string) => {
     const newInputs = [...inputs];
-    newInputs[index][field] = field === 'amount' ? parseFloat(value) : value;
+    if (field === 'amount') {
+      newInputs[index].amount = parseFloat(value);
+    } else {
+      newInputs[index].category = value;
+    }
     setInputs(newInputs);
   };
 

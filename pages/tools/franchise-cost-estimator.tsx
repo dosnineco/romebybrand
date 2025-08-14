@@ -165,4 +165,3 @@ const FAQSection: React.FC = () => (
 export default FranchiseCostEstimator;
 
 
-This code provides a comprehensive and modularized Next.js page component for a "Franchise Cost Estimator" tool. It includes a main component with state management, handlers for user interaction, calculation logic, and UI rendering. The page is styled using TailwindCSS and includes additional components for tips and FAQs to enhance user engagement.
