@@ -121,7 +121,7 @@ export default function Payment() {
                 purchase_units: [
                   {
                     amount: {
-                      value: '15',
+                      value: '4.99',
                     },
                   },
                 ],

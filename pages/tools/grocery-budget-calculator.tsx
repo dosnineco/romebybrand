@@ -15,6 +15,7 @@ import {
   Legend,
 } from "recharts";
 import SignUpBanner from "../../components/Misc/SignUpBanner";
+import PricingComponent from "../../components/Misc/PricingComponent";
 
 // Types for household members
 type Member = {
@@ -346,10 +347,14 @@ export default function GroceryBudgetCalculator() {
             }}
             aria-label="Grocery Budget Calculator"
           >
-            <div className="mb-6">
+            <div className="mb-6 ">
               <h3 className="font-semibold mb-2">Household Members</h3>
+              <p className="text-sm text-gray-600 mb-2">
+                Add details for each member of your household to get a personalized grocery budget.
+              </p>
+
               {members.map((m, idx) => (
-                <div key={m.id} className="flex flex-wrap gap-2 items-center mb-2">
+                <div key={m.id} className="flex flex-wrap justify-start gap-4 items-center mb-2">
                   <div>
                     <label htmlFor={`age-${m.id}`} className="block text-sm font-medium text-gray-700">
                       Age
@@ -361,7 +366,7 @@ export default function GroceryBudgetCalculator() {
                       max={120}
                       value={m.age}
                       onChange={(e) => updateMember(m.id, "age", Number(e.target.value))}
-                      className="input w-20 p-2 border border-gray-300 rounded"
+                      className="input w-20 p-2 h-8 w-4 border border-gray-300 rounded outline-none outline-emerald-300 focus:outline-emerald-300 border-none border-2 mt-2  "
                       aria-label="Age"
                       required
                     />
@@ -374,8 +379,7 @@ export default function GroceryBudgetCalculator() {
                       id={`gender-${m.id}`}
                       value={m.gender}
                       onChange={(e) => updateMember(m.id, "gender", e.target.value)}
-                      className="input p-2 border border-gray-300 rounded"
-                      aria-label="Gender"
+ className="input w-20 p-2 h-8 w-4 border border-gray-300 rounded outline-none outline-emerald-300 focus:outline-emerald-300 border-none border-2 mt-2  "                      aria-label="Gender"
                     >
                       {GENDERS.map((g) => (
                         <option key={g.value} value={g.value}>{g.label}</option>
@@ -390,8 +394,7 @@ export default function GroceryBudgetCalculator() {
                       id={`dietary-${m.id}`}
                       value={m.dietary}
                       onChange={(e) => updateMember(m.id, "dietary", e.target.value)}
-                      className="input p-2 border border-gray-300 rounded"
-                      aria-label="Dietary Needs"
+ className="input w-20 p-2 h-8 w-4 border border-gray-300 rounded outline-none outline-emerald-300 focus:outline-emerald-300 border-none border-2 mt-2  "                      aria-label="Dietary Needs"
                     >
                       {DIETARY_OPTIONS.map((d) => (
                         <option key={d} value={d}>{d}</option>
@@ -409,8 +412,7 @@ export default function GroceryBudgetCalculator() {
                       max={21}
                       value={m.mealsOut}
                       onChange={(e) => updateMember(m.id, "mealsOut", Number(e.target.value))}
-                      className="input w-24 p-2 border border-gray-300 rounded"
-                      aria-label="Meals Eaten Out Per Week"
+ className="input w-20 p-2 h-8 w-4 border border-gray-300 rounded outline-none outline-emerald-300 focus:outline-emerald-300 border-none border-2 mt-2  "                      aria-label="Meals Eaten Out Per Week"
                       placeholder="Meals Out"
                     />
                   </div>
@@ -437,7 +439,7 @@ export default function GroceryBudgetCalculator() {
               </button>
             </div>
 
-            <div className="mb-4 flex flex-wrap gap-4">
+            <div className="mb-4 flex flex-wrap  gap-4">
               <div>
                 <label htmlFor="region" className="block text-base text-gray-700 mb-1">
                   Region
@@ -446,8 +448,7 @@ export default function GroceryBudgetCalculator() {
                   id="region"
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
-                  className="p-2 border border-gray-300 rounded"
-                  aria-label="Region"
+ className="input w-20 p-2 h-8 w-4 border border-gray-300 rounded outline-none outline-emerald-300 focus:outline-emerald-300 border-none border-2 mt-2  "                   aria-label="Region"
                 >
                   {REGIONS.map((r) => (
                     <option key={r} value={r}>{r}</option>
@@ -462,8 +463,7 @@ export default function GroceryBudgetCalculator() {
                   id="storeType"
                   value={storeType}
                   onChange={(e) => setStoreType(e.target.value)}
-                  className="p-2 border border-gray-300 rounded"
-                  aria-label="Store Type"
+ className="input w-20 p-2 h-8 w-4 border border-gray-300 rounded outline-none outline-emerald-300 focus:outline-emerald-300 border-none border-2 mt-2  "                   aria-label="Store Type"
                 >
                   <option>Regular Supermarket</option>
                   <option>Discount Store</option>
@@ -479,8 +479,7 @@ export default function GroceryBudgetCalculator() {
                   id="usdaPlan"
                   value={usdaPlan}
                   onChange={(e) => setUsdaPlan(e.target.value)}
-                  className="p-2 border border-gray-300 rounded"
-                  aria-label="USDA Budget Plan"
+ className="input w-20 p-2 h-8 w-4 border border-gray-300 rounded outline-none outline-emerald-300 focus:outline-emerald-300 border-none border-2 mt-2  "                   aria-label="USDA Budget Plan"
                 >
                   {USDA_PLANS.map((p) => (
                     <option key={p.label} value={p.label}>{p.label}</option>
@@ -491,7 +490,12 @@ export default function GroceryBudgetCalculator() {
 
             <button
               type="submit"
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500"
+              className="px-5  py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-500"
+              onClick={() => {
+    document.getElementById("results")?.scrollIntoView({ 
+      behavior: "smooth" 
+    });
+  }}
             >
               Calculate
             </button>
@@ -499,40 +503,59 @@ export default function GroceryBudgetCalculator() {
 
         </section>
 
- {/* Results */}
+{/* Results */}
 {showResults && groceryBudget !== null && (
   <>
-    <section className="mb-8">
-      <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
-        <h2 className="text-xl font-medium mb-3 text-gray-700">Results</h2>
-        <p className="text-base text-gray-600 mb-1">
-          <span className="font-semibold text-blue-500">Monthly Grocery Budget:</span>{" "}
-          <span className="font-semibold text-blue-500">${groceryBudget.toFixed(2)}</span>
-        </p>
-        <p className="text-base text-gray-600 mb-1">
-          <span className="font-semibold text-blue-500">Weekly Grocery Budget:</span>{" "}
-          <span className="font-semibold text-blue-500">${weeklyBudget?.toFixed(2)}</span>
-        </p>
+    <section id="results" className="mb-8 justify-start w-full">
+      <div className="p-6 bg-white border border-gray-200 rounded-2xl shadow-sm">
+        <h2 className="text-xl font-semibold mb-4 text-gray-900">Your Grocery Budget</h2>
+
+        <div className="space-y-2">
+           <p className="text-base text-gray-700">
+            <span className="font-semibold text-gray-700">Weekly Grocery Budget:</span>{" "}
+            <span className="font-bold text-emerald-700">${weeklyBudget?.toFixed(2)}</span>
+          </p>
+          <p className="text-base text-gray-700">
+            <span className="font-semibold text-gray-700">Monthly Grocery Budget:</span>{" "}
+            <span className="font-bold text-emerald-700">${groceryBudget.toFixed(2)}</span>
+          </p>
+          <PricingComponent/>
+         
+        </div>
 
       </div>
+
     </section>
+
     <section className="mb-8">
-      <h2 className="text-lg font-normal mb-3 text-gray-700">Monthly Budget Breakdown</h2>
+      <h2 className="text-lg font-medium mb-4 text-gray-800">Monthly Budget Breakdown</h2>
       <ResponsiveContainer width="100%" height={260}>
-        <BarChart data={graphData} margin={{ top: 16, right: 24, left: 12, bottom: 4 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis tickFormatter={(value) => `$${value}`} />
-          <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
+        <BarChart
+          data={graphData}
+          margin={{ top: 16, right: 24, left: 12, bottom: 4 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <XAxis dataKey="month" stroke="#6b7280" />
+          <YAxis tickFormatter={(value) => `$${value}`} stroke="#6b7280" />
+          <Tooltip
+            formatter={(value: number) => `$${value.toFixed(2)}`}
+            contentStyle={{
+              backgroundColor: "white",
+              border: "1px solid #e5e7eb",
+              borderRadius: "0.5rem",
+              color: "#374151",
+            }}
+          />
           <Legend />
-          <Bar dataKey="monthlyBudget" fill="#b3b8ee" name="Monthly Budget ($)" />
+          <Bar dataKey="monthlyBudget" fill="#86efac" name="Monthly Budget ($)" radius={[6, 6, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </section>
-                <BlogScroller />
 
   </>
 )}
+
+    <BlogScroller />
 
         {/* More About Grocery Budgeting */}
 <section className="mb-10 bg-white p-6">

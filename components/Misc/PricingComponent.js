@@ -47,11 +47,11 @@ const PricingComponent = () => {
           {/* Lifetime Deal Card */}
           <div className="bg-gray-800 p-10 rounded-lg shadow-lg text-center relative border-2 border-yellow-500">
             <div className="absolute top-0 right-0 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-bl-lg">
-              POPULAR
+              25% OFF
             </div>
             <h3 className="text-xl font-semibold mb-4">Lifetime Deal</h3>
             <div className="text-4xl font-bold mb-2">
-              $15 <span className="text-lg font-medium line-through text-gray-400">$45</span>
+              $4.99 <span className="text-lg font-medium line-through text-gray-400">$23</span>
             </div>
             <p className="text-sm text-gray-400 mb-6">One-time payment. No subscription</p>
             <a
