@@ -4,6 +4,8 @@ import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import { useUser } from '@clerk/nextjs';
 import { supabase } from '../lib/supabase';
 import PricingComponent from '../components/Misc/PricingComponent';
+import { CheckCircle, Zap, Crown } from "lucide-react";
+
 
 export default function Payment() {
   const { user, isLoaded } = useUser();
@@ -107,15 +109,25 @@ export default function Payment() {
 
   return (
     <div className=" w-full max-w-screen-md mx-auto px-4 py-8">
-      <div className=" text-center p-8  text-gray-900">
-        <h1 className="text-3xl font-extrabold mb-4 text-gray-700">Upgrade to Premium</h1>
-        <p className="text-base   mb-6">
-          <span className="text-sm text-gray-500">No subscription, no hidden fees.</span>
-        </p>
-        <PricingComponent />
+      <div className=" text-center  p-8  text-gray-900">
+         <h1 className="text-4xl font-extrabold mb-4 text-gray-800 flex items-center justify-center gap-2">
+            Upgrade to Premium <Zap className="text-yellow-500 h-8 w-8" />
+          </h1>
+          <p className="text-gray-600 mb-4 text-lg">
+            Unlock full access to all tools. No hidden fees. Cancel anytime.
+          </p>
+           <h2 className="text-5xl font-bold text-gray-800 mb-4 flex items-center justify-center gap-2">
+            <Crown className="text-yellow-500 h-6 w-6" /> 
+            <p className="text-3xl mb-4 font-extrabold text-green-600 mb-2">$4.99</p>
+          </h2>
+    <div
+    className="mt-8 w-full"
+    >
+
+
         <PayPalScriptProvider options={{ "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}>
           <PayPalButtons
-            style={{ layout: 'vertical', color: 'blue', shape: 'pill', label: 'subscribe' }}
+            style={{ layout: 'vertical', color: 'blue', shape: 'rect', label: 'subscribe' }}
             createOrder={(data, actions) => {
               return actions.order.create({
                 purchase_units: [
@@ -138,6 +150,7 @@ export default function Payment() {
             }}
           />
         </PayPalScriptProvider>
+        </div>
       </div>
     </div>
   );

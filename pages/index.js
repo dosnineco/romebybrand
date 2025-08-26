@@ -332,11 +332,11 @@ export default function ExpenseTrackerLanding() {
       </section>
 
       {/* Statistics Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Trusted by Millions Worldwide
+              Trusted by Hundreds Worldwide
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Join the growing community of businesses and individuals who have transformed their financial management with Expense Goose.
@@ -345,11 +345,11 @@ export default function ExpenseTrackerLanding() {
           
           <div className="grid md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="stats-counter text-4xl font-bold text-green-600 mb-2">2.1M+</div>
+              <div className="stats-counter text-4xl font-bold text-green-600 mb-2">300+</div>
               <div className="text-gray-600">Monthly Active Users</div>
             </div>
             <div className="text-center">
-              <div className="stats-counter text-4xl font-bold text-green-600 mb-2">$2.8B+</div>
+              <div className="stats-counter text-4xl font-bold text-green-600 mb-2">$18m+</div>
               <div className="text-gray-600">Expenses Tracked</div>
             </div>
             <div className="text-center">
@@ -364,7 +364,7 @@ export default function ExpenseTrackerLanding() {
         </div>
       </section>
         
-    {/* Pricing & Payment */}
+    {/* Pricing & Payment
 <section className="w-full mx-auto px-6 py-16 text-center bg-gradient-to-br from-green-600 to-green-100 border border-blue-100  mb-12">
   <h2 className="text-4xl font-extrabold text-white mb-4 leading-tight">
     Get Lifetime Access for Just <span className="text-blue-600">$15</span>
@@ -387,7 +387,7 @@ export default function ExpenseTrackerLanding() {
       💡 Risk-free: Pay once, use forever.
     </span>
   </div>
-</section>
+</section> */}
 
 
         {/* FAQ Section */}

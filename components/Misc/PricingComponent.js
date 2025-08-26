@@ -1,71 +1,163 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { useUser } from "@clerk/nextjs";
+import { supabase } from "../../lib/supabase";
+import { CheckCircle, Zap, Crown } from "lucide-react";
 
-const PricingComponent = () => {
+export default function Payment() {
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
+  const [hasPaid, setHasPaid] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!user) {
+      router.push("/dashboard");
+      return;
+    }
+
+    const checkSubscriptionStatus = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("is_subscribed")
+          .eq("clerk_id", user.id)
+          .maybeSingle();
+
+        if (!error && data?.is_subscribed) {
+          setHasPaid(true);
+        }
+      } catch (err) {
+        console.error("Unexpected error checking subscription status:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkSubscriptionStatus();
+  }, [isLoaded, user, router]);
+
+  const handlePaymentSuccess = async (paymentid) => {
+    if (!user) {
+      alert("You must be signed in to complete the payment.");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.from("users").upsert(
+        {
+          clerk_id: user.id,
+          email: user.primaryEmailAddress?.emailAddress,
+          full_name: user.fullName,
+          is_subscribed: true,
+          subscription_date: new Date().toISOString(),
+          payment_id: paymentid,
+          is_trial_active: false,
+          payment_status: "Paid",
+        },
+        { onConflict: "clerk_id" }
+      );
+
+      if (error) {
+        console.error("Error saving subscription:", error);
+        alert("There was an issue updating your subscription. Please contact support.");
+      } else {
+        setHasPaid(true);
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error("Unexpected error saving subscription:", err);
+      alert("An unexpected error occurred. Please try again later.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-gray-700">
+        <div className="animate-spin rounded-full h-20 w-20 border-b-4 border-indigo-500"></div>
+      </div>
+    );
+  }
+
+  if (hasPaid) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 to-white">
+        <div className="max-w-lg text-center p-10 bg-white rounded-2xl shadow-xl border border-gray-200">
+          <Crown className="mx-auto h-16 w-16 text-yellow-500 mb-4" />
+          <h1 className="text-4xl font-extrabold mb-4 text-gray-800">Thank You!</h1>
+          <p className="text-lg mb-6 text-gray-600">
+            You are now <span className="font-semibold text-indigo-600">Premium</span>.  
+            Enjoy all the exclusive features!
+          </p>
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="px-6 py-3 font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg transition"
+          >
+            Go to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-6">
+      <div className="w-full max-w-2xl text-center">
+        <h1 className="text-4xl font-extrabold mb-4 text-gray-800 flex items-center justify-center gap-2">
+          Upgrade to Premium <Zap className="text-yellow-500 h-8 w-8" />
+        </h1>
+        <p className="text-gray-600 mb-10 text-lg">
+          Unlock full access to all tools. No hidden fees. Cancel anytime.
+        </p>
 
-    <>
-    
-          {/* <h2 className="text-4xl pt-6 font-bold capitalize text-inherit text-center mb-4">Become the best version of yourself!</h2> */}
-        <div className="  w-full  p-4 text-white grid flex justify-center  items-center w-full">
+        {/* Pricing Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center justify-center gap-2">
+            <Crown className="text-yellow-500 h-6 w-6" /> Premium Plan
+          </h2>
+          <p className="text-5xl font-extrabold text-indigo-600 mb-2">$4.99</p>
+          <p className="text-gray-500 mb-6">per month</p>
 
-  
-        {/* <div className="  w-full max-w-screen-md mx-auto px-4 py-8 text-white grid grid-cols-1 md:grid-cols-2 gap-3 justify-center  items-center"> */}
+          {/* Features */}
+          <ul className="text-gray-700 space-y-3 mb-8 text-left max-w-xs mx-auto">
+            <li className="flex items-center gap-2">
+              <CheckCircle className="text-green-500 w-5 h-5" /> Unlimited Access
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="text-green-500 w-5 h-5" /> Priority Support
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="text-green-500 w-5 h-5" /> Advanced Analytics
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="text-green-500 w-5 h-5" /> Exclusive Tools
+            </li>
+          </ul>
 
-          {/* Features Section */}
-          {/* <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-      
-
-            <ul className="space-y-4">
-              {[
-                "Unlimited access to all features",
-                "No hidden fees or charges",
-                "Early access to new features",
-                "anonymous data collection",
-              ].map((feature, index) => (
-                <li key={index} className="flex items-center">
-                  <svg
-                    className="h-6 w-6 text-green-500 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div> */}
-
-     
-
-          {/* Lifetime Deal Card */}
-          <div className="bg-gray-800 p-10 rounded-lg shadow-lg text-center relative border-2 border-yellow-500">
-            <div className="absolute top-0 right-0 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-bl-lg">
-              25% OFF
-            </div>
-            <h3 className="text-xl font-semibold mb-4">Lifetime Deal</h3>
-            <div className="text-4xl font-bold mb-2">
-              $4.99 <span className="text-lg font-medium line-through text-gray-400">$23</span>
-            </div>
-            <p className="text-sm text-gray-400 mb-6">One-time payment. No subscription</p>
-            <a
-              href="/checkout"
-              className="px-6 py-3 bg-pink-500 text-white font-bold rounded-lg hover:bg-pink-600 transition"
-            >
-              Get Access Now
-            </a>
-          </div>
-        </div>                  
-            </>
-
-     
+          {/* PayPal Button */}
+          <PayPalScriptProvider options={{ "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}>
+            <PayPalButtons
+              style={{ layout: "vertical", color: "blue", shape: "pill", label: "subscribe" }}
+              createOrder={(data, actions) => {
+                return actions.order.create({
+                  purchase_units: [{ amount: { value: "4.99" } }],
+                });
+              }}
+              onApprove={(data, actions) => {
+                return actions.order.capture().then(() => {
+                  handlePaymentSuccess(data.orderID);
+                });
+              }}
+              onError={(err) => {
+                console.error("PayPal Checkout Error:", err);
+                alert("There was an issue processing your payment. Please try again.");
+              }}
+            />
+          </PayPalScriptProvider>
+        </div>
+      </div>
+    </div>
   );
-};
-
-export default PricingComponent;
+}

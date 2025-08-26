@@ -86,20 +86,22 @@ const graphDataload = {
   labels: monthlySpendingData.map((item) => item.month),
   datasets: [
     {
-      label: 'Spending',
+      label: "Spending",
       data: monthlySpendingData.map((item) => item.total),
-      borderColor: '#2364e8', // Gold-like color for the line
-      backgroundColor: 'rgba(251, 191, 36, 0.2)', // Transparent gold fill
-      pointBackgroundColor: '#FBBF24', // Gold color for points
-      pointBorderColor: '#FBBF24',
-      pointHoverBackgroundColor: '#FBBF24',
-      pointHoverBorderColor: '#FBBF24',
-      pointRadius: 12, // Size of the points
-      pointHoverRadius: 16, // Size of the points on hover
-      tension: 0.4, // Smooth curve
+      borderColor: "#16a34a", // Primary green line
+      backgroundColor: "rgba(34, 197, 94, 0.15)", // Soft green fill
+      pointBackgroundColor: "#22c55e", // Bright green points
+      pointBorderColor: "#22c55e",
+      pointHoverBackgroundColor: "#0ea5e9", // Teal hover color
+      pointHoverBorderColor: "#0ea5e9",
+      pointRadius: 10, // Slightly smaller but visible
+      pointHoverRadius: 14, // Hover effect
+      borderWidth: 2, // Thicker line for emphasis
+      tension: 0.15, // Smooth curve
     },
   ],
 };
+
 
 const graphOptions = {
   responsive: true,
