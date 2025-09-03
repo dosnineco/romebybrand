@@ -91,7 +91,7 @@ export default function Payment() {
   if (hasPaid) {
     return (
       <div className="flex items-center justify-center mt-20 p-3 text-black">
-        <div className="max-w-3xl text-center p-8 bg-gray-100 rounded-lg text-gray-900">
+        <div className="max-w-3xl text-center p-8 rounded-lg text-gray-900">
           <h1 className="text-4xl font-extrabold mb-4 text-gray-700">Thank You!</h1>
           <p className="text-lg mb-6">
             You Are premium. Enjoy all the premium features!

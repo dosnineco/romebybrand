@@ -103,7 +103,7 @@ export default function Payment() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-6">
+    <div className="min-h-screen flex items-center justify-center bg-white  px-6">
       <div className="w-full max-w-2xl text-center">
         <h1 className="text-4xl font-extrabold mb-4 text-gray-800 flex items-center justify-center gap-2">
           Upgrade to Premium <Zap className="text-yellow-500 h-8 w-8" />
@@ -118,7 +118,7 @@ export default function Payment() {
             <Crown className="text-yellow-500 h-6 w-6" /> Premium Plan
           </h2>
           <p className="text-5xl font-extrabold text-indigo-600 mb-2">$4.99</p>
-          <p className="text-gray-500 mb-6">per month</p>
+          <p className="text-gray-500 mb-6">Per Year</p>
 
           {/* Features */}
           <ul className="text-gray-700 space-y-3 mb-8 text-left max-w-xs mx-auto">

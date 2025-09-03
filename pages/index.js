@@ -82,7 +82,7 @@ export default function ExpenseTrackerLanding() {
             The <span className="text-green-600">#1 Expense Tracking Software</span> & Petty Cash Spending Tool
           </h1>
           <p className="text-base sm:text-xl text-gray-700 mb-8">
-            Effortlessly track expenses, manage petty cash, and control your business or personal finances. Trusted by over <span className="font-bold text-green-600">2 million</span> users worldwide.
+            Effortlessly track expenses, manage petty cash, and control your business or personal finances.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
             <Link href="/expense-tracker" className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-4 rounded-lg text-lg shadow transition">
@@ -93,7 +93,7 @@ export default function ExpenseTrackerLanding() {
           <div className="flex flex-wrap justify-center gap-6 mt-8">
             <div className="flex items-center gap-2 text-base text-gray-600">
               <Users className="w-5 h-5 text-green-500" />
-              2.1M+ Monthly Visits
+              234 Monthly Visits
             </div>
 
             <div className="flex items-center gap-2 text-base text-gray-600">
@@ -105,7 +105,7 @@ export default function ExpenseTrackerLanding() {
 
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-white">
+      {/* <section id="features" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -209,7 +209,7 @@ export default function ExpenseTrackerLanding() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Product Demo Section */}
       <section id="demo" className="py-20 bg-gray-50">
