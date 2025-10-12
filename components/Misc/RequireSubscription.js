@@ -75,7 +75,7 @@ const RequireSubscription = ({ children }) => {
 
   if (trialActive) {
     return (
-      <div className="p-8 text-center">
+      <div className="w-full p-2 text-center">
         <p className="text-lg text-blue-600 p-4 mb-4">
           You are using a free trial. {trialDaysRemaining} day{trialDaysRemaining !== 1 ? 's' : ''} remaining.
         </p>
@@ -86,7 +86,7 @@ const RequireSubscription = ({ children }) => {
 
   // Not subscribed and no trial
   return (
-    <div className="p-8 text-center">
+    <div className="w-full p-8 text-center">
       <p className="text-lg text-red-600 p-4 mb-4">
         Your free trial has expired. Please subscribe to continue using the service.
       </p>

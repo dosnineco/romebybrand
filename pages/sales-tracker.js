@@ -217,14 +217,14 @@ const SalesTracker = () => {
 
   return (
     <RequireSubscription>
-    <div className="min-h-screen p-4 sm:p-6">
-      <div className="container mx-auto max-w-screen-md">
+    <div className="w-full  min-h-screen ">
+      <div className="w-full container mx-auto max-w-screen-md">
         <h1 className="text-3xl font-bold mb-6 text-center">Sales Tracker</h1>
         <p className="text-lg text-gray-700 mb-6 text-center">
           Track your sales, analyze trends, and manage your business effectively.
         </p>
         <div className="bg-gray-100 p-6 rounded-lg">
-          <div className="mb-6 flex justify-between items-center">
+          <div className="mb-6 flex justify-between flex-wrap items-center">
             <h2 className="text-xl font-semibold">Total Sales: ${totalSales.toFixed(2)}</h2>
             <button
               onClick={() => setShowAddForm(true)}
