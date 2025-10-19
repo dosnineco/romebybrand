@@ -54,6 +54,9 @@ const Header = () => {
            <Link href="/tools" className="text-inherit text-sm font-bold">
               Free Tools
             </Link>
+            <Link href="/tools/vector" className="text-inherit text-sm font-bold">
+              vector
+            </Link>
             <Link href="/dashboard" className="text-inherit text-sm font-bold">
               Dashboard
             </Link>
