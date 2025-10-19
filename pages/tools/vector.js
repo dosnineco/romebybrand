@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import ImageTracer from "imagetracerjs";
 
 // A state variable to hold the original image data once loaded
+// This is intentionally outside the component to prevent re-creation on every render
 let originalImgData = null;
 
 export default function VectorizePage() {
@@ -10,16 +11,16 @@ export default function VectorizePage() {
   const [cleanedDataUrl, setCleanedDataUrl] = useState(null);
   const [status, setStatus] = useState("");
   const [fileLoaded, setFileLoaded] = useState(false);
-  
-  // NEW OPTIMIZED DEFAULTS FOR TEXT PROTECTION AND AGGRESSIVE VECTOR SIMPLIFICATION
+
+  // OPTIMIZED DEFAULTS FOR TEXT PROTECTION AND AGGRESSIVE VECTOR SIMPLIFICATION
   const [options, setOptions] = useState({
-    sharpness: 1, 
-    minArea: 150,    // REDUCED: Protects fine text from being removed as noise
+    sharpness: 1,
+    minArea: 150, // REDUCED: Protects fine text from being removed as noise
     fattenAmount: 2, // Default to close thin gaps. Adjust up to thicken lines.
-    invertColors: false, 
-    removeBackground: true, 
+    invertColors: false,
+    removeBackground: true,
   });
-  
+
   const inputRef = useRef(null);
 
   // Helper to deep copy originalImgData for processing
@@ -57,16 +58,17 @@ export default function VectorizePage() {
       gray = applySharpen(gray, width, height, options.sharpness);
     }
 
-    // 2. Adaptive Thresholding (More aggressive than before)
-    // The C value (7) defines how much darker a pixel needs to be than its local mean to be foreground.
-    const thresh = adaptiveThreshold(gray, width, height, 15, 7); 
+    // 2. Adaptive Thresholding (Creates a black/white binary image)
+    // blockSize (15), C (7). C defines how much darker a pixel needs to be than its local mean.
+    const thresh = adaptiveThreshold(gray, width, height, 15, 7);
 
     // 3. Fattening (Dilation) - CRITICAL FOR CLOSING PATHS AND THICKNESS
     let processed = thresh;
     if (options.fattenAmount > 0) {
       setStatus(`Fattening image by ${options.fattenAmount}px...`);
       for (let i = 0; i < options.fattenAmount; i++) {
-        processed = applyDilation(processed, width, height, 1); 
+        // Radius of 1 per iteration
+        processed = applyDilation(processed, width, height, 1);
       }
     }
 
@@ -96,13 +98,13 @@ export default function VectorizePage() {
       const isForeground = finalBinary[i] === 1; // 1 is foreground (black/cut area)
 
       const colorValue = isForeground ? 0 : 255;
-      const alpha = isForeground ? 255 : (options.removeBackground ? 0 : 255); 
+      const alpha = isForeground ? 255 : (options.removeBackground ? 0 : 255);
 
       const idx = i * 4;
-      cleanedImageData.data[idx] = colorValue; 
-      cleanedImageData.data[idx + 1] = colorValue; 
-      cleanedImageData.data[idx + 2] = colorValue; 
-      cleanedImageData.data[idx + 3] = alpha; 
+      cleanedImageData.data[idx] = colorValue;
+      cleanedImageData.data[idx + 1] = colorValue;
+      cleanedImageData.data[idx + 2] = colorValue;
+      cleanedImageData.data[idx + 3] = alpha;
     }
 
     cc.putImageData(cleanedImageData, 0, 0);
@@ -112,9 +114,9 @@ export default function VectorizePage() {
     setStatus("Vectorizing (paths are being aggressively simplified)...");
     const tracerOptions = {
       scale: 1,
-      ltres: 7,           // INCREASED: Higher tolerance for smoother straight lines and curves
+      ltres: 7, // INCREASED: Higher tolerance for smoother straight lines and curves
       qtres: 1,
-      pathomit: 300,      // INCREASED: Ignores more tiny, jittery paths for a much cleaner cut.
+      pathomit: 300, // INCREASED: Ignores more tiny, jittery paths for a much cleaner cut.
       rightangleenhance: true,
       strokewidth: 0,
       numberofcolors: 2,
@@ -132,24 +134,25 @@ export default function VectorizePage() {
       },
       tracerOptions
     );
-  }, [options, fileLoaded]); 
+  }, [options, fileLoaded]);
 
   // UseEffect to trigger processing when options change
   useEffect(() => {
+    // Debounce the processing to prevent running too frequently while a slider is being dragged
     const timeoutId = setTimeout(() => {
       applyProcessing();
-    }, 150); 
+    }, 150);
 
     return () => clearTimeout(timeoutId);
-  }, [options, applyProcessing]); 
+  }, [options, applyProcessing]);
 
   // Handle file load (only runs once per file upload)
   async function handleFile(e) {
     const file = e.target.files?.[0];
     if (file && (file.type === "image/jpeg" || file.type === "image/jpg")) {
-        setStatus("Warning: JPEG files may cause rough edges and noise. PNG is highly recommended.");
+      setStatus("Warning: JPEG files may cause rough edges and noise. PNG is highly recommended.");
     }
-    
+
     if (!file) {
       setFileLoaded(false);
       originalImgData = null;
@@ -157,7 +160,7 @@ export default function VectorizePage() {
       setSvg(null);
       return;
     }
-    setFileLoaded(false); 
+    setFileLoaded(false);
     setStatus("Loading image...");
 
     try {
@@ -171,7 +174,7 @@ export default function VectorizePage() {
         height,
       };
 
-      setFileLoaded(true); 
+      setFileLoaded(true);
     } catch (error) {
       setStatus(`Error loading image: ${error.message}`);
       originalImgData = null;
@@ -186,8 +189,16 @@ export default function VectorizePage() {
     }));
   };
 
-  // --- Utility functions (Image Processing and Helpers - same as before) ---
-  
+  // --- Utility functions (Image Processing and Helpers) ---
+
+  /**
+   * Applies a Dilation (fattening) morphological operation.
+   * @param {Uint8Array} bin - Binary image (0 or 1).
+   * @param {number} width
+   * @param {number} height
+   * @param {number} radius
+   * @returns {Uint8Array} The dilated image.
+   */
   function applyDilation(bin, width, height, radius = 1) {
     if (radius < 1) return bin;
     const out = new Uint8Array(width * height);
@@ -215,10 +226,19 @@ export default function VectorizePage() {
     return out;
   }
 
+  /**
+   * Removes small connected components (noise/speckles) from a binary image.
+   * Uses flood fill for component identification.
+   * @param {Uint8Array} bin - Binary image (0 or 1).
+   * @param {number} width
+   * @param {number} height
+   * @param {number} minArea - Components smaller than this area will be removed.
+   * @returns {Uint8Array} The cleaned binary image.
+   */
   function removeSmallComponents(bin, width, height, minArea = 150) {
     const visited = new Uint8Array(width * height);
     const out = new Uint8Array(width * height);
-    for (let i = 0; i < bin.length; i++) out[i] = bin[i]; 
+    for (let i = 0; i < bin.length; i++) out[i] = bin[i];
 
     function floodFill(startIdx) {
       const stack = [startIdx];
@@ -270,6 +290,11 @@ export default function VectorizePage() {
     return out;
   }
 
+  /**
+   * Loads an Image object from a File object.
+   * @param {File} file
+   * @returns {Promise<HTMLImageElement>}
+   */
   function loadImageFromFile(file) {
     return new Promise((resolve, reject) => {
       const url = URL.createObjectURL(file);
@@ -283,6 +308,12 @@ export default function VectorizePage() {
     });
   }
 
+  /**
+   * Draws an image onto a canvas, scaling it down if it exceeds maxDim.
+   * @param {HTMLImageElement} img
+   * @param {number} maxDim
+   * @returns {{canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, width: number, height: number}}
+   */
   function drawImageToCanvas(img, maxDim = 1600) {
     const ratio = Math.max(img.width, img.height) / maxDim;
     const w = ratio > 1 ? Math.round(img.width / ratio) : img.width;
@@ -295,6 +326,11 @@ export default function VectorizePage() {
     return { canvas, ctx, width: w, height: h };
   }
 
+  /**
+   * Converts RGBA image data to a grayscale array using luminosity method.
+   * @param {ImageData} imgData
+   * @returns {Uint8ClampedArray} Grayscale values (0-255).
+   */
   function rgbaToGrayscale(imgData) {
     const w = imgData.width;
     const h = imgData.height;
@@ -304,18 +340,28 @@ export default function VectorizePage() {
       const r = d[i],
         g = d[i + 1],
         b = d[i + 2];
+      // Luminosity method for better grayscale
       out[j] = (0.299 * r + 0.587 * g + 0.114 * b) | 0;
     }
     return out;
   }
 
+  /**
+   * Applies a basic sharpening convolution filter.
+   * @param {Uint8ClampedArray} gray - Grayscale image data.
+   * @param {number} width
+   * @param {number} height
+   * @param {number} amount - Sharpening strength.
+   * @returns {Uint8ClampedArray} The sharpened grayscale image.
+   */
   function applySharpen(gray, width, height, amount = 1) {
+    // Sharpening kernel (simplified Laplace filter)
     const kernel = [
       0,
       -1 * amount,
       0,
       -1 * amount,
-      4 * amount + 1,
+      4 * amount + 1, // Center pixel is weighted more for original detail
       -1 * amount,
       0,
       -1 * amount,
@@ -334,16 +380,28 @@ export default function VectorizePage() {
             sum += gray[idx] * kernel[kidx];
           }
         }
+        // Clamp the result to be within 0-255
         out[y * width + x] = Math.min(255, Math.max(0, sum));
       }
     }
     return out;
   }
 
+  /**
+   * Performs adaptive thresholding using integral image for local mean calculation.
+   * @param {Uint8ClampedArray} gray - Grayscale image data.
+   * @param {number} width
+   * @param {number} height
+   * @param {number} blockSize - Size of the local neighborhood (must be odd).
+   * @param {number} C - Constant to subtract from the local mean (controls sensitivity).
+   * @returns {Uint8ClampedArray} Binary image (1 for foreground, 0 for background).
+   */
   function adaptiveThreshold(gray, width, height, blockSize = 15, C = 7) {
     const out = new Uint8ClampedArray(width * height);
     const half = Math.floor(blockSize / 2);
+    // Integral image is one pixel larger in both dimensions
     const integral = new Uint32Array((width + 1) * (height + 1));
+    // Calculate integral image for fast local summation
     for (let y = 0; y < height; y++) {
       let rowSum = 0;
       for (let x = 0; x < width; x++) {
@@ -352,19 +410,28 @@ export default function VectorizePage() {
           integral[y * (width + 1) + (x + 1)] + rowSum;
       }
     }
+
+    // Apply adaptive threshold
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
+        // Calculate the neighborhood boundaries (clamped to image borders)
         const x1 = Math.max(0, x - half);
         const y1 = Math.max(0, y - half);
         const x2 = Math.min(width - 1, x + half);
         const y2 = Math.min(height - 1, y + half);
+
         const area = (x2 - x1 + 1) * (y2 - y1 + 1);
+
+        // Fast sum calculation using the integral image
         const sum =
           integral[(y2 + 1) * (width + 1) + (x2 + 1)] -
           integral[y1 * (width + 1) + (x2 + 1)] -
           integral[(y2 + 1) * (width + 1) + x1] +
           integral[y1 * (width + 1) + x1];
+
         const mean = sum / area;
+
+        // Thresholding: pixel is foreground (1) if it's significantly darker than the local mean
         out[y * width + x] = gray[y * width + x] < mean - C ? 1 : 0;
       }
     }
@@ -420,10 +487,10 @@ export default function VectorizePage() {
               originalImgData = null;
               setFileLoaded(false);
               setOptions({
-                sharpness: 1, 
-                minArea: 150,    
-                fattenAmount: 2, 
-                invertColors: false, 
+                sharpness: 1,
+                minArea: 150,
+                fattenAmount: 2,
+                invertColors: false,
                 removeBackground: true,
               });
             }}
@@ -448,7 +515,7 @@ export default function VectorizePage() {
               <input
                 type="range"
                 min={0}
-                max={5} 
+                max={5}
                 step={1}
                 value={options.fattenAmount}
                 onChange={(e) => handleOptionChange("fattenAmount", Number(e.target.value))}
@@ -467,7 +534,7 @@ export default function VectorizePage() {
               <input
                 type="number"
                 min={1}
-                max={2000} 
+                max={2000}
                 value={options.minArea}
                 onChange={(e) => handleOptionChange("minArea", Number(e.target.value))}
                 className="w-24 border rounded px-2 py-1 text-sm"
@@ -482,7 +549,7 @@ export default function VectorizePage() {
             {/* Sharpness */}
             <div className="flex items-center gap-4">
               <label className="text-sm font-medium text-gray-700 w-40">
-                Sharpness:
+                Sharpening:
               </label>
               <input
                 type="range"
@@ -495,7 +562,7 @@ export default function VectorizePage() {
               />
               <span className="text-sm text-gray-600">{options.sharpness}</span>
             </div>
-            
+
             {/* Remove Background Checkbox */}
             <div className="flex items-center gap-4">
               <label className="text-sm font-medium text-gray-700 w-40">
@@ -545,6 +612,7 @@ export default function VectorizePage() {
                   maxWidth: "100%",
                   maxHeight: "360px",
                   objectFit: "contain",
+                  // Checkerboard background for transparency
                   backgroundImage: options.removeBackground
                     ? "repeating-linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0), repeating-linear-gradient(45deg, #f0f0f0 25%, #ffffff 25%, #ffffff 75%, #f0f0f0 75%, #f0f0f0)"
                     : "white",
@@ -572,6 +640,7 @@ export default function VectorizePage() {
             {svg ? (
               <div>
                 <div
+                  // This is safe because ImageTracer generates SVG, not user input
                   dangerouslySetInnerHTML={{ __html: svg }}
                   style={{
                     maxHeight: 360,
