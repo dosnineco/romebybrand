@@ -87,7 +87,7 @@ const tools = [
       title: "Vector image generator",
       description: " ",
       icon: Tool,
-      path: "/tools/cost-of-vector",
+      path: "/tools/vector",
       color: "text-blue-600",
       bgHover: "hover:bg-blue-50",
     },
