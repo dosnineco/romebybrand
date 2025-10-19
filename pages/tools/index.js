@@ -83,6 +83,14 @@ const tools = [
       color: "text-yellow-600",
       bgHover: "hover:bg-yellow-50",
     },
+        {
+      title: "Vector image generator",
+      description: " ",
+      icon: Tool,
+      path: "/tools/cost-of-vector",
+      color: "text-blue-600",
+      bgHover: "hover:bg-blue-50",
+    },
     {
       title: "Cost of Living Calculator",
       description: " ",
