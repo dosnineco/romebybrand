@@ -160,7 +160,7 @@ const SavingMoneyCalculator = () => {
     <RequiredSubscription>
     <div className="min-h-screen p-4 sm:p-6">
       <div className="max-w-screen-md mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-center">Saving Money Calculator</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center">Saving Money Tracker</h1>
         <p className="text-lg text-gray-700 mb-6 text-center">
           Track your savings goals and progress over time.
         </p>

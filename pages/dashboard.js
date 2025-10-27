@@ -68,10 +68,10 @@ const tools = [
     highlight: true, 
   },
     {
-      title: "Saving Money Calculator",
+      title: "Saving Money Tracker",
       description: "Project how much you can save over time",
       icon: PiggyBank,
-      path: "/saving-money-calculator",
+      path: "/saving-money-tracker",
       color: "text-stone-600",
       bgHover: "hover:bg-stone-50",
     },
@@ -83,23 +83,7 @@ const tools = [
       color: "text-yellow-600",
       bgHover: "hover:bg-yellow-50",
     },
-    {
-      title: "Cost of Living Calculator",
-      description: " ",
-      icon: Calculator,
-      path: "/tools/cost-of-living",
-      color: "text-green-600",
-      bgHover: "hover:bg-green-50",
-    },
-
-    {
-      title: "Living Expenses Calculator",
-      description: "Calculate your monthly living expenses",
-      icon: BarChart2,
-      path: "/tools/living-expenses",
-      color: "text-pink-600",
-      bgHover: "hover:bg-pink-50",
-    },
+   
     {
       title: "Monthly Spending Calculator",
       description: "Estimate your monthly spending based on your income and expenses",
@@ -108,30 +92,8 @@ const tools = [
       color: "text-blue-600",
       bgHover: "hover:bg-blue-50",
     },
-    {
-      title: "Auto Loan Calculator",
-      description: "Calculate your monthly auto loan payments",
-      icon: Car,
-      path: "/tools/auto-loan-calculator",
-      color: "text-blue-600",
-      bgHover: "hover:bg-blue-50",
-    },
-    {
-      title: "Emergency Fund Calculator",
-      description: "Estimate the amount to save for emergencies",
-      icon: PiggyBank,
-      path: "/tools/emergency-fund-calculator",
-      color: "text-red-600",
-      bgHover: "hover:bg-red-50",
-    },
-    {
-      title: "Retirement Spending Calculator",
-      description: "Plan how much you'll need in retirement",
-      icon: Award,
-      path: "/tools/retirement-spending-calculator",
-      color: "text-indigo-600",
-      bgHover: "hover:bg-indigo-50",
-    },
+  
+ 
     {
       title: "Grocery Budget Calculator",
       description: "Set your monthly grocery spending",
@@ -140,14 +102,7 @@ const tools = [
       color: "text-pink-600",
       bgHover: "hover:bg-pink-50",
     },
-    {
-      title: "Relocation Calculator",
-      description: "Compare expenses when moving to a new city",
-      icon: MapPin,
-      path: "/tools/relocation-calculator",
-      color: "text-teal-600",
-      bgHover: "hover:bg-teal-50",
-    }
+   
   ];
   
   const filteredTools = tools.filter(tool =>
