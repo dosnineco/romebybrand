@@ -75,14 +75,7 @@ const tools = [
       color: "text-stone-600",
       bgHover: "hover:bg-stone-50",
     },
-    {
-      title: "Sales Tracker",
-      description: " ",
-      icon: Calculator,
-      path: "/sales-tracker",
-      color: "text-yellow-600",
-      bgHover: "hover:bg-yellow-50",
-    },
+
    
     {
       title: "Monthly Spending Calculator",
