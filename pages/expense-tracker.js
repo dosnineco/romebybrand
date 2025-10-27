@@ -1066,7 +1066,7 @@ return (
         </div>
 
   {/* Remaining Budget */}
-  <div className="p-6 bg-gray-100 rounded-lg text-gray-900 flex flex-col items-center text-center">
+  {/* <div className="p-6 bg-gray-100 rounded-lg text-gray-900 flex flex-col items-center text-center">
   <div className="flex items-center gap-2 mb-2">
     <label className="text-lg font-semibold tracking-wide">Remaining Budget</label>
   </div>
@@ -1079,7 +1079,7 @@ return (
   {monthlySpending > periodBudget && (
     <p className="text-red-600 text-sm mt-2">You’ve exceeded your budget!</p>
   )}
-</div>
+</div> */}
 </div>
 
     <div className="mt-4 mb-5 grid  sm:grid-cols-1 md:grid-cols-3  gap-4">
