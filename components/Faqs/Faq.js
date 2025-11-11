@@ -34,7 +34,7 @@ const FAQ = () => {
               className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-gray-50"
               onClick={() => toggleAccordion(index)}
             >
-              <h3 className="text-gray-800 font-medium">{faq.question}</h3>
+              <h3 className="text-gray-800 font-medium text-xl">{faq.question}</h3>
               <span className="text-gray-500">
                 {activeIndex === index ? <FiChevronUp size={24} /> : <FiChevronDown size={24} />}
               </span>

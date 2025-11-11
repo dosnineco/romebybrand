@@ -67,7 +67,7 @@ export default function ExpenseTrackerLanding() {
       <main className="bg-white min-h-screen">
         {/* HERO */}
         <section className="max-w-6xl mx-auto px-6 py-20 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-green-50 via-transparent to-white opacity-80 pointer-events-none" />
+          <div className=" pointer-events-none" />
           <h1 className="text-5xl sm:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
             Simplify <span className="text-green-600">Expense Tracking</span> for
             Your Business
@@ -83,12 +83,12 @@ export default function ExpenseTrackerLanding() {
             >
               Get Started Free
             </Link>
-            <Link
+            {/* <Link
               href="/demo"
               className="border border-green-600 text-green-700 hover:bg-green-50 font-semibold px-8 py-4 rounded-lg text-lg transition-transform hover:-translate-y-1"
             >
               Watch Demo
-            </Link>
+            </Link> */}
           </div>
 
           <div className="flex flex-wrap justify-center gap-6 mt-10">
@@ -135,7 +135,7 @@ export default function ExpenseTrackerLanding() {
               </ul>
             </div>
 
-            <div className="relative bg-white shadow-xl border border-gray-200 rounded-xl p-6">
+            {/* <div className="relative bg-white shadow-xl border border-gray-200 rounded-xl p-6">
               <img
                 src="/images/dashboard-preview.png"
                 alt="Expense Goose Dashboard"
@@ -144,7 +144,7 @@ export default function ExpenseTrackerLanding() {
               <div className="absolute -top-3 -right-3 bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
                 Live Demo
               </div>
-            </div>
+            </div> */}
           </div>
         </section>
 
@@ -241,7 +241,7 @@ export default function ExpenseTrackerLanding() {
         </section>
 
         {/* CTA */}
-        <section className="py-20 bg-green-600 text-center text-white">
+        <section className="py-20 bg-green-600 text-center mt-4 text-white">
           <h2 className="text-4xl font-extrabold mb-4">
             Get Lifetime Access for Just $15
           </h2>
