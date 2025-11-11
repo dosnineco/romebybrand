@@ -78,7 +78,7 @@ export default function ExpenseTrackerLanding() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
-              href="/expense-tracker"
+              href="/dashboard"
               className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-4 rounded-lg text-lg shadow-lg transition-transform hover:-translate-y-1"
             >
               Get Started Free

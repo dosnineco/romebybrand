@@ -1,304 +1,314 @@
-import Head from "next/head";
-import Link from "next/link";
 import { 
-  Check,
-  X,
-  Zap,
-  Clock,
-  Shield,
-  BarChart2,
-  Smartphone,
+  BarChart2, 
+  Calculator, 
+  Mail, 
   DollarSign,
+  Settings,
+  Search,
+  Award,
+  MapPin,
+  PiggyBank,
+  Banknote,
   PieChart,
-  ArrowRight,
-  ChevronRight,
-  AlertTriangle,
+  Wallet,
   TrendingUp,
-  Users,
-  Download,
-  Bell
+  ClipboardList
 } from "lucide-react";
-import { useState, useEffect } from "react";
 
-export default function MobileOptimizedLanding() {
-  const [timeLeft, setTimeLeft] = useState({
-    hours: 2,
-    minutes: 30,
-    seconds: 0
-  });
+import { useEffect, useState } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { supabase } from '../lib/supabase';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { ArrowRight, PenTool as Tool, Zap, Users, BookOpen, Car } from "lucide-react";
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+function App() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const { user } = useUser();
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        const { hours, minutes, seconds } = prev;
-        if (seconds > 0) return { ...prev, seconds: seconds - 1 };
-        if (minutes > 0) return { ...prev, minutes: minutes - 1, seconds: 59 };
-        if (hours > 0) return { hours: hours - 1, minutes: 59, seconds: 59 };
-        clearInterval(timer);
-        return { hours: 0, minutes: 0, seconds: 0 };
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
+    const checkSubscriptionStatus = async () => {
+      if (user) {
+        try {
+          const { data, error } = await supabase
+            .from('users')
+            .select('is_subscribed')
+            .eq('clerk_id', user.id)
+            .single();
 
-  return (
-    <>
-      <Head>
-        <title>Expense Goose Lifetime Deal - $15 (Limited Time)</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-      </Head>
+          if (error) {
+            console.error('Error fetching subscription status:', error);
+          } else {
+            setIsSubscribed(data?.is_subscribed || false);
+          }
+        } catch (err) {
+          console.error('Unexpected error checking subscription status:', err);
+        }
+      }
+      setLoading(false);
+    };
 
-      <main className="bg-white">
-        {/* Sticky Mobile CTA Bar */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-green-600 shadow-lg z-50">
-          <Link href="/checkout" className="block py-4 px-6 text-center text-white font-bold text-lg flex items-center justify-between">
-            <span>GET LIFETIME ACCESS</span>
-            <span className="bg-white text-green-600 px-3 py-1 rounded-md text-sm font-bold">$15</span>
-          </Link>
-        </div>
+    checkSubscriptionStatus();
+  }, [user]);
 
-        {/* Hero Section with Video Frame */}
-        <section className="pt-8 pb-12 px-4 bg-gradient-to-b from-green-50 to-white">
-          <div className="max-w-md mx-auto text-center">
-            <div className="bg-red-100 text-red-800 text-sm font-bold px-3 py-1 rounded-full inline-flex items-center mb-4">
-              <AlertTriangle className="w-4 h-4 mr-1" />
-              LIMITED TIME OFFER
-            </div>
-            
-            <h1 className="text-4xl font-extrabold text-gray-900 mb-3 leading-tight">
-              Track Every Dollar.
-              <br/> Ditch the Fees.
-            </h1>
+const tools = [
 
-            
-            <p className="text-lg text-gray-700 mb-6">
-              Get <span className="font-bold">lifetime access</span> to premium expense tracking for less than 2 months of competitor pricing.
-            </p>
-            
-       
-            
-            <div className="bg-white p-4 rounded-lg  border border-green-200 mb-6">
-              <div className="flex justify-center gap-4 mb-2">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-500">$15</div>
-                  <div className="text-xs text-gray-500">ONE-TIME</div>
-                </div>
-                <div className=" w-px bg-gray-300"></div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-red-500 line-through">$13+/mo</div>
-                  <div className="text-xs text-gray-500">COMPETITORS</div>
-                </div>
-              </div>
-              <div className="text-center text-sm text-gray-700">
-                You save <span className="font-bold">$81+</span> in the first year alone
-              </div>
-            </div>
-            
-            <Link href="/checkout" className="block w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg text-lg shadow-lg transition transform hover:scale-105 mb-4">
-              GET LIFETIME DEAL - $15
-            </Link>
-        
-          </div>
-        </section>
-
-        {/* Countdown Timer Section */}
-        <section className="py-6 bg-yellow-50 border-y border-yellow-200">
-          <div className="max-w-md mx-auto px-4 text-center">
-            <div className="flex items-center justify-center text-yellow-800 font-bold mb-2">
-              <Clock className="w-5 h-5 mr-2" />
-              OFFER ENDS SOON:
-            </div>
-            <div className="flex justify-center gap-3">
-              <div className="bg-white rounded-lg p-2 shadow-sm w-16">
-                <div className="text-2xl font-bold">{timeLeft.hours.toString().padStart(2, '0')}</div>
-                <div className="text-xs text-gray-500">HOURS</div>
-              </div>
-              <div className="bg-white rounded-lg p-2 shadow-sm w-16">
-                <div className="text-2xl font-bold">{timeLeft.minutes.toString().padStart(2, '0')}</div>
-                <div className="text-xs text-gray-500">MINUTES</div>
-              </div>
-              <div className="bg-white rounded-lg p-2 shadow-sm w-16">
-                <div className="text-2xl font-bold">{timeLeft.seconds.toString().padStart(2, '0')}</div>
-                <div className="text-xs text-gray-500">SECONDS</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Social Proof Section */}
-        <section className="py-12 px-4 bg-white">
-          <div className="max-w-md mx-auto">
-            <h2 className="text-2xl font-bold text-center mb-6">Trusted by 2.1M+ Users</h2>
-            
-            <div className="space-y-4 mb-8">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                    <Users className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <div className="font-bold">Saved Our Startup $1,200+</div>
-                    <div className="text-sm text-gray-600">"We were using a $25/month tool before finding Expense Goose. The lifetime deal is unbelievable for the features you get."</div>
-                    <div className="mt-2 flex items-center">
-                      <div className="flex text-yellow-400">
-                        {[...Array(5)].map((_, i) => (
-                          <svg key={i} className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                          </svg>
-                        ))}
-                      </div>
-                      <span className="text-xs text-gray-500 ml-1">- Mark T., Startup Founder</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                    <DollarSign className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <div className="font-bold">Perfect for Freelancers</div>
-                    <div className="text-sm text-gray-600">"I was hesitant about yet another finance app, but the one-time payment sold me. It's paid for itself 10x over in tax deductions I would have missed."</div>
-                    <div className="mt-2 flex items-center">
-                      <div className="flex text-yellow-400">
-                        {[...Array(5)].map((_, i) => (
-                          <svg key={i} className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                          </svg>
-                        ))}
-                      </div>
-                      <span className="text-xs text-gray-500 ml-1">- Sarah L., Freelance Designer</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex justify-center">
-              <Link href="/reviews" className="text-green-600 font-semibold text-sm flex items-center">
-                See more user reviews <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Feature Comparison - Mobile Optimized */}
-        <section className="py-12 px-4 bg-gray-50">
-          <div className="max-w-md mx-auto">
-            <h2 className="text-2xl font-bold text-center mb-8">Why Expense Goose Beats Subscriptions</h2>
-            
-            <div className="space-y-6">
-              <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                <div className="flex items-start">
-                  <div className="bg-green-100 p-2 rounded-lg mr-4">
-                    <Zap className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-2">One-Time Payment</h3>
-                    <p className="text-gray-700 text-sm">Pay $15 once and never worry about monthly fees again. Competitors charge $8-$30/month forever.</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                <div className="flex items-start">
-                  <div className="bg-green-100 p-2 rounded-lg mr-4">
-                    <BarChart2 className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-2">All Features Included</h3>
-                    <p className="text-gray-700 text-sm">No "premium plan" upsells. Get advanced reporting, multi-user access, and all features upfront.</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                <div className="flex items-start">
-                  <div className="bg-green-100 p-2 rounded-lg mr-4">
-                    <Smartphone className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-2">Mobile-First Design</h3>
-                    <p className="text-gray-700 text-sm">Log expenses in seconds from your phone. Other tools feel clunky on mobile.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+  {
+    title: "Expense Tracker",
+    description: "Track and analyze your spending data",
+    icon: Wallet,
+    path: "/expense-tracker",
+    color: "text-orange-600",
+    bgHover: "hover:bg-orange-50",
+    highlight: true, 
+  },
+    {
+      title: "Saving Money Tracker",
+      description: "Project how much you can save over time",
+      icon: PiggyBank,
+      path: "/saving-money-tracker",
+      color: "text-stone-600",
+      bgHover: "hover:bg-stone-50",
+    },
 
    
+    {
+      title: "Monthly Spending Calculator",
+      description: "Estimate your monthly spending based on your income and expenses",
+      icon: Mail,
+      path: "/tools/monthly-calculator",
+      color: "text-blue-600",
+      bgHover: "hover:bg-blue-50",
+    },
+  
+ 
+    {
+      title: "Grocery Budget Calculator",
+      description: "Set your monthly grocery spending",
+      icon: DollarSign,
+      path: "/tools/grocery-budget-calculator",
+      color: "text-pink-600",
+      bgHover: "hover:bg-pink-50",
+    },
+   
+  ];
+  
+  const filteredTools = tools.filter(tool =>
+    tool.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    tool.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+const [monthlySpendingData, setMonthlySpendingData] = useState([]);
 
-        {/* FAQ Section */}
-        <section className="py-12 px-4 bg-gray-50">
-          <div className="max-w-md mx-auto">
-            <h2 className="text-2xl font-bold text-center mb-8">Common Questions</h2>
-            
-            <div className="space-y-4">
-              <div className="border-b border-gray-200 pb-4">
-                <h3 className="font-bold flex items-center">
-                  <ChevronRight className="w-5 h-5 mr-2 text-green-600" />
-                  Is this really a one-time payment?
-                </h3>
-                <p className="mt-2 text-gray-700 pl-7">Yes! Pay $15 once and get lifetime access to all current and future features with no hidden fees.</p>
-              </div>
-              
-              <div className="border-b border-gray-200 pb-4">
-                <h3 className="font-bold flex items-center">
-                  <ChevronRight className="w-5 h-5 mr-2 text-green-600" />
-                  What if I don't like it?
-                </h3>
-                <p className="mt-2 text-gray-700 pl-7">We offer a 30-day money back guarantee. No questions asked.</p>
-              </div>
-              
-              <div className="border-b border-gray-200 pb-4">
-                <h3 className="font-bold flex items-center">
-                  <ChevronRight className="w-5 h-5 mr-2 text-green-600" />
-                  How does this compare to free apps?
-                </h3>
-                <p className="mt-2 text-gray-700 pl-7">Free apps lack advanced features, show ads, or sell your data. Expense Goose gives you premium features with complete privacy.</p>
-              </div>
-            </div>
-          </div>
-        </section>
+  useEffect(() => {
+    if (user) {
+      fetchMonthlySpendingData();
+    }
+  }, [user]);
 
-        {/* Final CTA with Urgency */}
-        <section className="py-12 px-4 bg-green-600 text-white">
-          <div className="max-w-md mx-auto text-center">
-            <h2 className="text-2xl font-bold mb-4">Don't Miss This Lifetime Deal</h2>
-            <p className="mb-6">Join 2.1M+ users who switched to Expense Goose and never looked back.</p>
+const fetchMonthlySpendingData = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('transaction_date, amount')
+      .eq('user_id', user.id);
+
+    if (error) {
+      console.error('Error fetching transactions:', error);
+      return;
+    }
+
+    if (data && data.length > 0) {
+      // Aggregate spending by month
+      const spendingByMonth = data.reduce((acc, transaction) => {
+        const month = new Date(transaction.transaction_date).toISOString().slice(0, 7); // Format: YYYY-MM
+        acc[month] = (acc[month] || 0) + parseFloat(transaction.amount);
+        return acc;
+      }, {});
+
+      // Format data for the graph
+      const formattedData = Object.entries(spendingByMonth).map(([month, total]) => ({
+        month,
+        total,
+      }));
+
+      // Sort by month
+      formattedData.sort((a, b) => new Date(a.month) - new Date(b.month));
+
+      setMonthlySpendingData(formattedData);
+    } else {
+      setMonthlySpendingData([]); // Set an empty array if no data is returned
+    }
+  } catch (err) {
+    console.error('Failed to fetch monthly spending data:', err);
+  }
+};
+
+const graphData = {
+  labels: monthlySpendingData.map((item) => item.month),
+  datasets: [
+    {
+      label: 'Monthly Spending',
+      data: monthlySpendingData.map((item) => item.total),
+      borderColor: '#FBBF24', // Gold-like color for the line
+      backgroundColor: 'rgba(251, 191, 36, 0.2)', // Transparent gold fill
+      pointBackgroundColor: '#FBBF24', // Gold color for points
+      pointBorderColor: '#FBBF24',
+      pointHoverBackgroundColor: '#FBBF24',
+      pointHoverBorderColor: '#FBBF24',
+      pointRadius: 5, // Size of the points
+      pointHoverRadius: 7, // Size of the points on hover
+      tension: 0.4, // Smooth curve
+    },
+  ],
+};
+
+const graphOptions = {
+  responsive: true,
+  maintainAspectRatio: false, // Allow the graph to resize dynamically
+  plugins: {
+    legend: {
+      display: false, // Hide the legend
+    },
+    tooltip: {
+      backgroundColor: '#1F2937', // Dark background for the tooltip
+      titleColor: '#FFFFFF', // White title text
+      bodyColor: '#FFFFFF', // White body text
+      borderColor: '#FBBF24', // Gold border
+      borderWidth: 3,
+      cornerRadius: 4,
+      callbacks: {
+        title: (tooltipItems) => {
+          const month = tooltipItems[0].label;
+          return `${month}`; // Display the month
+        },
+        label: (context) => `$${context.raw.toFixed(2)}`, // Display the amount
+      },
+    },
+  },
+  scales: {
+    x: {
+      grid: {
+        display: false, // Hide gridlines on the x-axis
+      },
+      ticks: {
+        color: '#6B7280', // Gray color for x-axis labels
+        font: {
+          size: 12,
+        },
+      },
+    },
+    y: {
+      grid: {
+        color: '#E5E7EB', // Light gray gridlines
+        drawBorder: false, // Hide the border
+      },
+      ticks: {
+        color: '#6B7280', // Gray color for y-axis labels
+        font: {
+          size: 12,
+        },
+        callback: (value) => `$${value}`, // Add a dollar sign to y-axis labels
+      },
+    },
+  },
+};
+
+
+  return (
+    <div className="min-h-screen p-4 md:p-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-xl  p-6 md:p-8">
+          {/* Header */}
+          <div className="mb-8 w-full grid grid-cols-2 items-center justify-center gap-4">
+            <p className="text-inherit font-semibold text-xl mb-2">
+              Dashboard
+            </p>
             
-            <div className="bg-green-700 rounded-lg p-4 mb-6">
-              <div className="font-bold mb-2">OFFER ENDS IN:</div>
-              <div className="flex justify-center gap-3">
-                <div className="bg-white text-green-700 rounded-lg p-2 w-16">
-                  <div className="text-xl font-bold">{timeLeft.hours.toString().padStart(2, '0')}</div>
-                  <div className="text-xs">HOURS</div>
+
+          {!loading && (
+            <div className="flex items-center justify-center">
+              {isSubscribed ? (
+                <div className="flex items-center justify-center px-4 py-2">
+                  <Award className="h-6 w-6 text-yellow-500 mr-2" />
+                  <span className="text-yellow-500 font-bold"> Premium</span>
                 </div>
-                <div className="bg-white text-green-700 rounded-lg p-2 w-16">
-                  <div className="text-xl font-bold">{timeLeft.minutes.toString().padStart(2, '0')}</div>
-                  <div className="text-xs">MINUTES</div>
-                </div>
-                <div className="bg-white text-green-700 rounded-lg p-2 w-16">
-                  <div className="text-xl font-bold">{timeLeft.seconds.toString().padStart(2, '0')}</div>
-                  <div className="text-xs">SECONDS</div>
-                </div>
-              </div>
+              ) : (
+                <a href="/checkout" className="flex items-center justify-center px-4 py-2">
+                  <span className=" text-blue-500 font-bold font-base hover:underline">{user.firstName} Get Premium!</span>
+                </a>
+              )}
             </div>
-            
-            <Link href="/checkout" className="block w-full bg-white hover:bg-gray-100 text-green-700 font-bold py-4 px-6 rounded-lg text-lg shadow-lg transition transform hover:scale-105 mb-4">
-              GET LIFETIME ACCESS NOW - $15
-            </Link>
-            
-            <div className="flex items-center justify-center text-sm text-green-100">
-              <Shield className="w-4 h-4 mr-1" />
-              30-day money back guarantee • No credit card required
-            </div>
+          )}
           </div>
-        </section>
-      </main>
-    </>
+
+          {/* Search */}
+          <div className="relative mb-8">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-inherit" />
+            <input
+              type="text"
+              placeholder="Search tools..."
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+
+
+        {/* Tools Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+            {filteredTools.map((tool) => {
+              const Icon = tool.icon;
+              return tool.comingSoon ? (
+                <div
+                  key={tool.title}
+                  className={`group block p-4 rounded-lg bg-gray-100 transition-all duration-200 ${tool.bgHover}`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`p-2 rounded-full ${tool.color} bg-opacity-10 flex items-center justify-center`}>
+                      <Icon className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h2 className="text-base font-semibold text-gray-400">
+                      {tool.title}
+                    </h2>
+                  </div>
+                </div>
+              ) : (
+                 <a
+      key={tool.path}
+      href={tool.path}
+      className={`group block p-4 rounded-lg bg-gray-50 transition-all duration-200 ${tool.bgHover} ${
+        tool.highlight ? 'border-2 border-orange-400 shadow-lg bg-orange-50 ' : ''
+      }`}
+    >
+      <div className="flex items-center gap-4">
+        <div className={`p-2 rounded-full ${tool.color} bg-opacity-10 flex items-center justify-center`}>
+          <Icon className={`w-8 h-8 ${tool.color}`} />
+        </div>
+        <div className="flex-1">
+          <h2 className={`text-base font-semibold ${tool.highlight ? 'text-orange-800' : 'text-inherit'}`}>
+            {tool.title}
+          </h2>
+          {tool.highlight && (
+            <span className="mt-1 inline-block text-xs font-bold text-orange-600 bg-white border border-orange-300 rounded px-2 py-0.5">
+              Core Tool
+            </span>
+          )}
+        </div>
+      </div>
+    </a>
+  );
+})}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
+
+export default App;
