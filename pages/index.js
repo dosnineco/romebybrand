@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import Faq from "../components/Faqs/Faq";
+import ImagePopup from "../components/Misc/ImagePopup";
 import {
   Users,
   ShieldCheck,
@@ -73,8 +74,7 @@ export default function ExpenseTrackerLanding() {
             Your Business
           </h1>
           <p className="text-lg sm:text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
-            Expense Goose helps small businesses and individuals take control of
-            their money. Fast, secure, and built for results.
+The fun, smart way to manage expenses
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
@@ -83,6 +83,9 @@ export default function ExpenseTrackerLanding() {
             >
               Get Started Free
             </Link>
+
+         
+           
             {/* <Link
               href="/demo"
               className="border border-green-600 text-green-700 hover:bg-green-50 font-semibold px-8 py-4 rounded-lg text-lg transition-transform hover:-translate-y-1"
@@ -135,16 +138,17 @@ export default function ExpenseTrackerLanding() {
               </ul>
             </div>
 
-            {/* <div className="relative bg-white shadow-xl border border-gray-200 rounded-xl p-6">
-              <img
-                src="/images/dashboard-preview.png"
-                alt="Expense Goose Dashboard"
-                className="rounded-lg w-full"
-              />
+            <div className="relative bg-white shadow-xl border border-gray-200 rounded-xl p-6">
+                <ImagePopup
+              src="demo2.png"
+              alt="Expense Goose Expense Tracking Screenshot"
+              width={1080}
+              height={720}
+            />
               <div className="absolute -top-3 -right-3 bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
-                Live Demo
+                New
               </div>
-            </div> */}
+            </div>
           </div>
         </section>
 
@@ -243,7 +247,7 @@ export default function ExpenseTrackerLanding() {
         {/* CTA */}
         <section className="py-20 bg-green-600 text-center mt-4 text-white">
           <h2 className="text-4xl font-extrabold mb-4">
-            Get Lifetime Access for Just $15
+            Get Lifetime Access for Just $4.99/Yr
           </h2>
           <p className="text-lg max-w-2xl mx-auto mb-6">
             Pay once. Use forever. Unlock advanced features, reports, and
