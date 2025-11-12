@@ -92,16 +92,22 @@ const graphDataload = {
       backgroundColor: "rgba(34, 197, 94, 0.15)", // Soft green fill
       pointBackgroundColor: "#22c55e", // Bright green points
       pointBorderColor: "#22c55e",
-      pointHoverBackgroundColor: "#0ea5e9", // Teal hover color
-      pointHoverBorderColor: "#0ea5e9",
-      pointRadius: 10, // Slightly smaller but visible
+      pointHoverBackgroundColor: "#22c55e", // Teal hover color
+      pointHoverBorderColor: "#22c55e",
+      pointRadius: 7, // Slightly smaller but visible
       pointHoverRadius: 14, // Hover effect
       borderWidth: 2, // Thicker line for emphasis
-      tension: 0.15, // Smooth curve
+      tension: 0.35, // Smooth curve
     },
   ],
 };
 
+const formatMoneyShort = (num) => {
+  if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'b';
+  if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'm';
+  if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return num.toFixed(0);
+};
 
 const graphOptions = {
   responsive: true,
@@ -152,7 +158,7 @@ const graphOptions = {
         font: {
           size: 12,
         },
-        callback: (value) => `$${formatMoney(value)}`, // Add a dollar sign to y-axis labels
+        callback: (value) => `$${formatMoneyShort(value)}`, // Use compact money format
       },
     },
   },
@@ -704,7 +710,7 @@ useEffect(() => {
  
 return (
     <RequireSubscription>
-    <div className="min-h-screen   p-4 sm:p-6">
+    <div className="min-h-screen flex items-center justify-center   p-4 sm:p-6">
         <div className="w-full max-w-screen-md"> {/* Added container with max width */}
           <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Expense Tracker</h1>
@@ -860,9 +866,10 @@ return (
 
     {/* Download Transactions */}
     <CSVLink
+
       data={transactions}
       headers={csvHeaders}
-      filename={`transactions-${filterPeriod}.csv`}
+      filename={`expensegoose_transactions-${filterPeriod}.csv`}
       className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
     >
       <MdFileDownload className="w-6 h-6 text-purple-500"/>
