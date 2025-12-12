@@ -35,3 +35,14 @@ create table public.email_templates (
   shared_with text null,
   constraint email_templates_pkey primary key (id)
 ) TABLESPACE pg_default;
+
+-- Visitor email capture table
+CREATE TABLE IF NOT EXISTS visitor_emails (
+  id BIGSERIAL PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  phone VARCHAR(20),
+  user_agent TEXT,
+  ip_address VARCHAR(45),
+  referrer TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

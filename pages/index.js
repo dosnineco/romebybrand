@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Faq from "../components/Faqs/Faq";
 import ImagePopup from "../components/Misc/ImagePopup";
+import VisitorEmailPopup from "../components/VisitorEmailPopup";
 import {
   Users,
   ShieldCheck,
@@ -23,6 +24,7 @@ import {
 export default function ExpenseTrackerLanding() {
   return (
     <>
+      <VisitorEmailPopup />
       <Head>
         <title>Expense Goose | Smart Expense Tracking Software</title>
         <meta

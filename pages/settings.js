@@ -60,41 +60,22 @@ const Settings = () => {
   // Fetch budget settings with fallback to default (month = null)
   const fetchBudgetSettings = async () => {
     try {
-      // Try to get budget for current month
-      const monthString = getCurrentMonthString();
-
-      let { data: budgetData, error: budgetError } = await supabase
+      // Always fetch the default budget (month = null) which persists across months
+      const { data: defaultBudgetData, error: defaultError } = await supabase
         .from('monthly_budgets')
         .select('amount')
         .eq('user_id', user.id)
-        .eq('month', monthString)
+        .is('month', null)
         .single();
 
-      if (budgetError && budgetError.code !== 'PGRST116') {
-        // Ignore 'no rows' error; otherwise log
-        throw budgetError;
+      if (defaultError && defaultError.code !== 'PGRST116') {
+        throw defaultError;
       }
 
-      // If no budget for current month, try to get default budget (month = null)
-      if (!budgetData) {
-        const { data: defaultBudgetData, error: defaultError } = await supabase
-          .from('monthly_budgets')
-          .select('amount')
-          .eq('user_id', user.id)
-          .is('month', null)
-          .single();
-
-        if (defaultError && defaultError.code !== 'PGRST116') {
-          throw defaultError;
-        }
-
-        if (defaultBudgetData) {
-          setMonthlyBudget(defaultBudgetData.amount.toString());
-        } else {
-          setMonthlyBudget(''); // No budget set
-        }
+      if (defaultBudgetData) {
+        setMonthlyBudget(defaultBudgetData.amount.toString());
       } else {
-        setMonthlyBudget(budgetData.amount.toString());
+        setMonthlyBudget(''); // No budget set
       }
 
       // Fetch category limits (no month restriction)
@@ -211,24 +192,22 @@ const Settings = () => {
     setError('');
     setSuccess('');
     try {
-      const monthString = getCurrentMonthString();
-
-      // Upsert monthly budget for current month and default month (null)
+      // Save monthly budget as default (month = null) so it persists across months
       if (monthlyBudget.trim() === '') {
-        // If budget input is empty, delete current month budget (optional)
+        // If budget input is empty, delete the default budget
         await supabase
           .from('monthly_budgets')
           .delete()
-          .match({ user_id: user.id, month: monthString });
+          .match({ user_id: user.id, month: null });
       } else {
-        // Save for current month
+        // Save as default budget (month = null) to persist across all months
         await supabase
           .from('monthly_budgets')
           .upsert(
             [
               {
                 user_id: user.id,
-                month: monthString,
+                month: null,
                 amount: parseFloat(monthlyBudget) || 0,
               },
             ],

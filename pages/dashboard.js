@@ -10,6 +10,7 @@ import { TiRefresh } from "react-icons/ti";
 import { DollarSign } from "lucide-react";
 import RequireSubscription from '../components/Misc/RequireSubscription';  
 import { MdTune,MdFileDownload } from "react-icons/md";
+import VisitorEmailPopup from '../components/VisitorEmailPopup';
 
 import { CSVLink } from 'react-csv'; 
 import { FaInfoCircle } from 'react-icons/fa';
@@ -710,6 +711,7 @@ useEffect(() => {
  
 return (
     <RequireSubscription>
+    <VisitorEmailPopup />
     <div className="min-h-screen flex items-center justify-center   p-4 sm:p-6">
         <div className="w-full max-w-screen-md"> {/* Added container with max width */}
           <div className="flex justify-between items-center mb-6">
