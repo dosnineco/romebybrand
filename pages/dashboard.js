@@ -710,7 +710,7 @@ useEffect(() => {
 
  
 return (
-    <RequireSubscription>
+    <div>
     <VisitorEmailPopup />
     <div className="min-h-screen flex items-center justify-center   p-4 sm:p-6">
         <div className="w-full max-w-screen-md"> {/* Added container with max width */}
@@ -1320,7 +1320,7 @@ return (
       </div>
       </div>
     </div>
-    </RequireSubscription>
+    </div>
   );
 };
 
