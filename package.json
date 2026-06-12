@@ -91,6 +91,7 @@
     "postbuild": "next-sitemap"
   },
   "devDependencies": {
+    "@types/minimatch": "^6.0.0",
     "@types/react": "19.0.2",
     "eslint": "^8.16.0",
     "typescript": "5.7.2"
