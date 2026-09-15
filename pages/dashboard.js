@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { format, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, parseISO } from 'date-fns';
+import { format, subDays, subMonths, startOfWeek, endOfWeek, startOfMonth, endOfMonth, parseISO } from 'date-fns';
 import { Settings,  PlusCircle,FilePlus ,Edit2, Trash2, Save, X, Plus, Search, Filter, TrendingUp, AlertTriangle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { FaUtensils, FaShoppingCart, FaCar, FaHome, FaGamepad } from 'react-icons/fa';
@@ -284,6 +284,14 @@ const csvHeaders = [
         matchesFilter = date >= startOfWeek(new Date()) && date <= endOfWeek(new Date());
       } else if (filterPeriod === 'month') {
         matchesFilter = date >= startOfMonth(new Date()) && date <= endOfMonth(new Date());
+      } else if (filterPeriod === 'last month') {
+        const lastMonth = subMonths(new Date(), 1);
+        matchesFilter = date >= startOfMonth(lastMonth) && date <= endOfMonth(lastMonth);
+      } else if (['last 2 months', 'last 3 months', 'last 6 months'].includes(filterPeriod)) {
+        const monthCount = Number(filterPeriod.split(' ')[1]);
+        const endDate = endOfMonth(subMonths(new Date(), 1));
+        const startDate = startOfMonth(subMonths(new Date(), monthCount));
+        matchesFilter = date >= startDate && date <= endDate;
       } else if (filterPeriod === 'year') {
         matchesFilter = date.getFullYear() === parseInt(selectedYear, 10);
       } else if (filterPeriod === 'custom range') {
@@ -932,6 +940,50 @@ return (
                 }}
               >
                 This Month
+              </button>
+            </li>
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  setFilterPeriod('last month');
+                  setShowFilterDropdown(false);
+                }}
+              >
+                Last Month
+              </button>
+            </li>
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  setFilterPeriod('last 2 months');
+                  setShowFilterDropdown(false);
+                }}
+              >
+                Last 2 Months
+              </button>
+            </li>
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  setFilterPeriod('last 3 months');
+                  setShowFilterDropdown(false);
+                }}
+              >
+                Last 3 Months
+              </button>
+            </li>
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  setFilterPeriod('last 6 months');
+                  setShowFilterDropdown(false);
+                }}
+              >
+                Last 6 Months
               </button>
             </li>
             <li>
