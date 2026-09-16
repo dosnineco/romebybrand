@@ -36,6 +36,7 @@ const App = () => {
   const [isHowToUseOpen, setIsHowToUseOpen] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 const [monthlySpendingData, setMonthlySpendingData] = useState([]);
+  const [selectedSpendingMonth, setSelectedSpendingMonth] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -73,8 +74,10 @@ const fetchMonthlySpendingData = async () => {
       formattedData.sort((a, b) => new Date(a.month) - new Date(b.month));
 
       setMonthlySpendingData(formattedData);
+      setSelectedSpendingMonth(null);
     } else {
       setMonthlySpendingData([]); // Set an empty array if no data is returned
+      setSelectedSpendingMonth(null);
     }
   } catch (err) {
     console.error('Failed to fetch monthly spending data:', err);
@@ -86,12 +89,16 @@ const fetchMonthlySpendingData = async () => {
     return amount.toLocaleString("en-US", { minimumFractionDigits: 2 });
   };
 
+const displayedMonthlySpendingData = selectedSpendingMonth
+  ? monthlySpendingData.filter((item) => item.month === selectedSpendingMonth)
+  : monthlySpendingData;
+
 const graphDataload = {
-  labels: monthlySpendingData.map((item) => item.month),
+  labels: displayedMonthlySpendingData.map((item) => item.month),
   datasets: [
     {
       label: "Spending",
-      data: monthlySpendingData.map((item) => item.total),
+      data: displayedMonthlySpendingData.map((item) => item.total),
       borderColor: "#16a34a", // Primary green line
       backgroundColor: "rgba(34, 197, 94, 0.15)", // Soft green fill
       pointBackgroundColor: "#22c55e", // Bright green points
@@ -1102,6 +1109,35 @@ return (
 
       <div className="mt-8">
         <h2 className="text-xl sm:text-2xl font-semibold mb-4">Spending Over Time</h2>
+        {monthlySpendingData.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4" aria-label="Filter spending by month">
+            <button
+              type="button"
+              onClick={() => setSelectedSpendingMonth(null)}
+              className={`px-3 py-2 rounded-lg text-sm font-medium ${
+                selectedSpendingMonth === null
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              All Months
+            </button>
+            {monthlySpendingData.map(({ month }) => (
+              <button
+                key={month}
+                type="button"
+                onClick={() => setSelectedSpendingMonth(month)}
+                className={`px-3 py-2 rounded-lg text-sm font-medium ${
+                  selectedSpendingMonth === month
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {format(parseISO(`${month}-01`), 'MMM yyyy')}
+              </button>
+            ))}
+          </div>
+        )}
         <div className=" p-2 sm:p-4 rounded-lg">
           {monthlySpendingData.length > 0 ? (
             <div className="h-full w-full">
