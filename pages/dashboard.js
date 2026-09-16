@@ -248,7 +248,7 @@ const remainingBudget = periodBudget - monthlySpending;
 
   useEffect(() => {
     if (!user) return;
-    fetchBudgetAndCategoryLimits().then(() => fetchTransactions());
+    fetchBudgetAndCategoryLimits();
   }, [user]);
   
   // Prepare data for the graph based on the selected filter
