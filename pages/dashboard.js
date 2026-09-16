@@ -12,9 +12,6 @@ import RequireSubscription from '../components/Misc/RequireSubscription';
 import { MdTune,MdFileDownload } from "react-icons/md";
 import VisitorEmailPopup from '../components/VisitorEmailPopup';
 
-
-
-
 import { CSVLink } from 'react-csv'; 
 import { FaInfoCircle } from 'react-icons/fa';
 
@@ -36,7 +33,6 @@ const App = () => {
   const [isHowToUseOpen, setIsHowToUseOpen] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 const [monthlySpendingData, setMonthlySpendingData] = useState([]);
-  const [selectedSpendingMonth, setSelectedSpendingMonth] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -117,14 +113,6 @@ const formatMoneyShort = (num) => {
 const graphOptions = {
   responsive: true,
   maintainAspectRatio: true, // Allow the graph to resize dynamically
-  onClick: (_event, elements) => {
-    if (elements.length > 0) {
-      const clickedMonth = graphDataload.labels[elements[0].index];
-      setLoading(true);
-      setFilterPeriod('all');
-      setSelectedSpendingMonth(clickedMonth);
-    }
-  },
   plugins: {
     legend: {
       display: true, // Hide the legend
@@ -250,7 +238,7 @@ const remainingBudget = periodBudget - monthlySpending;
 
   useEffect(() => {
     if (!user) return;
-    fetchBudgetAndCategoryLimits();
+    fetchBudgetAndCategoryLimits().then(() => fetchTransactions());
   }, [user]);
   
   // Prepare data for the graph based on the selected filter
@@ -287,12 +275,10 @@ const csvHeaders = [
         ? t.description.toLowerCase().includes(searchTerm.toLowerCase())
         : true;
   
-      const date = parseISO(t.transaction_date);
       let matchesFilter = true;
+      const date = parseISO(t.transaction_date);
   
-      if (selectedSpendingMonth) {
-        matchesFilter = format(date, 'yyyy-MM') === selectedSpendingMonth;
-      } else if (filterPeriod === 'day') {
+      if (filterPeriod === 'day') {
         matchesFilter = date >= subDays(new Date(), 1);
       } else if (filterPeriod === 'week') {
         matchesFilter = date >= startOfWeek(new Date()) && date <= endOfWeek(new Date());
@@ -312,16 +298,10 @@ const csvHeaders = [
         matchesFilter =
           date >= new Date(customStartDate) && date <= new Date(customEndDate);
       }
-
+  
       return matchesSearch && matchesFilter;
     });
-  }, [searchTerm, filterPeriod, selectedYear, customStartDate, customEndDate, selectedSpendingMonth]);
-
-  const handleFilterPeriodChange = (period) => {
-    setSelectedSpendingMonth(null);
-    setFilterPeriod(period);
-    setShowFilterDropdown(false);
-  };
+  }, [searchTerm, filterPeriod, selectedYear, customStartDate, customEndDate]);
 
 
   const fetchBudgetAndCategoryLimits = async () => {
@@ -591,7 +571,7 @@ useEffect(() => {
     fetchTransactions();
   }
   // eslint-disable-next-line
-}, [searchTerm, filterPeriod, selectedYear, customStartDate, customEndDate, selectedSpendingMonth, user]);
+}, [filterPeriod, selectedYear, customStartDate, customEndDate, user]);
 
 
   const getCategoryIcon = (category) => {
@@ -921,7 +901,10 @@ return (
             <li>
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => handleFilterPeriodChange('all')}
+                onClick={() => {
+                  setFilterPeriod('all');
+                  setShowFilterDropdown(false);
+                }}
               >
                 All Time
               </button>
@@ -929,7 +912,10 @@ return (
             <li>
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => handleFilterPeriodChange('day')}
+                onClick={() => {
+                  setFilterPeriod('day');
+                  setShowFilterDropdown(false);
+                }}
               >
                 Last 24 Hours
               </button>
@@ -937,7 +923,10 @@ return (
             <li>
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => handleFilterPeriodChange('week')}
+                onClick={() => {
+                  setFilterPeriod('week');
+                  setShowFilterDropdown(false);
+                }}
               >
                 This Week
               </button>
@@ -945,7 +934,10 @@ return (
             <li>
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => handleFilterPeriodChange('month')}
+                onClick={() => {
+                  setFilterPeriod('month');
+                  setShowFilterDropdown(false);
+                }}
               >
                 This Month
               </button>
@@ -953,7 +945,10 @@ return (
             <li>
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => handleFilterPeriodChange('last month')}
+                onClick={() => {
+                  setFilterPeriod('last month');
+                  setShowFilterDropdown(false);
+                }}
               >
                 Last Month
               </button>
@@ -961,7 +956,10 @@ return (
             <li>
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => handleFilterPeriodChange('last 2 months')}
+                onClick={() => {
+                  setFilterPeriod('last 2 months');
+                  setShowFilterDropdown(false);
+                }}
               >
                 Last 2 Months
               </button>
@@ -969,7 +967,10 @@ return (
             <li>
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => handleFilterPeriodChange('last 3 months')}
+                onClick={() => {
+                  setFilterPeriod('last 3 months');
+                  setShowFilterDropdown(false);
+                }}
               >
                 Last 3 Months
               </button>
@@ -977,7 +978,10 @@ return (
             <li>
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => handleFilterPeriodChange('last 6 months')}
+                onClick={() => {
+                  setFilterPeriod('last 6 months');
+                  setShowFilterDropdown(false);
+                }}
               >
                 Last 6 Months
               </button>
@@ -985,7 +989,10 @@ return (
             <li>
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => handleFilterPeriodChange('year')}
+                onClick={() => {
+                  setFilterPeriod('year');
+                  setShowFilterDropdown(false);
+                }}
               >
                 This Year
               </button>
@@ -993,7 +1000,10 @@ return (
             <li>
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => handleFilterPeriodChange('custom range')}
+                onClick={() => {
+                  setFilterPeriod('custom range');
+                  setShowFilterDropdown(false);
+                }}
               >
                 Custom Range
               </button>
