@@ -285,10 +285,12 @@ const csvHeaders = [
         ? t.description.toLowerCase().includes(searchTerm.toLowerCase())
         : true;
   
-      let matchesFilter = true;
       const date = parseISO(t.transaction_date);
+      let matchesFilter = true;
   
-      if (filterPeriod === 'day') {
+      if (selectedSpendingMonth) {
+        matchesFilter = format(date, 'yyyy-MM') === selectedSpendingMonth;
+      } else if (filterPeriod === 'day') {
         matchesFilter = date >= subDays(new Date(), 1);
       } else if (filterPeriod === 'week') {
         matchesFilter = date >= startOfWeek(new Date()) && date <= endOfWeek(new Date());
@@ -309,11 +311,7 @@ const csvHeaders = [
           date >= new Date(customStartDate) && date <= new Date(customEndDate);
       }
 
-      const matchesSelectedSpendingMonth = selectedSpendingMonth
-        ? format(date, 'yyyy-MM') === selectedSpendingMonth
-        : true;
-  
-      return matchesSearch && matchesFilter && matchesSelectedSpendingMonth;
+      return matchesSearch && matchesFilter;
     });
   }, [searchTerm, filterPeriod, selectedYear, customStartDate, customEndDate, selectedSpendingMonth]);
 
