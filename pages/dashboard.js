@@ -120,6 +120,8 @@ const graphOptions = {
   onClick: (_event, elements) => {
     if (elements.length > 0) {
       const clickedMonth = graphDataload.labels[elements[0].index];
+      setLoading(true);
+      setFilterPeriod('all');
       setSelectedSpendingMonth(clickedMonth);
     }
   },
